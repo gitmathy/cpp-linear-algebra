@@ -4,7 +4,7 @@
 #include "includes/types.hpp"
 #include <algorithm>
 
-namespace LA
+namespace la
 {
 
 /// @brief Defining a vector used for numerical computations
@@ -68,5 +68,5 @@ template <typename T> void vector<T>::resize(size_type n, const T &val)
     delete[] new_vals;
 }
 
-} // namespace LA
+} // namespace la
 #endif
