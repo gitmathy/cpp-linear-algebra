@@ -23,6 +23,9 @@ public:
     /// @param val Default value
     vector(size_type n, const T &val = T(0));
 
+    /// @brief Move a vector
+    vector(vector<T> &&rhs);
+
     /// @brief Destructing a vector
     ~vector();
 
@@ -35,7 +38,7 @@ public:
     /// @brief Get the size of the vector
     inline size_type size() const { return p_size; }
 
-    /// @brief Resize a vector. If the vecotr becomes "bigger", fill values with the default value
+    /// @brief Resize a vector. If the vector becomes "bigger", fill values with the default value
     /// @param n New size
     /// @param val default value
     void resize(size_type n, const T &val = T(0));
@@ -49,6 +52,15 @@ template <typename T> vector<T>::vector(size_type n, const T &val) : p_vals(new 
 {
     for (size_type i = 0; i < n; ++i)
         p_vals[i] = val;
+}
+
+template <typename T> vector<T>::vector(vector<T> &&rhs)
+{
+    std::cout << "Moving a vector" << std::endl;
+    if (p_vals)
+        delete[] p_vals;
+    p_vals = rhs.p_vals;
+    p_size = rhs.p_size;
 }
 
 template <typename T> vector<T>::~vector() { delete[] p_vals; }
