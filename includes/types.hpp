@@ -3,10 +3,10 @@
 
 #include <cstddef>
 
-namespace LA
+namespace la
 {
 
 typedef std::size_t size_type;
 
-} // namespace LA
+} // namespace la
 #endif

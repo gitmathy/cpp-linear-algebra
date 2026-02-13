@@ -3,7 +3,7 @@
 
 #include "includes/types.hpp"
 
-namespace LA
+namespace la
 {
 
 /// @brief Defining a vector used for numerical computations
@@ -47,5 +47,5 @@ template <typename T> vector<T>::vector(size_type n, const T &val) : p_vals(new 
 
 template <typename T> vector<T>::~vector() { delete p_vals; }
 
-} // namespace LA
+} // namespace la
 #endif
