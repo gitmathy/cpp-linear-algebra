@@ -21,6 +21,7 @@ bool test_collection::run()
     strs << "Running test collection with " << p_tests.size() << " tests\n" << "==========";
     p_logger.log(strs, INFO);
     bool result = true;
+    int failed_results = 0;
     for (auto it = p_tests.begin(); it != p_tests.end(); ++it)
     {
         strs << "* Setup test: " << (*it)->name();
@@ -29,10 +30,16 @@ bool test_collection::run()
         strs << "* Execute test: " << (*it)->name();
         p_logger.log(strs, INFO);
         result = (*it)->execute() && result;
+        if (!result)
+        {
+            ++failed_results;
+        }
         strs << "* Tear down test: " << (*it)->name();
         p_logger.log(strs, INFO);
         (*it)->tear_down();
     }
+    strs << "==========\n" << "FAILED results: " << failed_results << std::endl;
+    p_logger.log(strs, INFO);
     return result;
 }
 
