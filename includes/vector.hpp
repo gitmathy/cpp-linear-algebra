@@ -74,32 +74,38 @@ template <typename T> void vector<T>::resize(size_type n, const T &val)
 {
     if (n == p_size)
         return;
-    T *new_vals = new T[n];
-    std::copy(p_vals, p_vals + std::min(p_size, n), new_vals);
-    for (size_type i = p_size; i < n; ++i)
+    T *new_vals = nullptr;
+    if (n > 0)
     {
-        new_vals[i] = val;
+        new_vals = new T[n];
+        std::copy(p_vals, p_vals + std::min(p_size, n), new_vals);
+        if (n > p_size)
+            std::fill(new_vals + p_size, new_vals + n, val);
     }
-    p_size = n;
     std::swap(new_vals, p_vals);
     delete[] new_vals;
+    p_size = n;
 }
 
 template <typename T> vector<T> &vector<T>::operator=(const vector<T> &rhs)
 {
-    if (rhs.size() != size())
-    {
-        resize(rhs.size());
-    }
-    std::copy(rhs.p_vals, rhs.p_vals + rhs.size(); p_vals);
+    if (this == &rhs)
+        return *this;
+    resize(rhs.size());
+    std::copy(rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
+    return *this;
 }
 
 template <typename T> vector<T> &vector<T>::operator=(vector<T> &&rhs) noexcept
 {
-    p_vals = rhs.p_vals;
-    p_size = rhs.p_size;
-    rhs.p_vals = nullptr;
-    rhs.p_size = 0;
+    if (this == &rhs)
+        return *this;
+    delete[] p_vals;
+    p_vals = nullptr;
+    p_size = 0;
+    std::swap(p_vals, rhs.p_vals);
+    std::swap(p_size, rhs.p_size);
+    return *this;
 }
 
 } // namespace la
