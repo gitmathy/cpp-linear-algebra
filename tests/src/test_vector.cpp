@@ -26,7 +26,19 @@ bool vector_test::execute()
     move_ok = test_move_constructor<float>() && move_ok;
     move_ok = test_move_constructor<int>() && move_ok;
 
-    return construct_ok && resize_ok && move_ok;
+    p_logger.log("   Test copy-assignment operator", DEBUG);
+    bool copy_assign_ok = true;
+    copy_assign_ok = test_copy_assignment<double>() && copy_assign_ok;
+    copy_assign_ok = test_copy_assignment<float>() && copy_assign_ok;
+    copy_assign_ok = test_copy_assignment<int>() && copy_assign_ok;
+
+    p_logger.log("   Test move-assignment operator", DEBUG);
+    bool move_assign_ok = true;
+    move_assign_ok = test_move_assignment<double>() && move_assign_ok;
+    move_assign_ok = test_move_assignment<float>() && move_assign_ok;
+    move_assign_ok = test_move_assignment<int>() && move_assign_ok;
+
+    return construct_ok && resize_ok && move_ok && copy_assign_ok && move_assign_ok;
 }
 
 } // namespace la_test
