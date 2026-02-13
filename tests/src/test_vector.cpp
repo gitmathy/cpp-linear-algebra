@@ -1,6 +1,5 @@
 #include "includes/test_vector.hpp"
 #include "../includes/types.hpp"
-#include "../includes/vector.hpp"
 
 namespace la_test
 {
@@ -9,26 +8,37 @@ vector_test::vector_test() : unit_test("vector test") {}
 
 bool vector_test::execute()
 {
-    bool result = true;
+    p_logger.log("   Test constructing a vector", DEBUG);
+    bool construct_ok = true;
+    construct_ok = test_construct<double>() && construct_ok;
+    construct_ok = test_construct<float>() && construct_ok;
+    construct_ok = test_construct<int>() && construct_ok;
 
-    // construct with defaults
-    la::vector<double> *v = new la::vector<double>(3, 2.0);
-    bool construct_result = true;
-    for (la::size_type i = 0; i < v->size(); ++i)
-    {
-        if ((*v)(i)-2.0 > 1e-16)
-        {
-            construct_result = false;
-        }
-    }
-    if (!construct_result)
-    {
-        p_errors.push_back("vector: Invalid value by constructor");
-        p_logger.log("== Invalid value by constructor", ERROR);
-    }
-    // destruct
-    delete v;
-    return result = construct_result;
+    p_logger.log("   Test resizing a vector", DEBUG);
+    bool resize_ok = true;
+    resize_ok = test_resize<double>() && resize_ok;
+    resize_ok = test_resize<float>() && resize_ok;
+    resize_ok = test_resize<int>() && resize_ok;
+
+    p_logger.log("   Test moving a vector", DEBUG);
+    bool move_ok = true;
+    move_ok = test_move_constructor<double>() && move_ok;
+    move_ok = test_move_constructor<float>() && move_ok;
+    move_ok = test_move_constructor<int>() && move_ok;
+
+    p_logger.log("   Test copy-assignment operator", DEBUG);
+    bool copy_assign_ok = true;
+    copy_assign_ok = test_copy_assignment<double>() && copy_assign_ok;
+    copy_assign_ok = test_copy_assignment<float>() && copy_assign_ok;
+    copy_assign_ok = test_copy_assignment<int>() && copy_assign_ok;
+
+    p_logger.log("   Test move-assignment operator", DEBUG);
+    bool move_assign_ok = true;
+    move_assign_ok = test_move_assignment<double>() && move_assign_ok;
+    move_assign_ok = test_move_assignment<float>() && move_assign_ok;
+    move_assign_ok = test_move_assignment<int>() && move_assign_ok;
+
+    return construct_ok && resize_ok && move_ok && copy_assign_ok && move_assign_ok;
 }
 
 } // namespace la_test

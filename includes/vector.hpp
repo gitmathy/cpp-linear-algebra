@@ -2,6 +2,8 @@
 #define LA_VECTOR_H
 
 #include "includes/types.hpp"
+#include <algorithm>
+#include <iostream>
 
 namespace la
 {
@@ -22,6 +24,9 @@ public:
     /// @param val Default value
     vector(size_type n, const T &val = T(0));
 
+    /// @brief Move a vector
+    vector(vector<T> &&rhs) noexcept;
+
     /// @brief Destructing a vector
     ~vector();
 
@@ -33,6 +38,17 @@ public:
 
     /// @brief Get the size of the vector
     inline size_type size() const { return p_size; }
+
+    /// @brief Resize a vector. If the vector becomes "bigger", fill values with the default value
+    /// @param n New size
+    /// @param val default value
+    void resize(size_type n, const T &val = T(0));
+
+    /// @brief Assign another vector
+    vector<T> &operator=(const vector<T> &rhs);
+
+    /// @brief Move assign a vector
+    vector<T> &operator=(vector<T> &&rhs) noexcept;
 };
 
 /// ===============================================
@@ -45,7 +61,52 @@ template <typename T> vector<T>::vector(size_type n, const T &val) : p_vals(new 
         p_vals[i] = val;
 }
 
-template <typename T> vector<T>::~vector() { delete p_vals; }
+// take ownership and leave rhs in a valid empty state
+template <typename T> vector<T>::vector(vector<T> &&rhs) noexcept : p_vals(rhs.p_vals), p_size(rhs.p_size)
+{
+    rhs.p_vals = nullptr;
+    rhs.p_size = 0;
+}
+
+template <typename T> vector<T>::~vector() { delete[] p_vals; }
+
+template <typename T> void vector<T>::resize(size_type n, const T &val)
+{
+    if (n == p_size)
+        return;
+    T *new_vals = nullptr;
+    if (n > 0)
+    {
+        new_vals = new T[n];
+        std::copy(p_vals, p_vals + std::min(p_size, n), new_vals);
+        if (n > p_size)
+            std::fill(new_vals + p_size, new_vals + n, val);
+    }
+    std::swap(new_vals, p_vals);
+    delete[] new_vals;
+    p_size = n;
+}
+
+template <typename T> vector<T> &vector<T>::operator=(const vector<T> &rhs)
+{
+    if (this == &rhs)
+        return *this;
+    resize(rhs.size());
+    std::copy(rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
+    return *this;
+}
+
+template <typename T> vector<T> &vector<T>::operator=(vector<T> &&rhs) noexcept
+{
+    if (this == &rhs)
+        return *this;
+    delete[] p_vals;
+    p_vals = nullptr;
+    p_size = 0;
+    std::swap(p_vals, rhs.p_vals);
+    std::swap(p_size, rhs.p_size);
+    return *this;
+}
 
 } // namespace la
 #endif
