@@ -1,6 +1,7 @@
 #ifndef TEST_LA_TEST_VECTOR_H
 #define TEST_LA_TEST_VECTOR_H
 
+#include "../includes/vector.hpp"
 #include "includes/unit_test.hpp"
 #include <sstream>
 #include <typeinfo>
@@ -39,8 +40,8 @@ template <typename T> bool vector_test::test_construct()
 {
     bool result = true;
     // construct with defaults
-    la::vector<T> *v = new la::vector<double>(3, T(2));
-    for (::la::size_type i = 0; i < v->size(); ++i)
+    la::vector<T> *v = new la::vector<T>(3, T(2));
+    for (la::size_type i = 0; i < v->size(); ++i)
     {
         if (double((*v)(i)-2) > 1e-16)
         {
@@ -50,7 +51,7 @@ template <typename T> bool vector_test::test_construct()
     if (!result)
     {
         std::stringstream strs;
-        strs << "vector<" << std::typeid(T()).name() << "> error in constructor";
+        strs << "vector<" << typeid(T()).name() << "> error in constructor";
         p_errors.push_back(strs.str());
         p_logger.log(strs.str(), ERROR);
     }
@@ -60,7 +61,41 @@ template <typename T> bool vector_test::test_construct()
 }
 
 /// @brief Test resizing a vector
-template <typename T> bool vector_test::test_resize() {}
+template <typename T> bool vector_test::test_resize()
+{
+    bool result = true;
+    la::vector<T> v(3);
+    v.resize(5, T(100));
+    if (double(v(4) - 100) > 1e-16)
+    {
+        result = false;
+        p_logger.log("Default value not set when making vector bigger", ERROR);
+    }
+    if (v.size() != 5)
+    {
+        result = false;
+        p_logger.log("Incorrect size when making vector bigger", ERROR);
+    }
+    v.resize(4);
+    if (double(v(3) - 100) > 1e-16)
+    {
+        result = false;
+        p_logger.log("Value not kept when making vector smaler", ERROR);
+    }
+    if (v.size() != 4)
+    {
+        result = false;
+        p_logger.log("Incorrect size when making vector smaler", ERROR);
+    }
+    if (!result)
+    {
+        std::stringstream strs;
+        strs << "vector<" << typeid(T()).name() << "> error in resize";
+        p_errors.push_back(strs.str());
+    }
+
+    return result;
+}
 
 } // namespace la_test
 #endif
