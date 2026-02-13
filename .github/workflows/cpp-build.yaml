@@ -19,3 +19,17 @@ jobs:
       shell: bash
       run: make -j
 
+  unit_tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8    # v6.0.1
+    - name: Version of g++
+      shell: bash
+      run: g++ -v
+    - name: Building unit tests with g++
+      shell: bash
+      run: |
+        cd tests || false
+        make -j 3
+        ./build/unit_test
+
