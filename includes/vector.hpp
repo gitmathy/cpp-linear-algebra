@@ -2,6 +2,7 @@
 #define LA_VECTOR_H
 
 #include "includes/types.hpp"
+#include <algorithm>
 
 namespace LA
 {
@@ -33,6 +34,11 @@ public:
 
     /// @brief Get the size of the vector
     inline size_type size() const { return p_size; }
+
+    /// @brief Resize a vector. If the vecotr becomes "bigger", fill values with the default value
+    /// @param n New size
+    /// @param val default value
+    void resize(size_type n, const T &val = T(0));
 };
 
 /// ===============================================
@@ -45,7 +51,22 @@ template <typename T> vector<T>::vector(size_type n, const T &val) : p_vals(new 
         p_vals[i] = val;
 }
 
-template <typename T> vector<T>::~vector() { delete p_vals; }
+template <typename T> vector<T>::~vector() { delete[] p_vals; }
+
+template <typename T> void vector<T>::resize(size_type n, const T &val)
+{
+    if (n == p_size)
+        return;
+    T *new_vals = new T[n];
+    std::copy(p_vals, p_vals + std::min(p_size, n), new_vals);
+    for (size_type i = p_size; i < n; ++i)
+    {
+        new_vals[i] = val;
+    }
+    p_size = n;
+    std::swap(new_vals, p_vals);
+    delete[] new_vals;
+}
 
 } // namespace LA
 #endif
