@@ -43,6 +43,12 @@ public:
     /// @param n New size
     /// @param val default value
     void resize(size_type n, const T &val = T(0));
+
+    /// @brief Assign another vector
+    vector<T> &operator=(const vector<T> &rhs);
+
+    /// @brief Move assign a vector
+    vector<T> &operator=(vector<T> &&rhs) noexcept;
 };
 
 /// ===============================================
@@ -77,6 +83,23 @@ template <typename T> void vector<T>::resize(size_type n, const T &val)
     p_size = n;
     std::swap(new_vals, p_vals);
     delete[] new_vals;
+}
+
+template <typename T> vector<T> &vector<T>::operator=(const vector<T> &rhs)
+{
+    if (rhs.size() != size())
+    {
+        resize(rhs.size());
+    }
+    std::copy(rhs.p_vals, rhs.p_vals + rhs.size(); p_vals);
+}
+
+template <typename T> vector<T> &vector<T>::operator=(vector<T> &&rhs) noexcept
+{
+    p_vals = rhs.p_vals;
+    p_size = rhs.p_size;
+    rhs.p_vals = nullptr;
+    rhs.p_size = 0;
 }
 
 } // namespace la
