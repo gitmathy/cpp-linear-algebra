@@ -24,6 +24,15 @@ public:
 
     /// @brief Destructing a vector
     ~vector();
+
+    /// @brief Get i'th element for reading
+    inline const T &operator()(const size_type i) const { return p_vals[i]; }
+
+    /// @brief Get i'th element for writing
+    inline T &operator()(const size_type i) { return p_vals[i]; }
+
+    /// @brief Get the size of the vector
+    inline size_type size() const { return p_size; }
 };
 
 /// ===============================================
