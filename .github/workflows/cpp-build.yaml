@@ -1,0 +1,21 @@
+name: Makefile CI
+description: Build the executable by g++
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8    # v6.0.1
+    - name: Version of g++
+      shell: bash
+      run: g++ -v
+    - name: Building with g++
+      shell: bash
+      run: make -j
+
