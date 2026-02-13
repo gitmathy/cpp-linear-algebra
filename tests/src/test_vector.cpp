@@ -12,9 +12,9 @@ bool vector_test::execute()
     bool result = true;
 
     // construct with defaults
-    LA::vector<double> *v = new LA::vector<double>(3, 2.0);
+    la::vector<double> *v = new la::vector<double>(3, 2.0);
     bool construct_result = true;
-    for (LA::size_type i = 0; i < v->size(); ++i)
+    for (la::size_type i = 0; i < v->size(); ++i)
     {
         if ((*v)(i)-2.0 > 1e-16)
         {
