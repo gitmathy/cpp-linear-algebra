@@ -16,7 +16,7 @@ enum TestLogLevel
     ERROR = 3
 };
 
-const TestLogLevel DEFAULT_LOG_LEVEL = INFO;
+const TestLogLevel DEFAULT_LOG_LEVEL = DEBUG;
 
 /// @brief Logger as singleton pattern
 class logger

@@ -3,6 +3,7 @@
 
 #include "includes/types.hpp"
 #include <algorithm>
+#include <iostream>
 
 namespace la
 {
@@ -24,7 +25,7 @@ public:
     vector(size_type n, const T &val = T(0));
 
     /// @brief Move a vector
-    vector(vector<T> &&rhs);
+    vector(vector<T> &&rhs) noexcept;
 
     /// @brief Destructing a vector
     ~vector();
@@ -54,13 +55,11 @@ template <typename T> vector<T>::vector(size_type n, const T &val) : p_vals(new 
         p_vals[i] = val;
 }
 
-template <typename T> vector<T>::vector(vector<T> &&rhs)
+// take ownership and leave rhs in a valid empty state
+template <typename T> vector<T>::vector(vector<T> &&rhs) noexcept : p_vals(rhs.p_vals), p_size(rhs.p_size)
 {
-    std::cout << "Moving a vector" << std::endl;
-    if (p_vals)
-        delete[] p_vals;
-    p_vals = rhs.p_vals;
-    p_size = rhs.p_size;
+    rhs.p_vals = nullptr;
+    rhs.p_size = 0;
 }
 
 template <typename T> vector<T>::~vector() { delete[] p_vals; }

@@ -8,17 +8,25 @@ vector_test::vector_test() : unit_test("vector test") {}
 
 bool vector_test::execute()
 {
-    bool construct = true;
-    construct = test_construct<double>() && construct;
-    construct = test_construct<float>() && construct;
-    construct = test_construct<int>() && construct;
+    p_logger.log("   Test constructing a vector", DEBUG);
+    bool construct_ok = true;
+    construct_ok = test_construct<double>() && construct_ok;
+    construct_ok = test_construct<float>() && construct_ok;
+    construct_ok = test_construct<int>() && construct_ok;
 
-    bool resize = true;
-    resize = test_resize<double>() && resize;
-    resize = test_resize<float>() && resize;
-    resize = test_resize<int>() && resize;
+    p_logger.log("   Test resizing a vector", DEBUG);
+    bool resize_ok = true;
+    resize_ok = test_resize<double>() && resize_ok;
+    resize_ok = test_resize<float>() && resize_ok;
+    resize_ok = test_resize<int>() && resize_ok;
 
-    return construct && resize;
+    p_logger.log("   Test moving a vector", DEBUG);
+    bool move_ok = true;
+    move_ok = test_move_constructor<double>() && move_ok;
+    move_ok = test_move_constructor<float>() && move_ok;
+    move_ok = test_move_constructor<int>() && move_ok;
+
+    return construct_ok && resize_ok && move_ok;
 }
 
 } // namespace la_test

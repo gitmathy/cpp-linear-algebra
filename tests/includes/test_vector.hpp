@@ -19,6 +19,9 @@ private:
     /// @brief Test resizing a vector
     template <typename T> bool test_resize();
 
+    /// @brief Test move constructor
+    template <typename T> bool test_move_constructor();
+
     bool test_various_constructs();
 
 public:
@@ -94,6 +97,42 @@ template <typename T> bool vector_test::test_resize()
         p_errors.push_back(strs.str());
     }
 
+    return result;
+}
+
+template <typename T> bool vector_test::test_move_constructor()
+{
+    bool result = true;
+    la::vector<T> src(4);
+    for (la::size_type i = 0; i < src.size(); ++i)
+        src(i) = static_cast<T>(i * 10 + 1);
+    la::vector<T> dst(std::move(src));
+    if (dst.size() != 4)
+    {
+        result = false;
+        p_logger.log("Moved-to vector has incorrect size", ERROR);
+    }
+    for (la::size_type i = 0; i < dst.size(); ++i)
+    {
+        if (double(dst(i) - static_cast<T>(i * 10 + 1)) != 0.0)
+        {
+            result = false;
+            std::stringstream ss;
+            ss << "Moved-to vector has incorrect value at " << i;
+            p_logger.log(ss.str(), ERROR);
+        }
+    }
+    if (src.size() != 0)
+    {
+        result = false;
+        p_logger.log("Moved-from vector not left in empty state (expected size==0)", ERROR);
+    }
+    if (!result)
+    {
+        std::stringstream strs;
+        strs << "vector<" << typeid(T()).name() << "> error in move constructor";
+        p_errors.push_back(strs.str());
+    }
     return result;
 }
 
