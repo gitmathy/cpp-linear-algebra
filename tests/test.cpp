@@ -11,5 +11,5 @@ int main()
     la_test::test_collection tests;
     tests.transfer(std::make_unique<la_test::vector_test>());
     bool result = tests.run();
-    return 0 ? result : 1;
+    return result ? 0 : 1;
 }
