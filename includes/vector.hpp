@@ -75,6 +75,8 @@ public:
     /// @brief Constant iterator to end
     inline citerator end() const { return p_vals + p_size; }
 
+    /// @brief Apply a function to every entry, i.e., x(i)=func(x(i))
+    /// @tparam function, supports func(T)
     template <typename function> vector<T> &apply_func(function func);
 };
 
