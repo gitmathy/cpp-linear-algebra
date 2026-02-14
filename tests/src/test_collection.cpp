@@ -18,12 +18,13 @@ bool test_collection::run()
 {
 
     std::stringstream strs;
-    strs << "Running test collection with " << p_tests.size() << " tests\n" << "==========";
+    strs << "Running test collection with " << p_tests.size() << " tests\n" << "===========================";
     p_logger.log(strs, INFO);
     bool result = true;
     int failed_results = 0;
     for (auto it = p_tests.begin(); it != p_tests.end(); ++it)
     {
+        strs << "--------- Test " << (*it)->name() << "-----\n";
         strs << "* Setup test: " << (*it)->name();
         p_logger.log(strs, INFO);
         (*it)->setup();
@@ -34,7 +35,7 @@ bool test_collection::run()
         {
             ++failed_results;
         }
-        strs << "* Tear down test: " << (*it)->name();
+        strs << "* Tear down test: " << (*it)->name() << '\n';
         p_logger.log(strs, INFO);
         (*it)->tear_down();
     }
