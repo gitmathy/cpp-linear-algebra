@@ -43,7 +43,7 @@ public:
         TIME_ME;
         la::vector<T> c(a.size());
         for (la::size_type i = 0; i < num_run; ++i)
-            c = a + b + a + b;
+            c = a + b + 3 + a + b + 2;
     }
 };
 
