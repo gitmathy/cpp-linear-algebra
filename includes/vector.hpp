@@ -74,6 +74,8 @@ public:
     inline citerator begin() const { return p_vals; }
     /// @brief Constant iterator to end
     inline citerator end() const { return p_vals + p_size; }
+
+    template <typename function> vector<T> &apply_func(function func);
 };
 
 /// ===============================================
@@ -156,6 +158,13 @@ template <typename T> vector<T> &vector<T>::operator-=(const vector<T> &rhs)
     {
         p_vals[i] -= rhs.p_vals[i];
     }
+    return *this;
+}
+
+template <typename T> template <typename function> vector<T> &vector<T>::apply_func(function func)
+{
+    for (size_type i = 0; i < size(); ++i)
+        p_vals[i] = func(p_vals[i]);
     return *this;
 }
 

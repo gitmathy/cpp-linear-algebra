@@ -1,10 +1,45 @@
+#include "../includes/la.hpp"
+#include "../includes/misc.hpp"
 #include "../includes/vector.hpp"
 #include "includes/timing.hpp"
 #include <iostream>
 
-void time_constructor(const la::size_type n = 10000)
+const la::size_type N = 100000000;
+const la::size_type RUNS = 10;
+
+template <typename T> class performance_add
 {
-    TIMEME;
+private:
+    la::vector<T> a, b;
+
+public:
+    performance_add(la::size_type n) : a(n), b(n) { init(); }
+
+    void init()
+    {
+        a.apply_func([](T) { return la::get_random<T>(); });
+        b.apply_func([](T) { return la::get_random<T>(); });
+    }
+
+    void run_assign_add(la::size_type num_run)
+    {
+        TIME_ME;
+        for (la::size_type i = 0; i < num_run; ++i)
+            a += b;
+    }
+
+    void run_add(la::size_type num_run)
+    {
+        TIME_ME;
+        la::vector<T> c(a.size());
+        for (la::size_type i = 0; i < num_run; ++i)
+            c = a + b;
+    }
+};
+
+void time_add(const la::size_type n = 10000)
+{
+    TIME_ME;
     la::vector<double> v(n);
 }
 
@@ -12,12 +47,12 @@ int main()
 {
     la_perf::time_report &timings = la_perf::time_report::get();
 
-    std::cout << "Running performance tests" << std::endl;
+    std::cout << "Running performance tests\n" << std::endl;
+    std::cout << "Dimension: " << N << '\n' << "# runs: " << RUNS << '\n' << std::endl;
 
-    for (int i = 0; i < 1000; ++i)
-    {
-        time_constructor();
-    }
+    performance_add<double> add(N);
+    add.run_assign_add(RUNS);
+    add.run_add(RUNS);
 
     timings.report();
     return 0;

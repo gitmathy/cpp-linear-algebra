@@ -117,9 +117,9 @@ public:
 };
 
 #ifdef TIMEMING
-#define TIMEME la_perf::scope_timer __my_function_timer__ = la_perf::scope_timer(__func__)
+#define TIME_ME la_perf::scope_timer __my_function_timer__ = la_perf::scope_timer(__func__)
 #else
-#define TIMEME(WHAT) ((void)0)
+#define TIME_ME ((void)0)
 #endif
 
 } // namespace la_perf
