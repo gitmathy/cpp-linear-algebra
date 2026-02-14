@@ -49,6 +49,9 @@ public:
 
     /// @brief Move assign a vector
     vector<T> &operator=(vector<T> &&rhs) noexcept;
+
+    /// @brief Add another vector
+    vector<T> &operator+=(const vector<T> &rhs);
 };
 
 /// ===============================================
@@ -105,6 +108,15 @@ template <typename T> vector<T> &vector<T>::operator=(vector<T> &&rhs) noexcept
     p_size = 0;
     std::swap(p_vals, rhs.p_vals);
     std::swap(p_size, rhs.p_size);
+    return *this;
+}
+
+template <typename T> vector<T> &vector<T>::operator+=(const vector<T> &rhs)
+{
+    for (size_type i = 0; i < size(); ++i)
+    {
+        p_vals[i] += rhs.p_vals[i];
+    }
     return *this;
 }
 
