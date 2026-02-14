@@ -44,7 +44,30 @@ template <typename T, typename ExpT> auto operator+(const internal::operant<ExpT
 /// S U B T R A C T I O N
 /// ===============================================
 
-template <typename T> vector<T> operator-(const vector<T> &left, const vector<T> &right);
+/// @brief vector - vector
+template <typename T> auto operator-(const vector<T> &left, const vector<T> &right);
+
+/// @brief vector - operant
+template <typename T, typename ExpT> auto operator-(const vector<T> &left, const internal::operant<ExpT> &right);
+
+/// @brief operant - vector
+template <typename T, typename ExpT> auto operator-(const internal::operant<ExpT> &left, const vector<T> &right);
+
+/// @brief operant - operant
+template <typename ExpLT, typename ExpRT>
+auto operator-(const internal::operant<ExpLT> &left, const internal::operant<ExpRT> &right);
+
+/// @brief vector - scalar
+template <typename T> auto operator-(const vector<T> &left, const T &right);
+
+/// @brief scalar - vector
+template <typename T> auto operator-(const T &left, const vector<T> &right);
+
+/// @brief scalar - operant
+template <typename T, typename ExpT> auto operator-(const T &left, const internal::operant<ExpT> &right);
+
+/// @brief operant - scalar
+template <typename T, typename ExpT> auto operator-(const internal::operant<ExpT> &left, const T &right);
 
 /// ===============================================
 /// T E M P L A T E   I M P L E M E N T A T I O N S
@@ -127,10 +150,76 @@ template <typename T, typename ExpT> auto operator+(const internal::operant<ExpT
 // SUBSTRACTION
 //-------------
 
-template <typename T> vector<T> operator-(const vector<T> &left, const vector<T> &right)
+/// @brief vector - vector
+template <typename T> auto operator-(const vector<T> &left, const vector<T> &right)
 {
-    vector<T> result(left);
-    return result -= right;
+    typedef internal::binary_expression<vector<T>, vector<T>, internal::sub_operation<vector<T>, vector<T>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief vector - operant
+template <typename T, typename ExpT> auto operator-(const vector<T> &left, const internal::operant<ExpT> &right)
+{
+    typedef internal::binary_expression<vector<T>, internal::operant<ExpT>,
+                                        internal::sub_operation<vector<T>, internal::operant<ExpT>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief operant - vector
+template <typename T, typename ExpT> auto operator-(const internal::operant<ExpT> &left, const vector<T> &right)
+{
+    typedef internal::binary_expression<internal::operant<ExpT>, vector<T>,
+                                        internal::sub_operation<internal::operant<ExpT>, vector<T>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief operant - operant
+template <typename ExpLT, typename ExpRT>
+auto operator-(const internal::operant<ExpLT> &left, const internal::operant<ExpRT> &right)
+{
+    typedef internal::binary_expression<internal::operant<ExpLT>, internal::operant<ExpRT>,
+                                        internal::sub_operation<internal::operant<ExpLT>, internal::operant<ExpRT>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief vector - scalar
+template <typename T> auto operator-(const vector<T> &left, const T &right)
+{
+    typedef internal::binary_expression<vector<T>, internal::literal<T>,
+                                        internal::sub_operation<vector<T>, internal::literal<T>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief scalar - vector
+template <typename T> auto operator-(const T &left, const vector<T> &right)
+{
+    typedef internal::binary_expression<internal::literal<T>, vector<T>,
+                                        internal::sub_operation<internal::literal<T>, vector<T>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief scalar - operant
+template <typename T, typename ExpT> auto operator-(const T &left, const internal::operant<ExpT> &right)
+{
+    typedef internal::binary_expression<internal::literal<T>, internal::operant<ExpT>,
+                                        internal::sub_operation<internal::literal<T>, internal::operant<ExpT>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief operant - scalar
+template <typename T, typename ExpT> auto operator-(const internal::operant<ExpT> &left, const T &right)
+{
+    typedef internal::binary_expression<internal::operant<ExpT>, internal::literal<T>,
+                                        internal::sub_operation<internal::operant<ExpT>, internal::literal<T>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }
 
 } // namespace la

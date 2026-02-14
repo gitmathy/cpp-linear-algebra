@@ -45,6 +45,15 @@ public:
         for (la::size_type i = 0; i < num_run; ++i)
             c = a + b + 3 + a + b + 2;
     }
+
+    void run_multiple_add_sub(la::size_type num_run)
+    {
+        std::cout << "multiple_add_sub" << std::endl;
+        TIME_ME;
+        la::vector<T> c(a.size());
+        for (la::size_type i = 0; i < num_run; ++i)
+            c = a - b - 2 + a - b + 2;
+    }
 };
 
 void time_add(const la::size_type n = 10000)
@@ -67,6 +76,8 @@ int main()
     add.run_add(RUNS);
 
     add.run_multiple_add(RUNS);
+
+    add.run_multiple_add_sub(RUNS);
 
     timings.report();
     return 0;
