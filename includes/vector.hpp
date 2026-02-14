@@ -29,7 +29,7 @@ private:
     size_type p_size;
 
 public:
-    /// @brief Construc a vector of given size
+    /// @brief Construct a vector of given size, initialize elements with 0
     explicit vector(size_type n);
 
     /// @brief Constructing a vector with default values
@@ -43,14 +43,19 @@ public:
     /// @brief Copy constructor
     vector(const vector<T> &rhs);
 
-    /// @brief Constrcut from expression
-    template <typename ExpressionT> vector(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), p_size(0)
-    {
-        *this = exp;
-    }
+    /// @brief Construct from expression
+    template <typename ExpressionT> vector(const internal::operant<ExpressionT> &exp);
 
     /// @brief Destructing a vector
     ~vector();
+
+    /// @brief Resize a vector. If the vector becomes "bigger", fill values with the default value
+    /// @param n New size
+    /// @param val default value
+    void resize(size_type n, const T &val = T(0));
+
+    /// @brief Get the size of the vector
+    inline size_type size() const { return p_size; }
 
     /// @brief Get i'th element for reading
     inline const T &operator()(const size_type i) const { return p_vals[i]; }
@@ -64,13 +69,15 @@ public:
     /// @brief Evaluate at position i, j is reading the element i(j is ignored)
     inline const T &evaluate(const size_type i, const size_type j) const { return p_vals[i]; }
 
-    /// @brief Get the size of the vector
-    inline size_type size() const { return p_size; }
+    /// @brief Iterator to begin
+    inline iterator begin() { return p_vals; }
+    /// @brief Iterator to end
+    inline iterator end() { return p_vals + p_size; }
 
-    /// @brief Resize a vector. If the vector becomes "bigger", fill values with the default value
-    /// @param n New size
-    /// @param val default value
-    void resize(size_type n, const T &val = T(0));
+    /// @brief Constant iterator to begin
+    inline citerator begin() const { return p_vals; }
+    /// @brief Constant iterator to end
+    inline citerator end() const { return p_vals + p_size; }
 
     /// @brief Assign another vector
     vector<T> &operator=(const vector<T> &rhs);
@@ -92,16 +99,6 @@ public:
 
     /// @brief subtract from another expression
     template <typename ExpressionT> vector<T> &operator-=(const internal::operant<ExpressionT> &exp);
-
-    /// @brief Iterator to begin
-    inline iterator begin() { return p_vals; }
-    /// @brief Iterator to end
-    inline iterator end() { return p_vals + p_size; }
-
-    /// @brief Constant iterator to begin
-    inline citerator begin() const { return p_vals; }
-    /// @brief Constant iterator to end
-    inline citerator end() const { return p_vals + p_size; }
 
     /// @brief Apply a function to every entry, i.e., x(i)=func(x(i))
     /// @tparam function, supports func(T)
@@ -135,8 +132,16 @@ template <typename T> vector<T>::vector(const vector<T> &rhs) : p_vals(nullptr),
 {
     if (rhs.p_size == 0)
         return;
-    resize(rhs.p_size);
+    p_vals = new T[rhs.p_size];
+    p_size = rhs.p_size;
     std::copy(rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
+}
+
+template <typename T>
+template <typename ExpressionT>
+vector<T>::vector(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), p_size(0)
+{
+    *this = exp;
 }
 
 template <typename T> vector<T>::~vector() { delete[] p_vals; }

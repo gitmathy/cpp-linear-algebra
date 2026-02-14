@@ -57,13 +57,13 @@ private:
     // no private members
 
 public:
-    /// @brief Add at element i
+    /// @brief Substract at element i
     static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y, const la::size_type i)
     {
         return std::minus<value_type>()(x.evaluate(i), y.evaluate(i));
     }
 
-    /// @brief Add at element i, j
+    /// @brief Substract at element i, j
     static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y, const la::size_type i,
                                       const la::size_type j)
     {
