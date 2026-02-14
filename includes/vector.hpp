@@ -12,6 +12,12 @@ namespace la
 /// @tparam T Type of every element
 template <typename T> class vector
 {
+public:
+    /// @brief Definition of iterator type
+    typedef T *iterator;
+    /// @brief Definition of constant iterator type
+    typedef const T *citerator;
+
 private:
     /// @brief The values of the vector
     T *p_vals;
@@ -58,6 +64,16 @@ public:
 
     /// @brief Substract another vector
     vector<T> &operator-=(const vector<T> &rhs);
+
+    /// @brief Iterator to begin
+    inline iterator begin() { return p_vals; }
+    /// @brief Iterator to end
+    inline iterator end() { return p_vals + p_size; }
+
+    /// @brief Constant iterator to begin
+    inline citerator begin() const { return p_vals; }
+    /// @brief Constant iterator to end
+    inline citerator end() const { return p_vals + p_size; }
 };
 
 /// ===============================================
