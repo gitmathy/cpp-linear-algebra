@@ -28,7 +28,7 @@ public:
     vector(vector<T> &&rhs) noexcept;
 
     /// @brief Copy constructor
-    constexpr vector(const vector<T> &rhs);
+    vector(const vector<T> &rhs);
 
     /// @brief Destructing a vector
     ~vector();
@@ -77,11 +77,12 @@ template <typename T> vector<T>::vector(vector<T> &&rhs) noexcept : p_vals(rhs.p
     rhs.p_size = 0;
 }
 
-template <typename T> constexpr vector<T>::vector(const vector<T> &rhs)
+template <typename T> vector<T>::vector(const vector<T> &rhs) : p_vals(nullptr), p_size(0)
 {
-    resize(rhs.size());
-    for (size_type i = 0; i < size(); ++i)
-        p_vals[i] = rhs.p_vals[i];
+    if (rhs.p_size == 0)
+        return;
+    resize(rhs.p_size);
+    std::copy(rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
 }
 
 template <typename T> vector<T>::~vector() { delete[] p_vals; }
