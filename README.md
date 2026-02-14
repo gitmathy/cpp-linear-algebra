@@ -43,8 +43,3 @@ Timing Report
 -------------------|---|---------------|-------------------
 | Overall          | 1 |        6.5127 |       N/A        |
 ```
-
-
-## Todos
-* [ ] operant to store a reference?
-* [ ] remove auto in la.hpp
