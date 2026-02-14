@@ -27,6 +27,9 @@ public:
     /// @brief Move a vector
     vector(vector<T> &&rhs) noexcept;
 
+    /// @brief Copy constructor
+    vector(const vector<T> &rhs);
+
     /// @brief Destructing a vector
     ~vector();
 
@@ -49,6 +52,12 @@ public:
 
     /// @brief Move assign a vector
     vector<T> &operator=(vector<T> &&rhs) noexcept;
+
+    /// @brief Add another vector
+    vector<T> &operator+=(const vector<T> &rhs);
+
+    /// @brief Substract another vector
+    vector<T> &operator-=(const vector<T> &rhs);
 };
 
 /// ===============================================
@@ -66,6 +75,14 @@ template <typename T> vector<T>::vector(vector<T> &&rhs) noexcept : p_vals(rhs.p
 {
     rhs.p_vals = nullptr;
     rhs.p_size = 0;
+}
+
+template <typename T> vector<T>::vector(const vector<T> &rhs) : p_vals(nullptr), p_size(0)
+{
+    if (rhs.p_size == 0)
+        return;
+    resize(rhs.p_size);
+    std::copy(rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
 }
 
 template <typename T> vector<T>::~vector() { delete[] p_vals; }
@@ -105,6 +122,24 @@ template <typename T> vector<T> &vector<T>::operator=(vector<T> &&rhs) noexcept
     p_size = 0;
     std::swap(p_vals, rhs.p_vals);
     std::swap(p_size, rhs.p_size);
+    return *this;
+}
+
+template <typename T> vector<T> &vector<T>::operator+=(const vector<T> &rhs)
+{
+    for (size_type i = 0; i < size(); ++i)
+    {
+        p_vals[i] += rhs.p_vals[i];
+    }
+    return *this;
+}
+
+template <typename T> vector<T> &vector<T>::operator-=(const vector<T> &rhs)
+{
+    for (size_type i = 0; i < size(); ++i)
+    {
+        p_vals[i] -= rhs.p_vals[i];
+    }
     return *this;
 }
 

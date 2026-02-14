@@ -1,6 +1,7 @@
 #ifndef TEST_LA_TEST_VECTOR_H
 #define TEST_LA_TEST_VECTOR_H
 
+#include "../includes/la.hpp"
 #include "../includes/vector.hpp"
 #include "includes/unit_test.hpp"
 #include <sstream>
@@ -27,6 +28,12 @@ private:
 
     /// @brief Test move-assignment operator
     template <typename T> bool test_move_assignment();
+
+    /// @brief Test add/sub assignment operators (+=, -=)
+    template <typename T> bool test_add_sub_assignment();
+
+    /// @brief Test add/sub operators (+, -)
+    template <typename T> bool test_add_sub_ops();
 
 public:
     /// @brief Setup the vector test
@@ -234,6 +241,138 @@ template <typename T> bool vector_test::test_move_assignment()
     {
         std::stringstream strs;
         strs << "vector<" << typeid(T()).name() << "> error in move assignment";
+        p_errors.push_back(strs.str());
+    }
+
+    return result;
+}
+
+// ------------------------------------------------------------------
+// Add/Sub assignment operators (+=, -=)
+// ------------------------------------------------------------------
+template <typename T> bool vector_test::test_add_sub_assignment()
+{
+    bool result = true;
+
+    la::vector<T> a(3), b(3);
+    for (la::size_type i = 0; i < a.size(); ++i)
+    {
+        a(i) = static_cast<T>(i + 1);        // 1,2,3
+        b(i) = static_cast<T>((i + 1) * 10); // 10,20,30
+    }
+
+    la::vector<T> a_orig(a.size());
+    a_orig = a;
+    la::vector<T> b_orig(b.size());
+    b_orig = b;
+
+    // test +=
+    a += b;
+    for (la::size_type i = 0; i < a.size(); ++i)
+    {
+        if (double(a(i) - (a_orig(i) + b_orig(i))) != 0.0)
+        {
+            result = false;
+            std::stringstream ss;
+            ss << "+= produced incorrect value at " << i;
+            p_logger.log(ss.str(), ERROR);
+        }
+    }
+    // rhs must remain unchanged
+    for (la::size_type i = 0; i < b.size(); ++i)
+    {
+        if (double(b(i) - b_orig(i)) != 0.0)
+        {
+            result = false;
+            p_logger.log("Right-hand side modified by +=", ERROR);
+            break;
+        }
+    }
+
+    // test -=
+    la::vector<T> c(a_orig.size());
+    c = a_orig; // reset via assignment
+    c -= b_orig;
+    for (la::size_type i = 0; i < c.size(); ++i)
+    {
+        if (double(c(i) - (a_orig(i) - b_orig(i))) != 0.0)
+        {
+            result = false;
+            std::stringstream ss;
+            ss << "-= produced incorrect value at " << i;
+            p_logger.log(ss.str(), ERROR);
+        }
+    }
+
+    if (!result)
+    {
+        std::stringstream strs;
+        strs << "vector<" << typeid(T()).name() << "> error in add/sub assignment";
+        p_errors.push_back(strs.str());
+    }
+
+    return result;
+}
+
+// ------------------------------------------------------------------
+// Add/Sub operators (+, -)
+// ------------------------------------------------------------------
+template <typename T> bool vector_test::test_add_sub_ops()
+{
+    bool result = true;
+
+    la::vector<T> a(3), b(3);
+    for (la::size_type i = 0; i < a.size(); ++i)
+    {
+        a(i) = static_cast<T>(i + 2);       // 2,3,4
+        b(i) = static_cast<T>((i + 1) * 5); // 5,10,15
+    }
+
+    la::vector<T> a_orig(a.size());
+    a_orig = a;
+    la::vector<T> b_orig(b.size());
+    b_orig = b;
+
+    // test + (returns new vector, lhs/rhs unchanged)
+    la::vector<T> sum = a + b;
+    for (la::size_type i = 0; i < sum.size(); ++i)
+    {
+        if (double(sum(i) - (a_orig(i) + b_orig(i))) != 0.0)
+        {
+            result = false;
+            std::stringstream ss;
+            ss << "+ produced incorrect value at " << i;
+            p_logger.log(ss.str(), ERROR);
+        }
+    }
+    if (double(a(0) - a_orig(0)) != 0.0 || double(b(0) - b_orig(0)) != 0.0)
+    {
+        result = false;
+        p_logger.log("Operands modified by +", ERROR);
+    }
+
+    // test - (returns new vector, lhs/rhs unchanged)
+    la::vector<T> diff = a - b;
+    for (la::size_type i = 0; i < diff.size(); ++i)
+    {
+        if (double(diff(i) - (a_orig(i) - b_orig(i))) != 0.0)
+        {
+            result = false;
+            std::stringstream ss;
+            ss << "- produced incorrect value at " << i;
+            p_logger.log(ss.str(), ERROR);
+        }
+    }
+    if (double(a(0) - a_orig(0)) != 0.0 || double(b(0) - b_orig(0)) != 0.0)
+    {
+        result = false;
+        p_logger.log("Operands modified by -", ERROR);
+    }
+
+    if (!result)
+    {
+        std::stringstream strs;
+        strs << "vector<" << typeid(T()).name() << "> error in add/sub operators";
         p_errors.push_back(strs.str());
     }
 
