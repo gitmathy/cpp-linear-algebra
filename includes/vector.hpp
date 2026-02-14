@@ -127,7 +127,6 @@ template <typename T> vector<T>::vector(vector<T> &&rhs) noexcept : p_vals(rhs.p
 
 template <typename T> vector<T>::vector(const vector<T> &rhs) : p_vals(nullptr), p_size(0)
 {
-    std::cout << "Copy constructor" << std::endl;
     if (rhs.p_size == 0)
         return;
     resize(rhs.p_size);
