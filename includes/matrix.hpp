@@ -52,6 +52,9 @@ public:
     /// @brief Copy a matrix
     matrix(const matrix<T, storage> &rhs);
 
+    /// @brief Destruct a matrix
+    ~matrix();
+
     /// @brief Resize a matrix. And set all values to val
     /// @param m number of rows
     /// @param n number of columns
@@ -134,12 +137,14 @@ matrix<T, storage>::matrix(matrix<T, storage> &&rhs) noexcept
     rhs.p_cols = 0;
 }
 
+template <typename T, storage_type storage> matrix<T, storage>::~matrix() { delete[] p_vals; }
+
 template <typename T, storage_type storage>
 matrix<T, storage>::matrix(const matrix<T, storage> &rhs) : p_vals(nullptr), p_rows(rhs.p_rows), p_cols(rhs.p_cols)
 {
     const size_type n = p_rows * p_cols;
     p_vals = new T[n];
-    std::copy(rhs.p_vals, rhs.p_vals + n; p_vals);
+    std::copy(rhs.p_vals, rhs.p_vals + n, p_vals);
 }
 
 template <typename T, storage_type storage> void matrix<T, storage>::resize(size_type m, size_type n, const T &val)
@@ -154,12 +159,12 @@ template <typename T, storage_type storage> void matrix<T, storage>::resize(size
 template <typename T, storage_type storage>
 inline const T &matrix<T, storage>::operator()(size_type i, size_type j) const
 {
-    return storage == ROW ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
+    return storage == ROW_WISE ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
 }
 
 template <typename T, storage_type storage> inline T &matrix<T, storage>::operator()(size_type i, size_type j)
 {
-    return storage == ROW ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
+    return storage == ROW_WISE ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
 }
 
 } // namespace la
