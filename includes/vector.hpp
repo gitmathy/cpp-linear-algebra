@@ -69,6 +69,16 @@ public:
     /// @brief Evaluate at position i, j is reading the element i(j is ignored)
     inline const T &evaluate(const size_type i, const size_type j) const { return p_vals[i]; }
 
+    /// @brief Iterator to begin
+    inline iterator begin() { return p_vals; }
+    /// @brief Iterator to end
+    inline iterator end() { return p_vals + p_size; }
+
+    /// @brief Constant iterator to begin
+    inline citerator begin() const { return p_vals; }
+    /// @brief Constant iterator to end
+    inline citerator end() const { return p_vals + p_size; }
+
     /// @brief Assign another vector
     vector<T> &operator=(const vector<T> &rhs);
 
@@ -89,16 +99,6 @@ public:
 
     /// @brief subtract from another expression
     template <typename ExpressionT> vector<T> &operator-=(const internal::operant<ExpressionT> &exp);
-
-    /// @brief Iterator to begin
-    inline iterator begin() { return p_vals; }
-    /// @brief Iterator to end
-    inline iterator end() { return p_vals + p_size; }
-
-    /// @brief Constant iterator to begin
-    inline citerator begin() const { return p_vals; }
-    /// @brief Constant iterator to end
-    inline citerator end() const { return p_vals + p_size; }
 
     /// @brief Apply a function to every entry, i.e., x(i)=func(x(i))
     /// @tparam function, supports func(T)
