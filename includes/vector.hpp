@@ -84,8 +84,14 @@ public:
     /// @brief Add another vector
     vector<T> &operator+=(const vector<T> &rhs);
 
+    /// @brief Add from another expression
+    template <typename ExpressionT> vector<T> &operator+=(const internal::operant<ExpressionT> &exp);
+
     /// @brief Substract another vector
     vector<T> &operator-=(const vector<T> &rhs);
+
+    /// @brief subtract from another expression
+    template <typename ExpressionT> vector<T> &operator-=(const internal::operant<ExpressionT> &exp);
 
     /// @brief Iterator to begin
     inline iterator begin() { return p_vals; }
@@ -181,25 +187,55 @@ vector<T> &vector<T>::operator=(const internal::operant<ExpressionT> &exp)
     if (size() != n)
         resize(n);
     for (std::size_t i = 0; i < n; ++i)
-        (*this)(i) = exp.evaluate(i);
+        p_vals[i] = exp.evaluate(i);
     return *this;
 }
 
 template <typename T> vector<T> &vector<T>::operator+=(const vector<T> &rhs)
 {
-    for (size_type i = 0; i < size(); ++i)
+    const std::size_t n = rhs.size();
+    if (size() != n)
+        resize(n);
+    for (size_type i = 0; i < n; ++i)
     {
         p_vals[i] += rhs.p_vals[i];
     }
     return *this;
 }
 
+template <typename T>
+template <typename ExpressionT>
+vector<T> &vector<T>::operator+=(const internal::operant<ExpressionT> &exp)
+{
+    const std::size_t n = exp.size();
+    if (size() != n)
+        resize(n);
+    for (std::size_t i = 0; i < n; ++i)
+        p_vals[i] += exp.evaluate(i);
+    return *this;
+}
+
 template <typename T> vector<T> &vector<T>::operator-=(const vector<T> &rhs)
 {
-    for (size_type i = 0; i < size(); ++i)
+    const std::size_t n = rhs.size();
+    if (size() != n)
+        resize(n);
+    for (size_type i = 0; i < n; ++i)
     {
         p_vals[i] -= rhs.p_vals[i];
     }
+    return *this;
+}
+
+template <typename T>
+template <typename ExpressionT>
+vector<T> &vector<T>::operator-=(const internal::operant<ExpressionT> &exp)
+{
+    const std::size_t n = exp.size();
+    if (size() != n)
+        resize(n);
+    for (std::size_t i = 0; i < n; ++i)
+        p_vals[i] -= exp.evaluate(i);
     return *this;
 }
 

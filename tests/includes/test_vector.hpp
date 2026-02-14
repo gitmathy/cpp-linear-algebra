@@ -266,7 +266,7 @@ template <typename T> bool vector_test::test_add_sub_assignment()
     la::vector<T> b_orig(b.size());
     b_orig = b;
 
-    // test +=
+    // test += with a plain vector RHS
     a += b;
     for (la::size_type i = 0; i < a.size(); ++i)
     {
@@ -289,7 +289,7 @@ template <typename T> bool vector_test::test_add_sub_assignment()
         }
     }
 
-    // test -=
+    // test -= with a plain vector RHS
     la::vector<T> c(a_orig.size());
     c = a_orig; // reset via assignment
     c -= b_orig;
@@ -301,6 +301,94 @@ template <typename T> bool vector_test::test_add_sub_assignment()
             std::stringstream ss;
             ss << "-= produced incorrect value at " << i;
             p_logger.log(ss.str(), ERROR);
+        }
+    }
+
+    // -------------------------
+    // New: tests where RHS is an expression
+    // -------------------------
+
+    // 1) operator+= with RHS = (a_orig - b_orig)  (vector temporary)
+    a = a_orig; // reset lhs
+    {
+        la::vector<T> rhs = a_orig - b_orig; // evaluate temporary
+        a += rhs;
+        for (la::size_type i = 0; i < a.size(); ++i)
+        {
+            T expected = a_orig(i) + rhs(i); // a_orig + (a_orig - b_orig)
+            if (double(a(i) - expected) != 0.0)
+            {
+                result = false;
+                std::stringstream ss;
+                ss << "+= with expression (vector temporary) produced incorrect value at " << i;
+                p_logger.log(ss.str(), ERROR);
+            }
+        }
+        // rhs must remain unchanged
+        for (la::size_type i = 0; i < rhs.size(); ++i)
+        {
+            if (double(rhs(i) - (a_orig(i) - b_orig(i))) != 0.0)
+            {
+                result = false;
+                p_logger.log("Right-hand side modified by += (vector temporary)", ERROR);
+                break;
+            }
+        }
+    }
+
+    // 2) operator+= with RHS = (a_orig + b_orig)  (expression -> operant -> converted to vector temporary)
+    a = a_orig; // reset lhs
+    {
+        a += a_orig + b_orig; // RHS is an expression (operant); should convert to temporary vector
+        for (la::size_type i = 0; i < a.size(); ++i)
+        {
+            T expected = a_orig(i) + (a_orig(i) + b_orig(i)); // a_orig + (a_orig + b_orig)
+            if (double(a(i) - expected) != 0.0)
+            {
+                result = false;
+                std::stringstream ss;
+                ss << "+= with expression (operant) produced incorrect value at " << i;
+                p_logger.log(ss.str(), ERROR);
+            }
+        }
+        // ensure operands were not modified
+        for (la::size_type i = 0; i < a_orig.size(); ++i)
+        {
+            if (double(a_orig(i) - static_cast<T>(i + 1)) != 0.0 ||
+                double(b_orig(i) - static_cast<T>((i + 1) * 10)) != 0.0)
+            {
+                result = false;
+                p_logger.log("An operand was modified by +=(expression)", ERROR);
+                break;
+            }
+        }
+    }
+
+    // 3) operator-= with RHS = (a_orig + b_orig)  (expression -> operant -> converted to vector temporary)
+    c = a_orig; // reset
+    {
+        c -= a_orig + b_orig;
+        for (la::size_type i = 0; i < c.size(); ++i)
+        {
+            T expected = a_orig(i) - (a_orig(i) + b_orig(i));
+            if (double(c(i) - expected) != 0.0)
+            {
+                result = false;
+                std::stringstream ss;
+                ss << "-= with expression (operant) produced incorrect value at " << i;
+                p_logger.log(ss.str(), ERROR);
+            }
+        }
+        // ensure operands were not modified
+        for (la::size_type i = 0; i < a_orig.size(); ++i)
+        {
+            if (double(a_orig(i) - static_cast<T>(i + 1)) != 0.0 ||
+                double(b_orig(i) - static_cast<T>((i + 1) * 10)) != 0.0)
+            {
+                result = false;
+                p_logger.log("An operand was modified by -=(expression)", ERROR);
+                break;
+            }
         }
     }
 
