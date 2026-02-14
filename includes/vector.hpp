@@ -29,7 +29,7 @@ private:
     size_type p_size;
 
 public:
-    /// @brief Construc a vector of given size
+    /// @brief Construct a vector of given size, initialize elements with 0
     explicit vector(size_type n);
 
     /// @brief Constructing a vector with default values
