@@ -19,7 +19,7 @@ public:
 
 private:
     /// @brief the value represented by the literal
-    const T p_value;
+    T p_value;
 
 public:
     /// @brief No default constructor

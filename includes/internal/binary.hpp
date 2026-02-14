@@ -28,10 +28,10 @@ public:
 
 private:
     /// @brief The left expression
-    const left_expression_type p_left;
+    left_expression_type p_left;
 
     /// @brief The right expression
-    const right_expression_type p_right;
+    right_expression_type p_right;
 
 public:
     /// @brief No default constructor

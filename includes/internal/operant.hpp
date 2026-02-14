@@ -22,20 +22,23 @@ public:
     typedef typename expression_traits<ExpressionT>::expression_type expression_type;
 
 private:
-    /// @brief Reference to the expression
-    const expression_type p_expression;
+    /// @brief Owned expression (store by value to keep temporaries alive)
+    expression_type p_expression;
 
 public:
     /// @brief No default constructor
     operant() = delete;
 
-    /// @brief Construct by expression
+    /// @brief Construct by expression (copy)
     operant(const ExpressionT &expression) : p_expression(expression) {}
 
-    /// @brief Copying a from another operant
+    /// @brief Construct by expression (move)
+    operant(ExpressionT &&expression) : p_expression(std::move(expression)) {}
+
+    /// @brief Copying from another operant (possibly different expression type)
     template <typename ExpT> operant(const operant<ExpT> &op) : p_expression(op.p_expression) {}
 
-    /// @brief Moving from another operant
+    /// @brief Moving from another operant (possibly different expression type)
     template <typename ExpT> operant(operant<ExpT> &&op) noexcept : p_expression(std::move(op.p_expression)) {}
 
     /// @brief Evaluate operant
