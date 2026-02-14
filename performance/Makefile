@@ -1,7 +1,7 @@
-# Tests Makefile — builds tests/src/*.cpp into tests/build/test
+# Tests Makefile — builds performance/src/*.cpp into performance/build/test
 
 CXX := g++-12
-CXXFLAGS := -Wall -Wextra -pedantic -std=c++23 -g -I.. -I.
+CXXFLAGS := -Wall -Wextra -pedantic -std=c++23 -O3 -Ofast -I.. -I.
 SRC_DIR := src
 BUILD_DIR := build
 # Include test runner (test.cpp) plus all sources under src/

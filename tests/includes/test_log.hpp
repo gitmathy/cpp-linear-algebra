@@ -22,7 +22,9 @@ const TestLogLevel DEFAULT_LOG_LEVEL = DEBUG;
 class logger
 {
 private:
+    /// @brief Implementing singleton pattern
     static logger *p_instance;
+    /// @brief Level of logging
     TestLogLevel p_level;
 
     /// @brief Construct a logger

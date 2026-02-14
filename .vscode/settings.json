@@ -11,5 +11,6 @@
     "cmake.configureSettings": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "YES"
     },
-    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json"
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "makefile.configureOnOpen": true
  }
