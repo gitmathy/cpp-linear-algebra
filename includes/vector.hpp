@@ -135,7 +135,8 @@ template <typename T> vector<T>::vector(const vector<T> &rhs) : p_vals(nullptr),
 {
     if (rhs.p_size == 0)
         return;
-    resize(rhs.p_size);
+    p_vals = new T[rhs.p_size];
+    p_size = rhs.p_size;
     std::copy(rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
 }
 
