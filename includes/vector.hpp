@@ -52,6 +52,14 @@ public:
     /// @brief Destructing a vector
     ~vector();
 
+    /// @brief Resize a vector. If the vector becomes "bigger", fill values with the default value
+    /// @param n New size
+    /// @param val default value
+    void resize(size_type n, const T &val = T(0));
+
+    /// @brief Get the size of the vector
+    inline size_type size() const { return p_size; }
+
     /// @brief Get i'th element for reading
     inline const T &operator()(const size_type i) const { return p_vals[i]; }
 
@@ -63,14 +71,6 @@ public:
 
     /// @brief Evaluate at position i, j is reading the element i(j is ignored)
     inline const T &evaluate(const size_type i, const size_type j) const { return p_vals[i]; }
-
-    /// @brief Get the size of the vector
-    inline size_type size() const { return p_size; }
-
-    /// @brief Resize a vector. If the vector becomes "bigger", fill values with the default value
-    /// @param n New size
-    /// @param val default value
-    void resize(size_type n, const T &val = T(0));
 
     /// @brief Assign another vector
     vector<T> &operator=(const vector<T> &rhs);
