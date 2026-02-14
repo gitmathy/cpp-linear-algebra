@@ -44,10 +44,7 @@ public:
     vector(const vector<T> &rhs);
 
     /// @brief Construct from expression
-    template <typename ExpressionT> vector(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), p_size(0)
-    {
-        *this = exp;
-    }
+    template <typename ExpressionT> vector(const internal::operant<ExpressionT> &exp);
 
     /// @brief Destructing a vector
     ~vector();
@@ -138,6 +135,13 @@ template <typename T> vector<T>::vector(const vector<T> &rhs) : p_vals(nullptr),
     p_vals = new T[rhs.p_size];
     p_size = rhs.p_size;
     std::copy(rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
+}
+
+template <typename T>
+template <typename ExpressionT>
+vector<T>::vector(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), p_size(0)
+{
+    *this = exp;
 }
 
 template <typename T> vector<T>::~vector() { delete[] p_vals; }
