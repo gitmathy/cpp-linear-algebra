@@ -1,4 +1,4 @@
-# Tests Makefile — builds tests/src/*.cpp into tests/build/test
+# Tests Makefile — builds performance/src/*.cpp into performance/build/test
 
 CXX := g++-12
 CXXFLAGS := -Wall -Wextra -pedantic -std=c++23 -g -I.. -I.
