@@ -9,11 +9,15 @@ Running performance tests
 Dimension: 100000000
 # runs: 10
 
+assign_add
+add
+multiple_add
 Timing Report
-| description    | # | duration [s]  | avg duration [s] |
------------------|---|---------------|-------------------
-| run_add        | 1 |        8.7483 |           8.7483 |
-| run_assign_add | 1 |        0.5021 |           0.5021 |
------------------|---|---------------|-------------------
-| Overall        | 1 |       12.5439 |       N/A        |
+| description      | # | duration [s]  | avg duration [s] |
+-------------------|---|---------------|-------------------
+| run_multiple_add | 1 |       25.6382 |          25.6382 |
+| run_add          | 1 |        8.1315 |           8.1315 |
+| run_assign_add   | 1 |        0.4504 |           0.4504 |
+-------------------|---|---------------|-------------------
+| Overall          | 1 |       37.5033 |       N/A        |
 ```

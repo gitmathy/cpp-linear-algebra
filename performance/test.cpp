@@ -35,6 +35,14 @@ public:
         for (la::size_type i = 0; i < num_run; ++i)
             c = a + b;
     }
+
+    void run_multiple_add(la::size_type num_run)
+    {
+        TIME_ME;
+        la::vector<T> c(a.size());
+        for (la::size_type i = 0; i < num_run; ++i)
+            c = a + b + a + b;
+    }
 };
 
 void time_add(const la::size_type n = 10000)
@@ -51,8 +59,12 @@ int main()
     std::cout << "Dimension: " << N << '\n' << "# runs: " << RUNS << '\n' << std::endl;
 
     performance_add<double> add(N);
+    std::cout << "assign_add" << std::endl;
     add.run_assign_add(RUNS);
+    std::cout << "add" << std::endl;
     add.run_add(RUNS);
+    std::cout << "multiple_add" << std::endl;
+    add.run_multiple_add(RUNS);
 
     timings.report();
     return 0;
