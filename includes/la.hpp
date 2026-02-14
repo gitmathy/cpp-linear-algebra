@@ -48,7 +48,7 @@ template <typename T> auto operator+(const vector<T> &left, const vector<T> &rig
 }
 
 /// @brief vector + operant
-template <typename T, typename ExpT> vector<T> operator+(const vector<T> &left, const internal::operant<ExpT> &right)
+template <typename T, typename ExpT> auto operator+(const vector<T> &left, const internal::operant<ExpT> &right)
 {
 
     typedef internal::binary_expression<vector<T>, internal::operant<ExpT>,

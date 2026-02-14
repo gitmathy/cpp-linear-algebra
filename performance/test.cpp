@@ -4,8 +4,8 @@
 #include "includes/timing.hpp"
 #include <iostream>
 
-const la::size_type N = 100000000;
-const la::size_type RUNS = 10;
+const la::size_type N = 100;
+const la::size_type RUNS = 1;
 
 template <typename T> class performance_add
 {
@@ -30,6 +30,7 @@ public:
 
     void run_add(la::size_type num_run)
     {
+        std::cout << "add" << std::endl;
         TIME_ME;
         la::vector<T> c(a.size());
         for (la::size_type i = 0; i < num_run; ++i)
@@ -38,6 +39,7 @@ public:
 
     void run_multiple_add(la::size_type num_run)
     {
+        std::cout << "multiple_add" << std::endl;
         TIME_ME;
         la::vector<T> c(a.size());
         for (la::size_type i = 0; i < num_run; ++i)
@@ -61,9 +63,9 @@ int main()
     performance_add<double> add(N);
     std::cout << "assign_add" << std::endl;
     add.run_assign_add(RUNS);
-    std::cout << "add" << std::endl;
+
     add.run_add(RUNS);
-    std::cout << "multiple_add" << std::endl;
+
     add.run_multiple_add(RUNS);
 
     timings.report();
