@@ -63,6 +63,22 @@ bool vector_add_sub_ops_test::execute()
         p_errors.push_back(strs.str());
     }
 
+    la::vector<double> a_2 = a + (double)2;
+    if (a_2(0) - 4 > 1e-16)
+    {
+        std::stringstream strs;
+        strs << "vector<> error in add/sub operators with scalar";
+        p_errors.push_back(strs.str());
+    }
+
+    la::vector<double> a_3 = (double)1 + a + (double)2 + b;
+    if (a_3(0) - 10 > 1e-16)
+    {
+        std::stringstream strs;
+        strs << "vector<> error in add/sub operators with scalars";
+        p_errors.push_back(strs.str());
+    }
+
     return result;
 }
 
