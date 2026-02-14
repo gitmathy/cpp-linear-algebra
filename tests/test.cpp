@@ -13,6 +13,15 @@
 #include "includes/test_vector_move_ctor.hpp"
 #include "includes/test_vector_resize.hpp"
 
+#include "includes/test_matrix_col_iterator.hpp"
+#include "includes/test_matrix_const_iterator.hpp"
+#include "includes/test_matrix_construct.hpp"
+#include "includes/test_matrix_copy_ctor.hpp"
+#include "includes/test_matrix_iterator.hpp"
+#include "includes/test_matrix_move_ctor.hpp"
+#include "includes/test_matrix_resize.hpp"
+#include "includes/test_matrix_row_iterator.hpp"
+
 #include <iostream>
 #include <memory>
 
@@ -31,6 +40,16 @@ int main()
     tests.transfer(std::make_unique<la_test::vector_expression_temporary_test>());
     tests.transfer(std::make_unique<la_test::vector_iterator_test>());
     tests.transfer(std::make_unique<la_test::vector_const_iterator_test>());
+
+    // matrix tests
+    tests.transfer(std::make_unique<la_test::matrix_construct_test>());
+    tests.transfer(std::make_unique<la_test::matrix_resize_test>());
+    tests.transfer(std::make_unique<la_test::matrix_move_constructor_test>());
+    tests.transfer(std::make_unique<la_test::matrix_copy_constructor_test>());
+    tests.transfer(std::make_unique<la_test::matrix_iterator_test>());
+    tests.transfer(std::make_unique<la_test::matrix_const_iterator_test>());
+    tests.transfer(std::make_unique<la_test::matrix_row_iterator_test>());
+    tests.transfer(std::make_unique<la_test::matrix_col_iterator_test>());
 
     bool result = tests.run();
     return result ? 0 : 1;
