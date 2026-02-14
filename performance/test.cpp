@@ -4,8 +4,8 @@
 #include "includes/timing.hpp"
 #include <iostream>
 
-const la::size_type N = 100;
-const la::size_type RUNS = 1;
+const la::size_type N = 100000000;
+const la::size_type RUNS = 10;
 
 template <typename T> class performance_add
 {

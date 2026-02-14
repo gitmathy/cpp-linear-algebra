@@ -3,6 +3,7 @@ Basic linear algebra
 
 ## Timing reference:
 
+### Without template expression
 ```
 Running performance tests
 
@@ -21,6 +22,28 @@ Timing Report
 -------------------|---|---------------|-------------------
 | Overall          | 1 |       37.5033 |       N/A        |
 ```
+
+### With template expressions
+
+```
+Running performance tests
+
+Dimension: 100000000
+# runs: 10
+
+assign_add
+add
+multiple_add
+Timing Report
+| description      | # | duration [s]  | avg duration [s] |
+-------------------|---|---------------|-------------------
+| run_multiple_add | 1 |        1.3221 |           1.3221 |
+| run_add          | 1 |        1.5408 |           1.5408 |
+| run_assign_add   | 1 |        0.4238 |           0.4238 |
+-------------------|---|---------------|-------------------
+| Overall          | 1 |        6.5127 |       N/A        |
+```
+
 
 ## Todos
 * [ ] operant to store a reference?
