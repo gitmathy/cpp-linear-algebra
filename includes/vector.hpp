@@ -52,6 +52,9 @@ public:
 
     /// @brief Add another vector
     vector<T> &operator+=(const vector<T> &rhs);
+
+    /// @brief Substract another vector
+    vector<T> &operator-=(const vector<T> &rhs);
 };
 
 /// ===============================================
@@ -116,6 +119,15 @@ template <typename T> vector<T> &vector<T>::operator+=(const vector<T> &rhs)
     for (size_type i = 0; i < size(); ++i)
     {
         p_vals[i] += rhs.p_vals[i];
+    }
+    return *this;
+}
+
+template <typename T> vector<T> &vector<T>::operator-=(const vector<T> &rhs)
+{
+    for (size_type i = 0; i < size(); ++i)
+    {
+        p_vals[i] -= rhs.p_vals[i];
     }
     return *this;
 }

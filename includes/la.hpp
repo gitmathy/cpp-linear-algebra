@@ -14,6 +14,12 @@ namespace la
 template <typename T> vector<T> operator+(const vector<T> &left, const vector<T> right);
 
 /// ===============================================
+/// S U B T R A C T I O N
+/// ===============================================
+
+template <typename T> vector<T> operator-(const vector<T> &left, const vector<T> right);
+
+/// ===============================================
 /// T E M P L A T E   I M P L E M E N T A T I O N S
 /// ===============================================
 
@@ -21,6 +27,12 @@ template <typename T> vector<T> operator+(const vector<T> &left, const vector<T>
 {
     vector<T> result(left);
     return result += right;
+}
+
+template <typename T> vector<T> operator-(const vector<T> &left, const vector<T> right)
+{
+    vector<T> result(left);
+    return result -= right;
 }
 
 } // namespace la
