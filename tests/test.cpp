@@ -7,6 +7,7 @@
 #include "includes/test_vector_const_iterator.hpp"
 #include "includes/test_vector_construct.hpp"
 #include "includes/test_vector_copy_assignment.hpp"
+#include "includes/test_vector_expression_temporary.hpp"
 #include "includes/test_vector_iterator.hpp"
 #include "includes/test_vector_move_assignment.hpp"
 #include "includes/test_vector_move_ctor.hpp"
@@ -27,6 +28,7 @@ int main()
     tests.transfer(std::make_unique<la_test::vector_move_assignment_test>());
     tests.transfer(std::make_unique<la_test::vector_add_sub_assignment_test>());
     tests.transfer(std::make_unique<la_test::vector_add_sub_ops_test>());
+    tests.transfer(std::make_unique<la_test::vector_expression_temporary_test>());
     tests.transfer(std::make_unique<la_test::vector_iterator_test>());
     tests.transfer(std::make_unique<la_test::vector_const_iterator_test>());
 
