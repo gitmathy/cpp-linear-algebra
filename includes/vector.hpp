@@ -43,7 +43,7 @@ public:
     /// @brief Copy constructor
     vector(const vector<T> &rhs);
 
-    /// @brief Constrcut from expression
+    /// @brief Construct from expression
     template <typename ExpressionT> vector(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), p_size(0)
     {
         *this = exp;
