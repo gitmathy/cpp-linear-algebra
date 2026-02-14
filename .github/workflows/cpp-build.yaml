@@ -41,5 +41,5 @@ jobs:
       run: |
         cd tests || false
         make -j 3
-        ./build/unit_test
+        ./build/test
 
