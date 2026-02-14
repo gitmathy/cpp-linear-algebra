@@ -38,7 +38,20 @@ bool vector_test::execute()
     move_assign_ok = test_move_assignment<float>() && move_assign_ok;
     move_assign_ok = test_move_assignment<int>() && move_assign_ok;
 
-    return construct_ok && resize_ok && move_ok && copy_assign_ok && move_assign_ok;
+    p_logger.log("   Test add/sub assignment operators (+=, -=)", DEBUG);
+    bool add_sub_assign_ok = true;
+    add_sub_assign_ok = test_add_sub_assignment<double>() && add_sub_assign_ok;
+    add_sub_assign_ok = test_add_sub_assignment<float>() && add_sub_assign_ok;
+    add_sub_assign_ok = test_add_sub_assignment<int>() && add_sub_assign_ok;
+
+    p_logger.log("   Test add/sub operators (+, -)", DEBUG);
+    bool add_sub_ops_ok = true;
+    add_sub_ops_ok = test_add_sub_ops<double>() && add_sub_ops_ok;
+    add_sub_ops_ok = test_add_sub_ops<float>() && add_sub_ops_ok;
+    add_sub_ops_ok = test_add_sub_ops<int>() && add_sub_ops_ok;
+
+    return construct_ok && resize_ok && move_ok && copy_assign_ok && move_assign_ok && add_sub_assign_ok &&
+           add_sub_ops_ok;
 }
 
 } // namespace la_test

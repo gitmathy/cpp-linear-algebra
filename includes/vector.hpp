@@ -27,6 +27,9 @@ public:
     /// @brief Move a vector
     vector(vector<T> &&rhs) noexcept;
 
+    /// @brief Copy constructor
+    constexpr vector(const vector<T> &rhs);
+
     /// @brief Destructing a vector
     ~vector();
 
@@ -72,6 +75,13 @@ template <typename T> vector<T>::vector(vector<T> &&rhs) noexcept : p_vals(rhs.p
 {
     rhs.p_vals = nullptr;
     rhs.p_size = 0;
+}
+
+template <typename T> constexpr vector<T>::vector(const vector<T> &rhs)
+{
+    resize(rhs.size());
+    for (size_type i = 0; i < size(); ++i)
+        p_vals[i] = rhs.p_vals[i];
 }
 
 template <typename T> vector<T>::~vector() { delete[] p_vals; }
