@@ -71,3 +71,25 @@ Timing Report
 ---------------------------|---|---------------|-------------------
 | Overall                  | 1 |       42.4324 |       N/A        |
 ```
+
+## Matrix and vector with template expressions
+
+```
+Timing Report
+| description              | # | duration [s]  | avg duration [s] |
+---------------------------|---|---------------|-------------------
+| mat_run_multiple_add     | 1 |        1.3435 |           1.3435 |
+| run_multiple_add_sub     | 1 |        1.3479 |           1.3479 |
+| mat_run_add              | 1 |        1.6759 |           1.6759 |
+| mat_run_assign_add       | 1 |        0.8368 |           0.8368 |
+| vec_run_multiple_add_sub | 1 |        1.4457 |           1.4457 |
+| vec_run_multiple_add     | 1 |        1.3815 |           1.3815 |
+| vec_run_add              | 1 |        1.6906 |           1.6906 |
+| vec_run_assign_add       | 1 |        0.8674 |           0.8674 |
+| init                     | 2 |        4.4453 |           2.2227 |
+---------------------------|---|---------------|-------------------
+| Overall                  | 1 |       16.7358 |       N/A        |
+```
+
+## Todo
+* [ ] Do we need dedicated vector and matrix operants?
