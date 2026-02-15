@@ -10,7 +10,9 @@ namespace la
 namespace internal
 {
 
-/// @brief Representing a binary expression, e.g., vector, scalar, add
+/// @brief Representing a binary expression consisting of two "operants" and an operation, e.g., (vector, scalar, add)
+/// or
+///    (matrix, matrix, substract)
 /// @tparam ExpTLeft type of left expression
 /// @tparam ExpTRight type of right expression
 /// @tparam OpsT type of operation
@@ -61,8 +63,13 @@ public:
     }
 
     /// @brief Get the size of the result
-    /// @return
     inline size_type size() const { return std::max(p_left.size(), p_right.size()); }
+
+    /// @brief Get the rows of the result
+    inline size_type rows() const { return p_left.rows(); }
+
+    /// @brief Get the columns of the result
+    inline size_type cols() const { return p_right.cols(); }
 };
 
 } // namespace internal

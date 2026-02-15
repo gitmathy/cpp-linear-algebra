@@ -40,7 +40,14 @@ public:
     /// @brief Evaluate literal (2d access)
     inline const T &evaluate(const size_type, const size_type) const { return p_value; }
 
+    /// @brief Size of literal
     inline size_type size() const { return 1; }
+
+    /// @brief Number of rows
+    inline size_type rows() const { return 1; }
+
+    /// @brief Number of cols
+    inline size_type cols() const { return 1; }
 };
 
 } // namespace internal

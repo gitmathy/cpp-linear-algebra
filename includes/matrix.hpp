@@ -2,18 +2,12 @@
 #define LA_MATRIX_H
 
 #include "includes/assert.hpp"
+#include "includes/internal/operant.hpp"
 #include "includes/types.hpp"
 #include <algorithm>
 
 namespace la
 {
-
-/// @brief Storing matrix row- or column-wise
-enum storage_type
-{
-    ROW_WISE,
-    COLUMN_WISE
-};
 
 /// @brief Dense matrix
 /// @tparam T Type of every element
@@ -60,6 +54,9 @@ public:
     /// @brief Copy from matrix with other storage type
     /// @tparam other_storage The other storage type
     template <storage_type other_storage> matrix(const matrix<T, other_storage> &rhs);
+
+    /// @brief Construct from expression
+    template <typename ExpressionT> matrix(const internal::operant<ExpressionT> &exp);
 
     /// @brief Destruct a matrix
     ~matrix() { delete[] p_vals; }
@@ -123,17 +120,26 @@ public:
     /// @brief Move assign a matix
     matrix<T, storage> &operator=(matrix<T, storage> &&rhs) noexcept;
 
+    /// @brief Assign from expression
+    template <typename ExpressionT> matrix<T, storage> &operator=(const internal::operant<ExpressionT> &exp);
+
     /// @brief Add another matix
     matrix<T, storage> &operator+=(const matrix<T, storage> &rhs);
 
     /// @brief Add another matix with another storage type
     template <storage_type other_storage> matrix<T, storage> &operator+=(const matrix<T, other_storage> &rhs);
 
+    /// @brief Add from another expression
+    template <typename ExpressionT> matrix<T, storage> &operator+=(const internal::operant<ExpressionT> &exp);
+
     /// @brief Subtract another matix
     matrix<T, storage> &operator-=(const matrix<T, storage> &rhs);
 
     /// @brief Substract another matix with another storage type
     template <storage_type other_storage> matrix<T, storage> &operator-=(const matrix<T, other_storage> &rhs);
+
+    /// @brief subtract from another expression
+    template <typename ExpressionT> matrix<T, storage> &operator-=(const internal::operant<ExpressionT> &exp);
 
     /// @brief Apply a function to every entry, i.e., A(i,j)=func(A(i,j))
     /// @tparam function, supports func(T)
@@ -192,6 +198,13 @@ template <storage_type other_storage>
 matrix<T, storage>::matrix(const matrix<T, other_storage> &rhs) : p_vals(nullptr), p_rows(0), p_cols(0)
 {
     *this = rhs;
+}
+
+template <typename T, storage_type storage>
+template <typename ExpressionT>
+matrix<T, storage>::matrix(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), p_rows(0)
+{
+    *this = exp;
 }
 
 template <typename T, storage_type storage> void matrix<T, storage>::resize(size_type m, size_type n, const T &val)
@@ -304,6 +317,18 @@ matrix<T, storage> &matrix<T, storage>::operator=(matrix<T, storage> &&rhs) noex
 }
 
 template <typename T, storage_type storage>
+template <typename ExpressionT>
+matrix<T, storage> &matrix<T, storage>::operator=(const internal::operant<ExpressionT> &exp)
+{
+    if (exp.rows() != p_rows || exp.cols() != p_cols)
+        allocate(exp.rows(), exp.cols());
+    for (size_type i = 0; i < p_rows; ++i)
+        for (size_type j = 0; j < p_cols; ++j)
+            (*this)(i, j) = exp.evaluate(i, j);
+    return *this;
+}
+
+template <typename T, storage_type storage>
 matrix<T, storage> &matrix<T, storage>::operator+=(const matrix<T, storage> &rhs)
 {
     SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(), "Invalid shape for matrix += matrix");
@@ -326,6 +351,17 @@ matrix<T, storage> &matrix<T, storage>::operator+=(const matrix<T, other_storage
 }
 
 template <typename T, storage_type storage>
+template <typename ExpressionT>
+matrix<T, storage> &matrix<T, storage>::operator+=(const internal::operant<ExpressionT> &exp)
+{
+    SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(), "Invalid shape for matrix += operant");
+    for (size_type i = 0; i < p_rows; ++i)
+        for (size_type j = 0; j < p_cols; ++j)
+            (*this)(i, j) += exp.evaluate(i, j);
+    return *this;
+}
+
+template <typename T, storage_type storage>
 matrix<T, storage> &matrix<T, storage>::operator-=(const matrix<T, storage> &rhs)
 {
     SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(), "Invalid shape for matrix -= matrix");
@@ -344,6 +380,17 @@ matrix<T, storage> &matrix<T, storage>::operator-=(const matrix<T, other_storage
     for (size_type i = 0; i < p_rows; ++i)
         for (size_type j = 0; i < p_cols; ++j)
             (*this)(i, j) -= rhs(i, j);
+    return *this;
+}
+
+template <typename T, storage_type storage>
+template <typename ExpressionT>
+matrix<T, storage> &matrix<T, storage>::operator-=(const internal::operant<ExpressionT> &exp)
+{
+    SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(), "Invalid shape for matrix -= operant");
+    for (size_type i = 0; i < p_rows; ++i)
+        for (size_type j = 0; j < p_cols; ++j)
+            (*this)(i, j) -= exp.evaluate(i, j);
     return *this;
 }
 
