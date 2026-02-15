@@ -17,7 +17,7 @@ bool vector_resize_test::execute()
         result = false;
         p_logger.log("Default value not set when making vector bigger", ERROR);
     }
-    if (v.size() != 5)
+    if (v.rows() != 5)
     {
         result = false;
         p_logger.log("Incorrect size when making vector bigger", ERROR);
@@ -28,7 +28,7 @@ bool vector_resize_test::execute()
         result = false;
         p_logger.log("Value not kept when making vector smaller", ERROR);
     }
-    if (v.size() != 4)
+    if (v.rows() != 4)
     {
         result = false;
         p_logger.log("Incorrect size when making vector smaller", ERROR);
@@ -40,7 +40,7 @@ bool vector_resize_test::execute()
     if (double(vf(4) - 100) > 1e-6)
         result = false;
     vf.resize(2);
-    if (vf.size() != 2)
+    if (vf.rows() != 2)
         result = false;
 
     // int
@@ -49,7 +49,7 @@ bool vector_resize_test::execute()
     if (double(vi(4) - 100) != 0.0)
         result = false;
     vi.resize(4);
-    if (vi.size() != 4)
+    if (vi.rows() != 4)
         result = false;
 
     if (!result)

@@ -12,7 +12,7 @@ bool vector_expression_temporary_test::execute()
 
     // prepare operands
     la::vector<double> a(3), b(3), c(3);
-    for (la::size_type i = 0; i < a.size(); ++i)
+    for (la::size_type i = 0; i < a.rows(); ++i)
     {
         a(i) = static_cast<double>(i + 1);         // 1,2,3
         b(i) = static_cast<double>((i + 1) * 10);  // 10,20,30
@@ -25,7 +25,7 @@ bool vector_expression_temporary_test::execute()
 
     // 1) nested temporary on right-hand side: a + (b + c)
     la::vector<double> res1 = a + (b + c);
-    for (la::size_type i = 0; i < res1.size(); ++i)
+    for (la::size_type i = 0; i < res1.rows(); ++i)
     {
         double expected = a_orig(i) + b_orig(i) + c_orig(i);
         if (double(res1(i) - expected) != 0.0)
@@ -39,7 +39,7 @@ bool vector_expression_temporary_test::execute()
 
     // 2) nested temporary on left-hand side: (a + b) + c
     la::vector<double> res2 = (a + b) + c;
-    for (la::size_type i = 0; i < res2.size(); ++i)
+    for (la::size_type i = 0; i < res2.rows(); ++i)
     {
         double expected = a_orig(i) + b_orig(i) + c_orig(i);
         if (double(res2(i) - expected) != 0.0)
@@ -53,7 +53,7 @@ bool vector_expression_temporary_test::execute()
 
     // 3) chained operators producing temporaries: a + b + c
     la::vector<double> res3 = a + b + c;
-    for (la::size_type i = 0; i < res3.size(); ++i)
+    for (la::size_type i = 0; i < res3.rows(); ++i)
     {
         double expected = a_orig(i) + b_orig(i) + c_orig(i);
         if (double(res3(i) - expected) != 0.0)
@@ -69,14 +69,14 @@ bool vector_expression_temporary_test::execute()
     auto make_tmp = []()
     {
         la::vector<double> t(3);
-        for (la::size_type j = 0; j < t.size(); ++j)
+        for (la::size_type j = 0; j < t.rows(); ++j)
             t(j) = static_cast<double>((j + 1) * 7); // 7,14,21
         return t;
     };
 
     la::vector<double> dst(3);
     dst = a + make_tmp();
-    for (la::size_type i = 0; i < dst.size(); ++i)
+    for (la::size_type i = 0; i < dst.rows(); ++i)
     {
         double expected = a_orig(i) + static_cast<double>((i + 1) * 7);
         if (double(dst(i) - expected) != 0.0)
@@ -89,7 +89,7 @@ bool vector_expression_temporary_test::execute()
     }
 
     // verify original operands were not modified by any expression
-    for (la::size_type i = 0; i < a.size(); ++i)
+    for (la::size_type i = 0; i < a.rows(); ++i)
     {
         if (double(a(i) - a_orig(i)) != 0.0 || double(b(i) - b_orig(i)) != 0.0 || double(c(i) - c_orig(i)) != 0.0)
         {

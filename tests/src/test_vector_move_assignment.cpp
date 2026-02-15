@@ -10,18 +10,18 @@ bool vector_move_assignment_test::execute()
     bool result = true;
 
     la::vector<double> src(4);
-    for (la::size_type i = 0; i < src.size(); ++i)
+    for (la::size_type i = 0; i < src.rows(); ++i)
         src(i) = static_cast<double>(i * 5 + 7);
 
     la::vector<double> dst(2, double(9));
     dst = std::move(src);
 
-    if (dst.size() != 4)
+    if (dst.rows() != 4)
     {
         result = false;
         p_logger.log("Move-assigned vector has incorrect size", ERROR);
     }
-    for (la::size_type i = 0; i < dst.size(); ++i)
+    for (la::size_type i = 0; i < dst.rows(); ++i)
     {
         if (double(dst(i) - static_cast<double>(i * 5 + 7)) != 0.0)
         {
@@ -32,7 +32,7 @@ bool vector_move_assignment_test::execute()
         }
     }
 
-    if (src.size() != 0)
+    if (src.rows() != 0)
     {
         result = false;
         p_logger.log("Moved-from vector not left empty after move-assignment", ERROR);
