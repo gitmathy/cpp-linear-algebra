@@ -75,9 +75,6 @@ public:
     /// @brief Evaluate matrix at (i,j), i.e., read element (i,j)
     inline const T &evaluate(size_type i, size_type j) const { return (*this)(i, j); }
 
-    /// @brief Evaluate matrix at (i,j), i.e., write element (i,j)
-    inline T &evaluate(size_type i, size_type j) { return (*this)(i, j); }
-
     /// @brief Iterator to begin
     inline iterator begin() { return p_vals; }
     /// @brief Iterator to end
