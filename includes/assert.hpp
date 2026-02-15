@@ -14,12 +14,15 @@ class error : public std::runtime_error
 public:
     /// @brief Constructor with only an error message
     /// @param message
-    explicit error(const std::string &message) : std::runtime_error(message) {}
+    explicit inline error(const std::string &message) : std::runtime_error(message) {}
 
     /// @brief Constructor with an error code
     /// @param message Message that indicates the error
     /// @param code if this error was raised by shape or boundary check
-    error(const std::string &message, int code) : std::runtime_error(message + "(code " + std::to_string(code) + ")") {}
+    inline error(const std::string &message, int code)
+        : std::runtime_error(message + "(code " + std::to_string(code) + ")")
+    {
+    }
 
     /// @brief Default destructor
     ~error() = default;
