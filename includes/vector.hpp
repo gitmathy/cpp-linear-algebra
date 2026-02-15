@@ -197,10 +197,10 @@ template <typename T>
 template <typename ExpressionT>
 vector<T> &vector<T>::operator=(const internal::operant<ExpressionT> &exp)
 {
-    const std::size_t n = exp.size();
+    const size_type n = exp.size();
     if (p_size != n)
         allocate(n);
-    for (std::size_t i = 0; i < n; ++i)
+    for (size_type i = 0; i < n; ++i)
         p_vals[i] = exp.evaluate(i);
     return *this;
 }
@@ -220,7 +220,7 @@ template <typename ExpressionT>
 vector<T> &vector<T>::operator+=(const internal::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(p_size == exp.size(), "Invalid shape for vector += operant");
-    for (std::size_t i = 0; i < p_size; ++i)
+    for (size_type i = 0; i < p_size; ++i)
         p_vals[i] += exp.evaluate(i);
     return *this;
 }
@@ -240,7 +240,7 @@ template <typename ExpressionT>
 vector<T> &vector<T>::operator-=(const internal::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(p_size == exp.size(), "Invalid shape for vector-+= operant");
-    for (std::size_t i = 0; i < p_size; ++i)
+    for (size_type i = 0; i < p_size; ++i)
         p_vals[i] -= exp.evaluate(i);
     return *this;
 }
