@@ -53,6 +53,14 @@ auto operator+(const matrix<T, storage_left> &left, const internal::operant<ExpT
 template <typename T, storage_type storage_right, typename ExpT>
 auto operator+(const internal::operant<ExpT> &left, const matrix<T, storage_right> &right);
 
+/// @brief matrix + scalar
+template <typename T, storage_type storage_left, typename ExpT>
+auto operator+(const matrix<T, storage_left> &left, const T &right);
+
+/// @brief scalar + matrix
+template <typename T, storage_type storage_right, typename ExpT>
+auto operator+(const T &left, const matrix<T, storage_right> &right);
+
 /// ===============================================
 /// S U B T R A C T I O N
 /// ===============================================
@@ -199,6 +207,26 @@ auto operator+(const internal::operant<ExpT> &left, const matrix<T, storage_righ
 {
     typedef internal::binary_expression<internal::operant<ExpT>, matrix<T, storage_right>,
                                         internal::add_operation<internal::operant<ExpT>, matrix<T, storage_right>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief matrix + scalar
+template <typename T, storage_type storage_left, typename ExpT>
+auto operator+(const matrix<T, storage_left> &left, const T &right)
+{
+    typedef internal::binary_expression<matrix<T, storage_left>, internal::literal<T>,
+                                        internal::add_operation<matrix<T, storage_left>, internal::literal<T>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief scalar + matrix
+template <typename T, storage_type storage_right, typename ExpT>
+auto operator+(const T &left, const matrix<T, storage_right> &right)
+{
+    typedef internal::binary_expression<internal::literal<T>, matrix<T, storage_right>,
+                                        internal::add_operation<internal::literal<T>, matrix<T, storage_right>>>
         new_bin_exp_type;
     return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }
