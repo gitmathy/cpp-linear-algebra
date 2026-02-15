@@ -1,7 +1,6 @@
 #ifndef TEST_LA_PERF_TIMING_H
 #define TEST_LA_PERF_TIMING_H
 
-#include "includes/settings.hpp"
 #include <chrono>
 #include <string>
 #include <unordered_map>
@@ -116,11 +115,7 @@ public:
     ~scope_timer() { time_report::get().record(p_what, timer::get()); }
 };
 
-#ifdef TIMEMING
 #define TIME_ME la_perf::scope_timer __my_function_timer__ = la_perf::scope_timer(__func__)
-#else
-#define TIME_ME ((void)0)
-#endif
 
 } // namespace la_perf
 

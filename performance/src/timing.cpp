@@ -75,6 +75,13 @@ template <typename T> inline std::size_t num_digits(T number)
 void time_report::report()
 {
     duration_type total_elapsed_seconds = p_timer.get();
+
+    if (p_timings.empty())
+    {
+        std::cout << "Timing Report (no recorded timings)\n";
+        return;
+    }
+
     std::size_t max_descr_width = std::max_element(p_timings.begin(), p_timings.end(), [](const auto &a, const auto &b)
                                                    { return a.first.length() < b.first.length(); })
                                       ->first.length();
