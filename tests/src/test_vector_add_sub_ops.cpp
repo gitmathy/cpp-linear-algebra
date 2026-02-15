@@ -11,19 +11,19 @@ bool vector_add_sub_ops_test::execute()
     bool result = true;
 
     la::vector<double> a(3), b(3);
-    for (la::size_type i = 0; i < a.size(); ++i)
+    for (la::size_type i = 0; i < a.rows(); ++i)
     {
         a(i) = static_cast<double>(i + 2);       // 2,3,4
         b(i) = static_cast<double>((i + 1) * 5); // 5,10,15
     }
 
-    la::vector<double> a_orig(a.size());
+    la::vector<double> a_orig(a.rows());
     a_orig = a;
-    la::vector<double> b_orig(b.size());
+    la::vector<double> b_orig(b.rows());
     b_orig = b;
 
     la::vector<double> sum = a + b;
-    for (la::size_type i = 0; i < sum.size(); ++i)
+    for (la::size_type i = 0; i < sum.rows(); ++i)
     {
         if (double(sum(i) - (a_orig(i) + b_orig(i))) != 0.0)
         {
@@ -40,7 +40,7 @@ bool vector_add_sub_ops_test::execute()
     }
 
     la::vector<double> diff = a - b;
-    for (la::size_type i = 0; i < diff.size(); ++i)
+    for (la::size_type i = 0; i < diff.rows(); ++i)
     {
         if (double(diff(i) - (a_orig(i) - b_orig(i))) != 0.0)
         {

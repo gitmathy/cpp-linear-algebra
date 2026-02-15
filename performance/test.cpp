@@ -40,7 +40,7 @@ public:
     {
         std::cout << "add" << std::endl;
         TIME_ME;
-        la::vector<T> c(a.size());
+        la::vector<T> c(a.rows());
         for (la::size_type i = 0; i < num_run; ++i)
             c = a + b;
     }
@@ -49,7 +49,7 @@ public:
     {
         std::cout << "multiple_add" << std::endl;
         TIME_ME;
-        la::vector<T> c(a.size());
+        la::vector<T> c(a.rows());
         for (la::size_type i = 0; i < num_run; ++i)
             c = a + b + a + b;
     }
@@ -58,7 +58,7 @@ public:
     {
         std::cout << "multiple_add_sub" << std::endl;
         TIME_ME;
-        la::vector<T> c(a.size());
+        la::vector<T> c(a.rows());
         for (la::size_type i = 0; i < num_run; ++i)
             c = a - b - 2 + a - b + 2;
     }
@@ -105,14 +105,18 @@ public:
             c = a + b + a + b;
     }
 
-    // void run_multiple_add_sub(la::size_type num_run)
-    // {
-    //     std::cout << "multiple_add_sub" << std::endl;
-    //     TIME_ME;
-    //     la::vector<T> c(a.size());
-    //     for (la::size_type i = 0; i < num_run; ++i)
-    //         c = a - b - 2 + a - b + 2;
-    // }
+    void run_multiple_add_sub(la::size_type num_run)
+    {
+        std::cout << "multiple_add_sub" << std::endl;
+        TIME_ME;
+        la::matrix<T> c(a.rows(), a.cols());
+        for (la::size_type i = 0; i < num_run; ++i)
+            c = a - b - 2 + a - b + 2;
+        if (c.rows() != a.rows() || c.cols() != a.cols())
+        {
+            throw std::runtime_error("Invalid dimension of result");
+        }
+    }
 };
 
 void time_add(const la::size_type n = 10000)
@@ -139,7 +143,7 @@ int main()
 
     add.vec_run_multiple_add_sub(RUNS);
 
-    std::cout << "Running performance tests on vector\n" << std::endl;
+    std::cout << "Running performance tests on matrix\n" << std::endl;
     std::cout << "Dimension: " << MATRIX_M << " x " << MATRIX_N << '\n' << "# runs: " << RUNS << '\n' << std::endl;
 
     performance_add_mat<double> add_matrix(MATRIX_M, MATRIX_N);
@@ -150,7 +154,7 @@ int main()
 
     add_matrix.mat_run_multiple_add(RUNS);
 
-    // add_matrix.run_multiple_add_sub(RUNS);
+    add_matrix.run_multiple_add_sub(RUNS);
 
     timings.report();
     return 0;

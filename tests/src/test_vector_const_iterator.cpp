@@ -10,7 +10,7 @@ bool vector_const_iterator_test::execute()
     bool result = true;
 
     la::vector<int> v(6);
-    for (la::size_type i = 0; i < v.size(); ++i)
+    for (la::size_type i = 0; i < v.rows(); ++i)
         v(i) = static_cast<int>(i + 1); // 1..6
 
     const la::vector<int> cv = v; // use copy / const access
@@ -30,7 +30,7 @@ bool vector_const_iterator_test::execute()
     // test algorithm on const-iterators (std::accumulate)
     int sum = std::accumulate(cv.begin(), cv.end(), 0);
     int expect = 0;
-    for (int i = 1; i <= static_cast<int>(cv.size()); ++i)
+    for (int i = 1; i <= static_cast<int>(cv.rows()); ++i)
         expect += i;
     if (sum != expect)
     {

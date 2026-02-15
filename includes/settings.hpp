@@ -16,7 +16,7 @@ namespace la
 /// @brief Check everything
 // #define LA_CHECK ~0
 
-// /// @brief Check nothing
+/// @brief Check nothing
 #define LA_CHECK 0
 
 /// @brief No logs are written

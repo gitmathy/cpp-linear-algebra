@@ -55,7 +55,7 @@ template <typename T> bool vector_test::test_construct()
     bool result = true;
     // construct with defaults
     la::vector<T> *v = new la::vector<T>(3, T(2));
-    for (la::size_type i = 0; i < v->size(); ++i)
+    for (la::size_type i = 0; i < v->rows(); ++i)
     {
         if (double((*v)(i)-2) > 1e-16)
         {
@@ -85,7 +85,7 @@ template <typename T> bool vector_test::test_resize()
         result = false;
         p_logger.log("Default value not set when making vector bigger", ERROR);
     }
-    if (v.size() != 5)
+    if (v.rows() != 5)
     {
         result = false;
         p_logger.log("Incorrect size when making vector bigger", ERROR);
@@ -96,7 +96,7 @@ template <typename T> bool vector_test::test_resize()
         result = false;
         p_logger.log("Value not kept when making vector smaler", ERROR);
     }
-    if (v.size() != 4)
+    if (v.rows() != 4)
     {
         result = false;
         p_logger.log("Incorrect size when making vector smaler", ERROR);
@@ -115,15 +115,15 @@ template <typename T> bool vector_test::test_move_constructor()
 {
     bool result = true;
     la::vector<T> src(4);
-    for (la::size_type i = 0; i < src.size(); ++i)
+    for (la::size_type i = 0; i < src.rows(); ++i)
         src(i) = static_cast<T>(i * 10 + 1);
     la::vector<T> dst(std::move(src));
-    if (dst.size() != 4)
+    if (dst.rows() != 4)
     {
         result = false;
         p_logger.log("Moved-to vector has incorrect size", ERROR);
     }
-    for (la::size_type i = 0; i < dst.size(); ++i)
+    for (la::size_type i = 0; i < dst.rows(); ++i)
     {
         if (double(dst(i) - static_cast<T>(i * 10 + 1)) != 0.0)
         {
@@ -133,7 +133,7 @@ template <typename T> bool vector_test::test_move_constructor()
             p_logger.log(ss.str(), ERROR);
         }
     }
-    if (src.size() != 0)
+    if (src.rows() != 0)
     {
         result = false;
         p_logger.log("Moved-from vector not left in empty state (expected size==0)", ERROR);
@@ -155,19 +155,19 @@ template <typename T> bool vector_test::test_copy_assignment()
     bool result = true;
 
     la::vector<T> src(4);
-    for (la::size_type i = 0; i < src.size(); ++i)
+    for (la::size_type i = 0; i < src.rows(); ++i)
         src(i) = static_cast<T>(i * 3 + 2);
 
     la::vector<T> dst(2, T(0));
     dst = src; // copy-assign
 
     // dst must match src
-    if (dst.size() != src.size())
+    if (dst.rows() != src.rows())
     {
         result = false;
         p_logger.log("Copy-assigned vector has incorrect size", ERROR);
     }
-    for (la::size_type i = 0; i < dst.size(); ++i)
+    for (la::size_type i = 0; i < dst.rows(); ++i)
     {
         if (double(dst(i) - src(i)) != 0.0)
         {
@@ -179,7 +179,7 @@ template <typename T> bool vector_test::test_copy_assignment()
     }
 
     // source must remain unchanged
-    for (la::size_type i = 0; i < src.size(); ++i)
+    for (la::size_type i = 0; i < src.rows(); ++i)
     {
         if (double(src(i) - static_cast<T>(i * 3 + 2)) != 0.0)
         {
@@ -207,19 +207,19 @@ template <typename T> bool vector_test::test_move_assignment()
     bool result = true;
 
     la::vector<T> src(4);
-    for (la::size_type i = 0; i < src.size(); ++i)
+    for (la::size_type i = 0; i < src.rows(); ++i)
         src(i) = static_cast<T>(i * 5 + 7);
 
     la::vector<T> dst(2, T(9));
     dst = std::move(src);
 
     // dst must contain values
-    if (dst.size() != 4)
+    if (dst.rows() != 4)
     {
         result = false;
         p_logger.log("Move-assigned vector has incorrect size", ERROR);
     }
-    for (la::size_type i = 0; i < dst.size(); ++i)
+    for (la::size_type i = 0; i < dst.rows(); ++i)
     {
         if (double(dst(i) - static_cast<T>(i * 5 + 7)) != 0.0)
         {
@@ -231,7 +231,7 @@ template <typename T> bool vector_test::test_move_assignment()
     }
 
     // moved-from should be in valid empty state
-    if (src.size() != 0)
+    if (src.rows() != 0)
     {
         result = false;
         p_logger.log("Moved-from vector not left empty after move-assignment", ERROR);
@@ -255,20 +255,20 @@ template <typename T> bool vector_test::test_add_sub_assignment()
     bool result = true;
 
     la::vector<T> a(3), b(3);
-    for (la::size_type i = 0; i < a.size(); ++i)
+    for (la::size_type i = 0; i < a.rows(); ++i)
     {
         a(i) = static_cast<T>(i + 1);        // 1,2,3
         b(i) = static_cast<T>((i + 1) * 10); // 10,20,30
     }
 
-    la::vector<T> a_orig(a.size());
+    la::vector<T> a_orig(a.rows());
     a_orig = a;
-    la::vector<T> b_orig(b.size());
+    la::vector<T> b_orig(b.rows());
     b_orig = b;
 
     // test += with a plain vector RHS
     a += b;
-    for (la::size_type i = 0; i < a.size(); ++i)
+    for (la::size_type i = 0; i < a.rows(); ++i)
     {
         if (double(a(i) - (a_orig(i) + b_orig(i))) != 0.0)
         {
@@ -279,7 +279,7 @@ template <typename T> bool vector_test::test_add_sub_assignment()
         }
     }
     // rhs must remain unchanged
-    for (la::size_type i = 0; i < b.size(); ++i)
+    for (la::size_type i = 0; i < b.rows(); ++i)
     {
         if (double(b(i) - b_orig(i)) != 0.0)
         {
@@ -290,10 +290,10 @@ template <typename T> bool vector_test::test_add_sub_assignment()
     }
 
     // test -= with a plain vector RHS
-    la::vector<T> c(a_orig.size());
+    la::vector<T> c(a_orig.rows());
     c = a_orig; // reset via assignment
     c -= b_orig;
-    for (la::size_type i = 0; i < c.size(); ++i)
+    for (la::size_type i = 0; i < c.rows(); ++i)
     {
         if (double(c(i) - (a_orig(i) - b_orig(i))) != 0.0)
         {
@@ -313,7 +313,7 @@ template <typename T> bool vector_test::test_add_sub_assignment()
     {
         la::vector<T> rhs = a_orig - b_orig; // evaluate temporary
         a += rhs;
-        for (la::size_type i = 0; i < a.size(); ++i)
+        for (la::size_type i = 0; i < a.rows(); ++i)
         {
             T expected = a_orig(i) + rhs(i); // a_orig + (a_orig - b_orig)
             if (double(a(i) - expected) != 0.0)
@@ -325,7 +325,7 @@ template <typename T> bool vector_test::test_add_sub_assignment()
             }
         }
         // rhs must remain unchanged
-        for (la::size_type i = 0; i < rhs.size(); ++i)
+        for (la::size_type i = 0; i < rhs.rows(); ++i)
         {
             if (double(rhs(i) - (a_orig(i) - b_orig(i))) != 0.0)
             {
@@ -340,7 +340,7 @@ template <typename T> bool vector_test::test_add_sub_assignment()
     a = a_orig; // reset lhs
     {
         a += a_orig + b_orig; // RHS is an expression (operant); should convert to temporary vector
-        for (la::size_type i = 0; i < a.size(); ++i)
+        for (la::size_type i = 0; i < a.rows(); ++i)
         {
             T expected = a_orig(i) + (a_orig(i) + b_orig(i)); // a_orig + (a_orig + b_orig)
             if (double(a(i) - expected) != 0.0)
@@ -352,7 +352,7 @@ template <typename T> bool vector_test::test_add_sub_assignment()
             }
         }
         // ensure operands were not modified
-        for (la::size_type i = 0; i < a_orig.size(); ++i)
+        for (la::size_type i = 0; i < a_orig.rows(); ++i)
         {
             if (double(a_orig(i) - static_cast<T>(i + 1)) != 0.0 ||
                 double(b_orig(i) - static_cast<T>((i + 1) * 10)) != 0.0)
@@ -368,7 +368,7 @@ template <typename T> bool vector_test::test_add_sub_assignment()
     c = a_orig; // reset
     {
         c -= a_orig + b_orig;
-        for (la::size_type i = 0; i < c.size(); ++i)
+        for (la::size_type i = 0; i < c.rows(); ++i)
         {
             T expected = a_orig(i) - (a_orig(i) + b_orig(i));
             if (double(c(i) - expected) != 0.0)
@@ -380,7 +380,7 @@ template <typename T> bool vector_test::test_add_sub_assignment()
             }
         }
         // ensure operands were not modified
-        for (la::size_type i = 0; i < a_orig.size(); ++i)
+        for (la::size_type i = 0; i < a_orig.rows(); ++i)
         {
             if (double(a_orig(i) - static_cast<T>(i + 1)) != 0.0 ||
                 double(b_orig(i) - static_cast<T>((i + 1) * 10)) != 0.0)
@@ -410,20 +410,20 @@ template <typename T> bool vector_test::test_add_sub_ops()
     bool result = true;
 
     la::vector<T> a(3), b(3);
-    for (la::size_type i = 0; i < a.size(); ++i)
+    for (la::size_type i = 0; i < a.rows(); ++i)
     {
         a(i) = static_cast<T>(i + 2);       // 2,3,4
         b(i) = static_cast<T>((i + 1) * 5); // 5,10,15
     }
 
-    la::vector<T> a_orig(a.size());
+    la::vector<T> a_orig(a.rows());
     a_orig = a;
-    la::vector<T> b_orig(b.size());
+    la::vector<T> b_orig(b.rows());
     b_orig = b;
 
     // test + (returns new vector, lhs/rhs unchanged)
     la::vector<T> sum = a + b;
-    for (la::size_type i = 0; i < sum.size(); ++i)
+    for (la::size_type i = 0; i < sum.rows(); ++i)
     {
         if (double(sum(i) - (a_orig(i) + b_orig(i))) != 0.0)
         {
@@ -441,7 +441,7 @@ template <typename T> bool vector_test::test_add_sub_ops()
 
     // test - (returns new vector, lhs/rhs unchanged)
     la::vector<T> diff = a - b;
-    for (la::size_type i = 0; i < diff.size(); ++i)
+    for (la::size_type i = 0; i < diff.rows(); ++i)
     {
         if (double(diff(i) - (a_orig(i) - b_orig(i))) != 0.0)
         {

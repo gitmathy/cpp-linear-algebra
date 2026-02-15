@@ -3,6 +3,7 @@
 
 #include "includes/internal/traits.hpp"
 #include "includes/types.hpp"
+#include <algorithm>
 #include <memory>
 
 namespace la
@@ -10,7 +11,8 @@ namespace la
 namespace internal
 {
 
-/// @brief Representing a binary expression, e.g., vector, scalar, add
+/// @brief Representing a binary expression consisting of two "operants" and an operation, e.g., (vector, scalar, add)
+///     or (matrix, matrix, substract)
 /// @tparam ExpTLeft type of left expression
 /// @tparam ExpTRight type of right expression
 /// @tparam OpsT type of operation
@@ -60,10 +62,64 @@ public:
         return OpsT::evaluate(p_left, p_right, i, j);
     }
 
-    /// @brief Get the size of the result
-    /// @return
-    inline size_type size() const { return std::max(p_left.size(), p_right.size()); }
+    /// @brief Get the rows of the result
+    inline size_type rows() const;
+
+    /// @brief Get the columns of the result
+    inline size_type cols() const;
+
+    /// @brief Get dimension of result
+    inline size_type dimension() const;
 };
+
+/// ===============================================
+/// T E M P L A T E   I M P L E M E N T A T I O N S
+/// ===============================================
+
+template <typename ExpTLeft, typename ExpTRight, typename OpsT>
+size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::rows() const
+{
+    if (p_left.dimension() == 0)
+    {
+        return p_right.rows();
+    }
+    if (p_right.dimension() == 0)
+    {
+        return p_left.rows();
+    }
+    return p_left.rows();
+}
+
+template <typename ExpTLeft, typename ExpTRight, typename OpsT>
+size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::cols() const
+{
+    if (p_left.dimension() == 0)
+    {
+        return p_right.cols();
+    }
+    if (p_right.dimension() == 0)
+    {
+        return p_left.cols();
+    }
+    return p_right.cols();
+}
+
+template <typename ExpTLeft, typename ExpTRight, typename OpsT>
+size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::dimension() const
+{
+    if (p_left.dimension() == 0)
+    {
+        return p_right.dimension();
+    }
+    if (p_right.dimension() == 0)
+    {
+        return p_left.dimension();
+    }
+    // matrix * matrix => 2d
+    // matrix * vector => 1d
+    // vector * vector => 1d
+    return std::min(p_left.dimension(), p_right.dimension());
+}
 
 } // namespace internal
 

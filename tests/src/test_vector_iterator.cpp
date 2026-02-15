@@ -17,7 +17,7 @@ bool vector_iterator_test::execute()
         *it = ++idx; // 1..5
     }
     // check values
-    for (la::size_type i = 0; i < v.size(); ++i)
+    for (la::size_type i = 0; i < v.rows(); ++i)
     {
         if (v(i) != static_cast<int>(i + 1))
         {
@@ -36,7 +36,7 @@ bool vector_iterator_test::execute()
 
     // test algorithm using iterator (std::fill)
     std::fill(v.begin(), v.end(), 7);
-    for (la::size_type i = 0; i < v.size(); ++i)
+    for (la::size_type i = 0; i < v.rows(); ++i)
     {
         if (v(i) != 7)
         {

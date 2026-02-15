@@ -10,7 +10,7 @@ bool vector_construct_test::execute()
     bool result = true;
     // construct with defaults
     la::vector<double> *v = new la::vector<double>(3, double(2));
-    for (la::size_type i = 0; i < v->size(); ++i)
+    for (la::size_type i = 0; i < v->rows(); ++i)
     {
         if (double((*v)(i)-2) > 1e-16)
         {
@@ -29,7 +29,7 @@ bool vector_construct_test::execute()
     // repeat for float
     result = result && true; // keep previous result
     la::vector<float> *vf = new la::vector<float>(3, float(2));
-    for (la::size_type i = 0; i < vf->size(); ++i)
+    for (la::size_type i = 0; i < vf->rows(); ++i)
     {
         if (double((*vf)(i)-2) > 1e-6)
         {
@@ -40,7 +40,7 @@ bool vector_construct_test::execute()
 
     // repeat for int
     la::vector<int> *vi = new la::vector<int>(3, int(2));
-    for (la::size_type i = 0; i < vi->size(); ++i)
+    for (la::size_type i = 0; i < vi->rows(); ++i)
     {
         if (double((*vi)(i)-2) != 0.0)
         {
