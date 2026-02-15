@@ -42,3 +42,5 @@
 
 # builds
 builds/*
+dummy.cpp
+dummy
