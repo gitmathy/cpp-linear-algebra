@@ -42,14 +42,14 @@ template <typename AssertionT> inline void __assert(AssertionT assertion, const 
 }
 
 /// @brief Asserting shapes
-#if LA_CHECK | LA_CHECK_SHAPE_C
+#if LA_CHECK & LA_CHECK_SHAPE_C
 #define SHAPE_ASSERT(a, b) (la::__assert((a), (b), (LA_CHECK_SHAPE_C)))
 #else
 #define SHAPE_ASSERT(a, b) ((void)0)
 #endif
 
 /// @brief Asserting boundaries while accessing arrays
-#if LA_CHECK | LA_CHECK_BOUNDARY_C
+#if LA_CHECK & LA_CHECK_BOUNDARY_C
 #define BOUNDARY_ASSERT(a, b) (la::__assert((a), (b), (LA_CHECK_BOUNDARY_C)))
 #else
 #define BOUNDARY_ASSERT(a, b) ((void)0)
