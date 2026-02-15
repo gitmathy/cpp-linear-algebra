@@ -47,14 +47,14 @@ public:
     /// @brief Evaluate operant (2d access)
     inline value_type evaluate(const size_type i, const size_type j) const { return p_expression.evaluate(i, j); }
 
-    /// @brief Size (if this is a vector or scalar operant)
-    inline size_type size() const { return p_expression.size(); }
-
-    /// @brief Number of rows (2d structure)
+    /// @brief Number of rows
     inline size_type rows() const { return p_expression.rows(); }
 
-    /// @brief Number of columns (2d structure)
+    /// @brief Number of columns
     inline size_type cols() const { return p_expression.cols(); }
+
+    /// @brief Dimension of the operant is defined by the expression
+    inline size_type dimension() const { return p_expression.dimension(); }
 };
 
 } // namespace internal

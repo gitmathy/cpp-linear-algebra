@@ -72,6 +72,9 @@ public:
     /// @brief Get number of columns
     inline size_type cols() const { return p_cols; }
 
+    /// @brief A matrix is two dimensional
+    inline size_type dimension() const { return 2; }
+
     /// @brief Get element (i,j) for reading
     inline const T &operator()(size_type i, size_type j) const;
 

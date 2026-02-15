@@ -48,6 +48,9 @@ public:
 
     /// @brief Number of cols
     inline size_type cols() const { return 1; }
+
+    /// @brief A literal is zero dimensional
+    inline size_type dimension() const { return 0; }
 };
 
 } // namespace internal
