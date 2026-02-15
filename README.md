@@ -90,6 +90,3 @@ Timing Report
 ---------------------------|---|---------------|-------------------
 | Overall                  | 1 |       16.7358 |       N/A        |
 ```
-
-## Todo
-* [ ] Do we need dedicated vector and matrix operants?
