@@ -145,13 +145,7 @@ template <typename T> vector<T>::vector(vector<T> &&rhs) noexcept : p_vals(rhs.p
     rhs.p_size = 0;
 }
 
-template <typename T> vector<T>::vector(const vector<T> &rhs) : p_vals(nullptr), p_size(0)
-{
-    if (rhs.p_size == 0)
-        return;
-    allocate(rhs.p_size);
-    std::copy(rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
-}
+template <typename T> vector<T>::vector(const vector<T> &rhs) : p_vals(nullptr), p_size(0) { *this = rhs; }
 
 template <typename T>
 template <typename ExpressionT>
