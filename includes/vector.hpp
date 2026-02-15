@@ -1,6 +1,7 @@
 #ifndef LA_VECTOR_H
 #define LA_VECTOR_H
 
+#include "includes/assert.hpp"
 #include "includes/internal/operant.hpp"
 #include "includes/types.hpp"
 #include <algorithm>
@@ -28,6 +29,10 @@ private:
     /// @brief Dimension of the vector
     size_type p_size;
 
+    /// @brief Allocate memory and set size
+    /// @param n Size of the vector
+    void allocate(size_type n);
+
 public:
     /// @brief Construct a vector of given size, initialize elements with 0
     explicit vector(size_type n);
@@ -47,9 +52,9 @@ public:
     template <typename ExpressionT> vector(const internal::operant<ExpressionT> &exp);
 
     /// @brief Destructing a vector
-    ~vector();
+    ~vector() { delete[] p_vals; }
 
-    /// @brief Resize a vector. If the vector becomes "bigger", fill values with the default value
+    /// @brief Resize a vector. Set all elements to default value
     /// @param n New size
     /// @param val default value
     void resize(size_type n, const T &val = T(0));
@@ -58,16 +63,16 @@ public:
     inline size_type size() const { return p_size; }
 
     /// @brief Get i'th element for reading
-    inline const T &operator()(const size_type i) const { return p_vals[i]; }
+    inline const T &operator()(const size_type i) const;
 
     /// @brief Get i'th element for writing
-    inline T &operator()(const size_type i) { return p_vals[i]; }
+    inline T &operator()(const size_type i);
 
     /// @brief Evaluate at position i is reading the element
-    inline const T &evaluate(const size_type i) const { return p_vals[i]; }
+    inline const T &evaluate(const size_type i) const { return (*this)(i); }
 
     /// @brief Evaluate at position i, j is reading the element i(j is ignored)
-    inline const T &evaluate(const size_type i, const size_type j) const { return p_vals[i]; }
+    inline const T &evaluate(const size_type i, const size_type) const { return (*this)(i); }
 
     /// @brief Iterator to begin
     inline iterator begin() { return p_vals; }
@@ -109,14 +114,26 @@ public:
 /// T E M P L A T E   I M P L E M E N T A T I O N S
 /// ===============================================
 
-template <typename T> vector<T>::vector(size_type n) : p_vals(new T[n]), p_size(n)
+template <typename T> void vector<T>::allocate(size_type n)
 {
+    if (p_vals != nullptr)
+    {
+        delete[] p_vals;
+    }
+    p_vals = new T[n];
+    p_size = n;
+}
+
+template <typename T> vector<T>::vector(size_type n) : p_vals(nullptr), p_size(0)
+{
+    allocate(n);
     for (size_type i = 0; i < n; ++i)
         p_vals[i] = T(0);
 }
 
-template <typename T> vector<T>::vector(size_type n, const T &val) : p_vals(new T[n]), p_size(n)
+template <typename T> vector<T>::vector(size_type n, const T &val) : p_vals(nullptr), p_size(0)
 {
+    allocate(n);
     for (size_type i = 0; i < n; ++i)
         p_vals[i] = val;
 }
@@ -132,8 +149,7 @@ template <typename T> vector<T>::vector(const vector<T> &rhs) : p_vals(nullptr),
 {
     if (rhs.p_size == 0)
         return;
-    p_vals = new T[rhs.p_size];
-    p_size = rhs.p_size;
+    allocate(rhs.p_size);
     std::copy(rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
 }
 
@@ -144,30 +160,29 @@ vector<T>::vector(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), 
     *this = exp;
 }
 
-template <typename T> vector<T>::~vector() { delete[] p_vals; }
-
 template <typename T> void vector<T>::resize(size_type n, const T &val)
 {
-    if (n == p_size)
-        return;
-    T *new_vals = nullptr;
-    if (n > 0)
-    {
-        new_vals = new T[n];
-        std::copy(p_vals, p_vals + std::min(p_size, n), new_vals);
-        if (n > p_size)
-            std::fill(new_vals + p_size, new_vals + n, val);
-    }
-    std::swap(new_vals, p_vals);
-    delete[] new_vals;
-    p_size = n;
+    allocate(n);
+    std::fill(p_vals, p_vals + n, val);
+}
+
+template <typename T> inline const T &vector<T>::operator()(const size_type i) const
+{
+    BOUNDARY_ASSERT(i < p_size, "Index out of bound: vector read element");
+    return p_vals[i];
+}
+
+template <typename T> inline T &vector<T>::operator()(const size_type i)
+{
+    BOUNDARY_ASSERT(i < p_size, "Index out of bound: vector write element");
+    return p_vals[i];
 }
 
 template <typename T> vector<T> &vector<T>::operator=(const vector<T> &rhs)
 {
     if (this == &rhs)
         return *this;
-    resize(rhs.size());
+    allocate(rhs.p_size);
     std::copy(rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
     return *this;
 }
@@ -189,8 +204,8 @@ template <typename ExpressionT>
 vector<T> &vector<T>::operator=(const internal::operant<ExpressionT> &exp)
 {
     const std::size_t n = exp.size();
-    if (size() != n)
-        resize(n);
+    if (p_size != n)
+        allocate(n);
     for (std::size_t i = 0; i < n; ++i)
         p_vals[i] = exp.evaluate(i);
     return *this;
@@ -198,10 +213,8 @@ vector<T> &vector<T>::operator=(const internal::operant<ExpressionT> &exp)
 
 template <typename T> vector<T> &vector<T>::operator+=(const vector<T> &rhs)
 {
-    const std::size_t n = rhs.size();
-    if (size() != n)
-        resize(n);
-    for (size_type i = 0; i < n; ++i)
+    SHAPE_ASSERT(p_size == rhs.p_size, "Invalid shape for vector += vector");
+    for (size_type i = 0; i < p_size; ++i)
     {
         p_vals[i] += rhs.p_vals[i];
     }
@@ -212,20 +225,16 @@ template <typename T>
 template <typename ExpressionT>
 vector<T> &vector<T>::operator+=(const internal::operant<ExpressionT> &exp)
 {
-    const std::size_t n = exp.size();
-    if (size() != n)
-        resize(n);
-    for (std::size_t i = 0; i < n; ++i)
+    SHAPE_ASSERT(p_size == exp.size(), "Invalid shape for vector += operant");
+    for (std::size_t i = 0; i < p_size; ++i)
         p_vals[i] += exp.evaluate(i);
     return *this;
 }
 
 template <typename T> vector<T> &vector<T>::operator-=(const vector<T> &rhs)
 {
-    const std::size_t n = rhs.size();
-    if (size() != n)
-        resize(n);
-    for (size_type i = 0; i < n; ++i)
+    SHAPE_ASSERT(p_size == rhs.p_size, "Invalid shape for vector -= vector");
+    for (size_type i = 0; i < p_size; ++i)
     {
         p_vals[i] -= rhs.p_vals[i];
     }
@@ -236,10 +245,8 @@ template <typename T>
 template <typename ExpressionT>
 vector<T> &vector<T>::operator-=(const internal::operant<ExpressionT> &exp)
 {
-    const std::size_t n = exp.size();
-    if (size() != n)
-        resize(n);
-    for (std::size_t i = 0; i < n; ++i)
+    SHAPE_ASSERT(p_size == exp.size(), "Invalid shape for vector-+= operant");
+    for (std::size_t i = 0; i < p_size; ++i)
         p_vals[i] -= exp.evaluate(i);
     return *this;
 }
