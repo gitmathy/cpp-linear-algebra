@@ -14,10 +14,10 @@ namespace la
 #define LA_CHECK_LAYOUT_C 4
 
 /// @brief Check everything
-#define LA_CHECK ~0
+// #define LA_CHECK ~0
 
 // /// @brief Check nothing
-// #define LA_CHECK 0
+#define LA_CHECK 0
 
 /// @brief No logs are written
 #define LA_DEBUG_SILENT_C 0
