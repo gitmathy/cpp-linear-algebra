@@ -52,7 +52,7 @@ public:
     template <typename ExpressionT> vector(const internal::operant<ExpressionT> &exp);
 
     /// @brief Destructing a vector
-    ~vector();
+    ~vector() { delete[] p_vals; }
 
     /// @brief Resize a vector. Set all elements to default value
     /// @param n New size
@@ -63,18 +63,10 @@ public:
     inline size_type size() const { return p_size; }
 
     /// @brief Get i'th element for reading
-    inline const T &operator()(const size_type i) const
-    {
-        BOUNDARY_ASSERT(i < p_size, "Index out of bound: vector read element");
-        return p_vals[i];
-    }
+    inline const T &operator()(const size_type i) const;
 
     /// @brief Get i'th element for writing
-    inline T &operator()(const size_type i)
-    {
-        BOUNDARY_ASSERT(i < p_size, "Index out of bound: vector write element");
-        return p_vals[i];
-    }
+    inline T &operator()(const size_type i);
 
     /// @brief Evaluate at position i is reading the element
     inline const T &evaluate(const size_type i) const { return (*this)(i); }
@@ -168,12 +160,22 @@ vector<T>::vector(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), 
     *this = exp;
 }
 
-template <typename T> vector<T>::~vector() { delete[] p_vals; }
-
 template <typename T> void vector<T>::resize(size_type n, const T &val)
 {
     allocate(n);
     std::fill(p_vals, p_vals + n, val);
+}
+
+template <typename T> inline const T &vector<T>::operator()(const size_type i) const
+{
+    BOUNDARY_ASSERT(i < p_size, "Index out of bound: vector read element");
+    return p_vals[i];
+}
+
+template <typename T> inline T &vector<T>::operator()(const size_type i)
+{
+    BOUNDARY_ASSERT(i < p_size, "Index out of bound: vector write element");
+    return p_vals[i];
 }
 
 template <typename T> vector<T> &vector<T>::operator=(const vector<T> &rhs)
