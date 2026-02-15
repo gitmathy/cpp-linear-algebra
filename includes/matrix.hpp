@@ -1,6 +1,7 @@
 #ifndef LA_MATRIX_H
 #define LA_MATRIX_H
 
+#include "includes/assert.hpp"
 #include "includes/types.hpp"
 #include <algorithm>
 
@@ -37,6 +38,10 @@ private:
     /// @brief Number of columns
     size_type p_cols;
 
+    /// @brief Allocate memory and set dimensions
+    /// @param n Size of the vector
+    void allocate(size_type m, size_type n);
+
 public:
     /// @brief Construct a matrix of given size, initialize elements with 0
     /// @param m number of rows
@@ -52,8 +57,12 @@ public:
     /// @brief Copy a matrix
     matrix(const matrix<T, storage> &rhs);
 
+    /// @brief Copy from matrix with other storage type
+    /// @tparam other_storage The other storage type
+    template <storage_type other_storage> matrix(const matrix<T, other_storage> &rhs);
+
     /// @brief Destruct a matrix
-    ~matrix();
+    ~matrix() { delete[] p_vals; }
 
     /// @brief Resize a matrix. And set all values to val
     /// @param m number of rows
@@ -110,16 +119,29 @@ public:
 /// T E M P L A T E   I M P L E M E N T A T I O N S
 /// ===============================================
 
-template <typename T, storage_type storage>
-matrix<T, storage>::matrix(size_type m, size_type n) : p_vals(new T[m * n]), p_rows(m), p_cols(n)
+template <typename T, storage_type storage> void matrix<T, storage>::allocate(size_type m, size_type n)
 {
+    if (p_vals != nullptr)
+    {
+        delete[] p_vals;
+    }
+    p_vals = new T[m * n];
+    p_rows = m;
+    p_cols = n;
+}
+
+template <typename T, storage_type storage>
+matrix<T, storage>::matrix(size_type m, size_type n) : p_vals(nullptr), p_rows(0), p_cols(0)
+{
+    allocate(m, n);
     for (size_type i = 0; i < m * n; ++i)
         p_vals[i] = T(0);
 }
 
 template <typename T, storage_type storage>
-matrix<T, storage>::matrix(size_type m, size_type n, const T &val) : p_vals(new T[m * n]), p_rows(m), p_cols(n)
+matrix<T, storage>::matrix(size_type m, size_type n, const T &val) : p_vals(nullptr), p_rows(0), p_cols(0)
 {
+    allocate(m, n);
     for (size_type i = 0; i < m * n; ++i)
         p_vals[i] = val;
 }
@@ -134,33 +156,42 @@ matrix<T, storage>::matrix(matrix<T, storage> &&rhs) noexcept
     rhs.p_cols = 0;
 }
 
-template <typename T, storage_type storage> matrix<T, storage>::~matrix() { delete[] p_vals; }
+template <typename T, storage_type storage>
+template <storage_type other_storage>
+matrix<T, storage>::matrix(const matrix<T, other_storage> &rhs) : p_vals(nullptr), p_rows(0), p_cols(0)
+{
+    allocate(rhs.rows(), rhs.cols());
+    // Access to rhs is not cache optimized :-(
+    for (size_type i = 0; i < p_rows; ++i)
+        for (size_type j = 0; j < p_cols; ++j)
+            (*this)(i, j) = rhs(i, j);
+}
 
 template <typename T, storage_type storage>
 matrix<T, storage>::matrix(const matrix<T, storage> &rhs) : p_vals(nullptr), p_rows(rhs.p_rows), p_cols(rhs.p_cols)
 {
-    const size_type n = p_rows * p_cols;
-    p_vals = new T[n];
-    std::copy(rhs.p_vals, rhs.p_vals + n, p_vals);
+    if (rhs.p_cols * rhs.p_rows == 0)
+        return;
+    allocate(rhs.p_rows, rhs.p_cols);
+    std::copy(rhs.p_vals, rhs.p_vals + rhs.p_rows * rhs.p_cols, p_vals);
 }
 
 template <typename T, storage_type storage> void matrix<T, storage>::resize(size_type m, size_type n, const T &val)
 {
-    delete[] p_vals;
-    p_vals = new T[m * n];
-    p_rows = m;
-    p_cols = n;
+    allocate(m, n);
     std::fill(p_vals, p_vals + m * n, val);
 }
 
 template <typename T, storage_type storage>
 inline const T &matrix<T, storage>::operator()(size_type i, size_type j) const
 {
+    BOUNDARY_ASSERT(i < p_rows && j < p_cols, "Index out of bound: matrix read element");
     return storage == ROW_WISE ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
 }
 
 template <typename T, storage_type storage> inline T &matrix<T, storage>::operator()(size_type i, size_type j)
 {
+    BOUNDARY_ASSERT(i < p_rows && j < p_cols, "Index out of bound: matrix write element");
     return storage == ROW_WISE ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
 }
 
