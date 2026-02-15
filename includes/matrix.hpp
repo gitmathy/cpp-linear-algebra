@@ -95,24 +95,24 @@ public:
     inline citerator end() const { return p_vals + p_rows * p_cols; }
 
     /// @brief Iterator to row begin (only valid for ROW_WISE)
-    inline iterator row_begin(size_type i) { return p_vals + i * p_cols; }
+    inline iterator row_begin(size_type i);
     /// @brief Iterator to row end (only valid for ROW_WISE)
-    inline iterator row_end(size_type i) { return p_vals + (i + 1) * p_cols; }
+    inline iterator row_end(size_type i);
 
     /// @brief Constant iterator to row begin (only valid for ROW_WISE)
-    inline citerator row_begin(size_type i) const { return p_vals + i * p_cols; }
+    inline citerator row_begin(size_type i) const;
     /// @brief Constant iterator to row end (only valid for ROW_WISE)
-    inline citerator row_end(size_type i) const { return p_vals + (i + 1) * p_cols; }
+    inline citerator row_end(size_type i) const;
 
     /// @brief Iterator to column begin (only valid for COL_WISE)
-    inline iterator col_begin(size_type i) { return p_vals + i * p_rows; }
+    inline iterator col_begin(size_type i);
     /// @brief Iterator to column end (only valid for COL_WISE)
-    inline iterator col_end(size_type i) { return p_vals + (i + 1) * p_rows; }
+    inline iterator col_end(size_type i);
 
     /// @brief Constant iterator to column begin (only valid for COL_WISE)
-    inline citerator col_begin(size_type i) const { return p_vals + i * p_rows; }
+    inline citerator col_begin(size_type i) const;
     /// @brief Constant iterator to column end (only valid for COL_WISE)
-    inline citerator col_end(size_type i) const { return p_vals + (i + 1) * p_rows; }
+    inline citerator col_end(size_type i) const;
 };
 
 /// ===============================================
@@ -157,6 +157,15 @@ matrix<T, storage>::matrix(matrix<T, storage> &&rhs) noexcept
 }
 
 template <typename T, storage_type storage>
+matrix<T, storage>::matrix(const matrix<T, storage> &rhs) : p_vals(nullptr), p_rows(rhs.p_rows), p_cols(rhs.p_cols)
+{
+    if (rhs.p_cols * rhs.p_rows == 0)
+        return;
+    allocate(rhs.p_rows, rhs.p_cols);
+    std::copy(rhs.p_vals, rhs.p_vals + rhs.p_rows * rhs.p_cols, p_vals);
+}
+
+template <typename T, storage_type storage>
 template <storage_type other_storage>
 matrix<T, storage>::matrix(const matrix<T, other_storage> &rhs) : p_vals(nullptr), p_rows(0), p_cols(0)
 {
@@ -165,15 +174,6 @@ matrix<T, storage>::matrix(const matrix<T, other_storage> &rhs) : p_vals(nullptr
     for (size_type i = 0; i < p_rows; ++i)
         for (size_type j = 0; j < p_cols; ++j)
             (*this)(i, j) = rhs(i, j);
-}
-
-template <typename T, storage_type storage>
-matrix<T, storage>::matrix(const matrix<T, storage> &rhs) : p_vals(nullptr), p_rows(rhs.p_rows), p_cols(rhs.p_cols)
-{
-    if (rhs.p_cols * rhs.p_rows == 0)
-        return;
-    allocate(rhs.p_rows, rhs.p_cols);
-    std::copy(rhs.p_vals, rhs.p_vals + rhs.p_rows * rhs.p_cols, p_vals);
 }
 
 template <typename T, storage_type storage> void matrix<T, storage>::resize(size_type m, size_type n, const T &val)
@@ -193,6 +193,59 @@ template <typename T, storage_type storage> inline T &matrix<T, storage>::operat
 {
     BOUNDARY_ASSERT(i < p_rows && j < p_cols, "Index out of bound: matrix write element");
     return storage == ROW_WISE ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
+}
+
+// ITERATORS
+// ---------
+
+template <typename T, storage_type storage> matrix<T, storage>::iterator matrix<T, storage>::row_begin(size_type i)
+{
+    LAYOUT_ASSERT(storage == ROW_WISE, "Invalid layour for matrix::row_begin");
+    return p_vals + i * p_cols;
+}
+
+template <typename T, storage_type storage> matrix<T, storage>::iterator matrix<T, storage>::row_end(size_type i)
+{
+    LAYOUT_ASSERT(storage == ROW_WISE, "Invalid layour for matrix::row_end");
+    return p_vals + (i + 1) * p_cols;
+}
+
+template <typename T, storage_type storage>
+matrix<T, storage>::citerator matrix<T, storage>::row_begin(size_type i) const
+{
+    LAYOUT_ASSERT(storage == ROW_WISE, "Invalid layour for matrix::row_begin const");
+    return p_vals + i * p_cols;
+}
+
+template <typename T, storage_type storage> matrix<T, storage>::citerator matrix<T, storage>::row_end(size_type i) const
+{
+    LAYOUT_ASSERT(storage == ROW_WISE, "Invalid layour for matrix::row_end const");
+    return p_vals + (i + 1) * p_cols;
+}
+
+template <typename T, storage_type storage> matrix<T, storage>::iterator matrix<T, storage>::col_begin(size_type i)
+{
+    LAYOUT_ASSERT(storage == COLUMN_WISE, "Invalid layour for matrix::col_begin");
+    return p_vals + i * p_rows;
+}
+
+template <typename T, storage_type storage> matrix<T, storage>::iterator matrix<T, storage>::col_end(size_type i)
+{
+    LAYOUT_ASSERT(storage == COLUMN_WISE, "Invalid layour for matrix::col_end");
+    return p_vals + (i + 1) * p_rows;
+}
+
+template <typename T, storage_type storage>
+matrix<T, storage>::citerator matrix<T, storage>::col_begin(size_type i) const
+{
+    LAYOUT_ASSERT(storage == COLUMN_WISE, "Invalid layour for matrix::col_begin const");
+    return p_vals + i * p_rows;
+}
+
+template <typename T, storage_type storage> matrix<T, storage>::citerator matrix<T, storage>::col_end(size_type i) const
+{
+    LAYOUT_ASSERT(storage == COLUMN_WISE, "Invalid layour for matrix::col_end const");
+    return p_vals + (i + 1) * p_rows;
 }
 
 } // namespace la
