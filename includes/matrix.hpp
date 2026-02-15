@@ -134,6 +134,10 @@ public:
 
     /// @brief Substract another matix with another storage type
     template <storage_type other_storage> matrix<T, storage> &operator-=(const matrix<T, other_storage> &rhs);
+
+    /// @brief Apply a function to every entry, i.e., A(i,j)=func(A(i,j))
+    /// @tparam function, supports func(T)
+    template <typename function> matrix<T, storage> &apply_func(function func);
 };
 
 /// ===============================================
@@ -343,5 +347,13 @@ matrix<T, storage> &matrix<T, storage>::operator-=(const matrix<T, other_storage
     return *this;
 }
 
+template <typename T, storage_type storage>
+template <typename function>
+matrix<T, storage> &matrix<T, storage>::apply_func(function func)
+{
+    for (size_type i = 0; i < p_rows * p_cols; ++i)
+        p_vals[i] = func(p_vals[i]);
+    return *this;
+}
 } // namespace la
 #endif
