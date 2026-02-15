@@ -128,6 +128,12 @@ public:
 
     /// @brief Add another matix with another storage type
     template <storage_type other_storage> matrix<T, storage> &operator+=(const matrix<T, other_storage> &rhs);
+
+    /// @brief Subtract another matix
+    matrix<T, storage> &operator-=(const matrix<T, storage> &rhs);
+
+    /// @brief Substract another matix with another storage type
+    template <storage_type other_storage> matrix<T, storage> &operator-=(const matrix<T, other_storage> &rhs);
 };
 
 /// ===============================================
@@ -298,9 +304,7 @@ matrix<T, storage> &matrix<T, storage>::operator+=(const matrix<T, storage> &rhs
 {
     SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(), "Invalid shape for matrix += matrix");
     for (size_type i = 0; i < p_cols * p_rows; ++i)
-    {
-        p_vals[i] = rhs.p_vals[i];
-    }
+        p_vals[i] += rhs.p_vals[i];
     return *this;
 }
 
@@ -314,6 +318,29 @@ matrix<T, storage> &matrix<T, storage>::operator+=(const matrix<T, other_storage
     for (size_type i = 0; i < p_rows; ++i)
         for (size_type j = 0; i < p_cols; ++j)
             (*this)(i, j) += rhs(i, j);
+    return *this;
+}
+
+template <typename T, storage_type storage>
+matrix<T, storage> &matrix<T, storage>::operator-=(const matrix<T, storage> &rhs)
+{
+    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(), "Invalid shape for matrix -= matrix");
+    for (size_type i = 0; i < p_cols * p_rows; ++i)
+        p_vals[i] -= rhs.p_vals[i];
+    return *this;
+}
+
+template <typename T, storage_type storage>
+template <storage_type other_storage>
+matrix<T, storage> &matrix<T, storage>::operator-=(const matrix<T, other_storage> &rhs)
+{
+    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
+                 "Invalid shape for matrix -= matrix with different storage_type");
+    LOG_WARNING("Unoptimized storage access due to storage layout");
+    for (size_type i = 0; i < p_rows; ++i)
+        for (size_type j = 0; i < p_cols; ++j)
+            (*this)(i, j) -= rhs(i, j);
+    return *this;
 }
 
 } // namespace la
