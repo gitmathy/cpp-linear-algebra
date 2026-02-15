@@ -25,21 +25,32 @@ Timing Report
 
 ### With template expressions
 
+#### double
+
 ```
-Running performance tests
-
-Dimension: 100000000
-# runs: 10
-
-assign_add
-add
-multiple_add
 Timing Report
-| description      | # | duration [s]  | avg duration [s] |
--------------------|---|---------------|-------------------
-| run_multiple_add | 1 |        1.3221 |           1.3221 |
-| run_add          | 1 |        1.5408 |           1.5408 |
-| run_assign_add   | 1 |        0.4238 |           0.4238 |
--------------------|---|---------------|-------------------
-| Overall          | 1 |        6.5127 |       N/A        |
+| description          | # | duration [s]  | avg duration [s] |
+-----------------------|---|---------------|-------------------
+| run_multiple_add     | 1 |        1.3432 |           1.3432 |
+| run_add              | 1 |        1.6670 |           1.6670 |
+| run_multiple_add_sub | 1 |        1.3383 |           1.3383 |
+| run_assign_add       | 1 |        0.8400 |           0.8400 |
+| init                 | 1 |        2.2248 |           2.2248 |
+-----------------------|---|---------------|-------------------
+| Overall              | 1 |        8.5145 |       N/A        |
+```
+
+#### float
+
+```
+Timing Report
+| description          | # | duration [s]  | avg duration [s] |
+-----------------------|---|---------------|-------------------
+| run_multiple_add     | 1 |        0.6917 |           0.6917 |
+| run_add              | 1 |        0.8109 |           0.8109 |
+| run_multiple_add_sub | 1 |        0.6858 |           0.6858 |
+| run_assign_add       | 1 |        0.4314 |           0.4314 |
+| init                 | 1 |        2.3098 |           2.3098 |
+-----------------------|---|---------------|-------------------
+| Overall              | 1 |        5.3297 |       N/A        |
 ```
