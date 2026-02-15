@@ -8,8 +8,11 @@ namespace la
 // forward-declare vector so we can specialize expression_traits for it
 template <typename T> class vector;
 
-// forward-declare vector so we can specialize expression_traits for it
+// forward-declare matrix so we can specialize expression_traits for it
 template <typename T, storage_type storage> class matrix;
+
+// forward-declare literal so we can specialize expression_traits for it
+template <typename T> class literal;
 
 namespace internal
 {
@@ -40,6 +43,15 @@ template <typename T> struct expression_traits<la::vector<T>>
 template <typename T, storage_type storage> struct expression_traits<la::matrix<T, storage>>
 {
     typedef const la::matrix<T, storage> &expression_type;
+    typedef T value_type;
+};
+
+/// @brief Specialization for `la::internal::literal<T>`: store as a reference in expression nodes
+/// This avoids copying large matrix objects into expression trees; operant/binary_expression
+/// will hold references to existing vectors while `operant` itself still owns temporaries.
+template <typename T> struct expression_traits<la::literal<T>>
+{
+    typedef la::literal<T> expression_type;
     typedef T value_type;
 };
 
