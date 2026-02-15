@@ -10,6 +10,9 @@ namespace la
 /// @brief Check boundaries. This has a big impackt on performance
 #define LA_CHECK_BOUNDARY_C 2
 
+/// @brief Layout check, i.e., matrix row-wise or column-wise
+#define LA_CHECK_LAYOUT_C 4
+
 /// @brief Check everything
 #define LA_CHECK ~0
 
