@@ -1,11 +1,15 @@
 #include "../includes/la.hpp"
-#include "../includes/misc.hpp"
 #include "../includes/vector.hpp"
 #include "includes/timing.hpp"
+#include <cstdlib>
+#include <ctime>
+#include <initializer_list>
 #include <iostream>
 
 const la::size_type N = 100000000;
 const la::size_type RUNS = 10;
+
+template <typename T> inline double get_random() { return T((std::rand() / (T)RAND_MAX) * 2 - 1); }
 
 template <typename T> class performance_add
 {
@@ -17,8 +21,9 @@ public:
 
     void init()
     {
-        a.apply_func([](T) { return la::get_random<T>(); });
-        b.apply_func([](T) { return la::get_random<T>(); });
+        TIME_ME;
+        a.apply_func([](T) { return get_random<T>(); });
+        b.apply_func([](T) { return get_random<T>(); });
     }
 
     void run_assign_add(la::size_type num_run)
@@ -64,6 +69,7 @@ void time_add(const la::size_type n = 10000)
 
 int main()
 {
+    std::srand(std::time({})); // use current time as seed for random generator
     la_perf::time_report &timings = la_perf::time_report::get();
 
     std::cout << "Running performance tests\n" << std::endl;
