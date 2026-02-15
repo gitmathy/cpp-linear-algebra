@@ -5,6 +5,7 @@
 #include "includes/internal/literal.hpp"
 #include "includes/internal/operant.hpp"
 #include "includes/internal/operations.hpp"
+#include "includes/matrix.hpp"
 #include "includes/types.hpp"
 #include "includes/vector.hpp"
 
@@ -40,6 +41,10 @@ template <typename T, typename ExpT> auto operator+(const T &left, const interna
 /// @brief operant + scalar
 template <typename T, typename ExpT> auto operator+(const internal::operant<ExpT> &left, const T &right);
 
+/// @brief matrix + matrix
+template <typename T, storage_type storage_left, storage_type storage_right>
+auto operator+(const matrix<T, storage_left> &left, const matrix<T, storage_right> &right);
+
 /// ===============================================
 /// S U B T R A C T I O N
 /// ===============================================
@@ -68,6 +73,10 @@ template <typename T, typename ExpT> auto operator-(const T &left, const interna
 
 /// @brief operant - scalar
 template <typename T, typename ExpT> auto operator-(const internal::operant<ExpT> &left, const T &right);
+
+/// @brief matrix - matrix
+template <typename T, storage_type storage_left, storage_type storage_right>
+auto operator-(const matrix<T, storage_left> &left, const matrix<T, storage_right> &right);
 
 /// ===============================================
 /// T E M P L A T E   I M P L E M E N T A T I O N S
@@ -147,6 +156,13 @@ template <typename T, typename ExpT> auto operator+(const internal::operant<ExpT
     return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }
 
+template <typename T, storage_type storage_left, storage_type storage_right>
+auto operator+(const matrix<T, storage_left> &left, const matrix<T, storage_right> &right)
+{
+    matrix<T, storage_left> A(left);
+    return A += right;
+}
+
 // SUBSTRACTION
 //-------------
 
@@ -220,6 +236,13 @@ template <typename T, typename ExpT> auto operator-(const internal::operant<ExpT
                                         internal::sub_operation<internal::operant<ExpT>, internal::literal<T>>>
         new_bin_exp_type;
     return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+template <typename T, storage_type storage_left, storage_type storage_right>
+auto operator-(const matrix<T, storage_left> &left, const matrix<T, storage_right> &right)
+{
+    matrix<T, storage_left> A(left);
+    return A -= right;
 }
 
 } // namespace la

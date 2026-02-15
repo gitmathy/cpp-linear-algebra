@@ -113,6 +113,31 @@ public:
     inline citerator col_begin(size_type i) const;
     /// @brief Constant iterator to column end (only valid for COL_WISE)
     inline citerator col_end(size_type i) const;
+
+    /// @brief Assign another matrix
+    matrix<T, storage> &operator=(const matrix<T, storage> &rhs);
+
+    /// @brief Assign another matrix with another storage type
+    template <storage_type other_storage> matrix<T, storage> &operator=(const matrix<T, other_storage> &rhs);
+
+    /// @brief Move assign a matix
+    matrix<T, storage> &operator=(matrix<T, storage> &&rhs) noexcept;
+
+    /// @brief Add another matix
+    matrix<T, storage> &operator+=(const matrix<T, storage> &rhs);
+
+    /// @brief Add another matix with another storage type
+    template <storage_type other_storage> matrix<T, storage> &operator+=(const matrix<T, other_storage> &rhs);
+
+    /// @brief Subtract another matix
+    matrix<T, storage> &operator-=(const matrix<T, storage> &rhs);
+
+    /// @brief Substract another matix with another storage type
+    template <storage_type other_storage> matrix<T, storage> &operator-=(const matrix<T, other_storage> &rhs);
+
+    /// @brief Apply a function to every entry, i.e., A(i,j)=func(A(i,j))
+    /// @tparam function, supports func(T)
+    template <typename function> matrix<T, storage> &apply_func(function func);
 };
 
 /// ===============================================
@@ -159,21 +184,14 @@ matrix<T, storage>::matrix(matrix<T, storage> &&rhs) noexcept
 template <typename T, storage_type storage>
 matrix<T, storage>::matrix(const matrix<T, storage> &rhs) : p_vals(nullptr), p_rows(rhs.p_rows), p_cols(rhs.p_cols)
 {
-    if (rhs.p_cols * rhs.p_rows == 0)
-        return;
-    allocate(rhs.p_rows, rhs.p_cols);
-    std::copy(rhs.p_vals, rhs.p_vals + rhs.p_rows * rhs.p_cols, p_vals);
+    *this = rhs;
 }
 
 template <typename T, storage_type storage>
 template <storage_type other_storage>
 matrix<T, storage>::matrix(const matrix<T, other_storage> &rhs) : p_vals(nullptr), p_rows(0), p_cols(0)
 {
-    allocate(rhs.rows(), rhs.cols());
-    // Access to rhs is not cache optimized :-(
-    for (size_type i = 0; i < p_rows; ++i)
-        for (size_type j = 0; j < p_cols; ++j)
-            (*this)(i, j) = rhs(i, j);
+    *this = rhs;
 }
 
 template <typename T, storage_type storage> void matrix<T, storage>::resize(size_type m, size_type n, const T &val)
@@ -248,5 +266,94 @@ template <typename T, storage_type storage> matrix<T, storage>::citerator matrix
     return p_vals + (i + 1) * p_rows;
 }
 
+template <typename T, storage_type storage>
+matrix<T, storage> &matrix<T, storage>::operator=(const matrix<T, storage> &rhs)
+{
+    if (this == &rhs)
+        return *this;
+    allocate(rhs.p_rows, rhs.p_cols);
+    std::copy(rhs.p_vals, rhs.p_vals + rhs.rows() * rhs.cols(), p_vals);
+    return *this;
+}
+
+template <typename T, storage_type storage>
+template <storage_type other_storage>
+matrix<T, storage> &matrix<T, storage>::operator=(const matrix<T, other_storage> &rhs)
+{
+    allocate(rhs.rows(), rhs.cols());
+    LOG_WARNING("Unoptimized storage access due to storage layout");
+    for (size_type i = 0; i < p_rows; ++i)
+        for (size_type j = 0; j < p_cols; ++j)
+            (*this)(i, j) = rhs(i, j);
+    return *this;
+}
+
+template <typename T, storage_type storage>
+matrix<T, storage> &matrix<T, storage>::operator=(matrix<T, storage> &&rhs) noexcept
+{
+    if (this == &rhs)
+        return *this;
+    delete[] p_vals;
+    p_vals = nullptr;
+    p_rows = 0;
+    p_cols = 0;
+    std::swap(p_vals, rhs.p_vals);
+    std::swap(p_rows, rhs.p_rows);
+    std::swap(p_cols, rhs.p_cols);
+    return *this;
+}
+
+template <typename T, storage_type storage>
+matrix<T, storage> &matrix<T, storage>::operator+=(const matrix<T, storage> &rhs)
+{
+    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(), "Invalid shape for matrix += matrix");
+    for (size_type i = 0; i < p_cols * p_rows; ++i)
+        p_vals[i] += rhs.p_vals[i];
+    return *this;
+}
+
+template <typename T, storage_type storage>
+template <storage_type other_storage>
+matrix<T, storage> &matrix<T, storage>::operator+=(const matrix<T, other_storage> &rhs)
+{
+    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
+                 "Invalid shape for matrix += matrix with different storage_type");
+    LOG_WARNING("Unoptimized storage access due to storage layout");
+    for (size_type i = 0; i < p_rows; ++i)
+        for (size_type j = 0; i < p_cols; ++j)
+            (*this)(i, j) += rhs(i, j);
+    return *this;
+}
+
+template <typename T, storage_type storage>
+matrix<T, storage> &matrix<T, storage>::operator-=(const matrix<T, storage> &rhs)
+{
+    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(), "Invalid shape for matrix -= matrix");
+    for (size_type i = 0; i < p_cols * p_rows; ++i)
+        p_vals[i] -= rhs.p_vals[i];
+    return *this;
+}
+
+template <typename T, storage_type storage>
+template <storage_type other_storage>
+matrix<T, storage> &matrix<T, storage>::operator-=(const matrix<T, other_storage> &rhs)
+{
+    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
+                 "Invalid shape for matrix -= matrix with different storage_type");
+    LOG_WARNING("Unoptimized storage access due to storage layout");
+    for (size_type i = 0; i < p_rows; ++i)
+        for (size_type j = 0; i < p_cols; ++j)
+            (*this)(i, j) -= rhs(i, j);
+    return *this;
+}
+
+template <typename T, storage_type storage>
+template <typename function>
+matrix<T, storage> &matrix<T, storage>::apply_func(function func)
+{
+    for (size_type i = 0; i < p_rows * p_cols; ++i)
+        p_vals[i] = func(p_vals[i]);
+    return *this;
+}
 } // namespace la
 #endif
