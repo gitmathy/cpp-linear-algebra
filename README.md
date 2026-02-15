@@ -54,3 +54,20 @@ Timing Report
 -----------------------|---|---------------|-------------------
 | Overall              | 1 |        5.3297 |       N/A        |
 ```
+
+## Matrix and vector, vector with template expressions, matrix without
+
+```
+| description              | # | duration [s]  | avg duration [s] |
+---------------------------|---|---------------|-------------------
+| mat_run_multiple_add     | 1 |       21.9540 |          21.9540 |
+| mat_run_add              | 1 |        8.2352 |           8.2352 |
+| mat_run_assign_add       | 1 |        0.7975 |           0.7975 |
+| vec_run_multiple_add_sub | 1 |        1.3455 |           1.3455 |
+| vec_run_multiple_add     | 1 |        1.3279 |           1.3279 |
+| vec_run_add              | 1 |        1.6720 |           1.6720 |
+| vec_run_assign_add       | 1 |        1.0796 |           1.0796 |
+| init                     | 2 |        4.4303 |           2.2151 |
+---------------------------|---|---------------|-------------------
+| Overall                  | 1 |       42.4324 |       N/A        |
+```
