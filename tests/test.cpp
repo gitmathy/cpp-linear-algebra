@@ -22,6 +22,12 @@
 #include "includes/test_matrix_resize.hpp"
 #include "includes/test_matrix_row_iterator.hpp"
 
+// newly added matrix test headers
+#include "includes/test_matrix_add_sub_assignment.hpp"
+#include "includes/test_matrix_add_sub_ops.hpp"
+#include "includes/test_matrix_copy_assignment.hpp"
+#include "includes/test_matrix_move_assignment.hpp"
+
 #include <iostream>
 #include <memory>
 
@@ -50,6 +56,12 @@ int main()
     tests.transfer(std::make_unique<la_test::matrix_const_iterator_test>());
     tests.transfer(std::make_unique<la_test::matrix_row_iterator_test>());
     tests.transfer(std::make_unique<la_test::matrix_col_iterator_test>());
+
+    // newly added matrix tests
+    tests.transfer(std::make_unique<la_test::matrix_copy_assignment_test>());
+    tests.transfer(std::make_unique<la_test::matrix_move_assignment_test>());
+    tests.transfer(std::make_unique<la_test::matrix_add_sub_assignment_test>());
+    tests.transfer(std::make_unique<la_test::matrix_add_sub_ops_test>());
 
     bool result = tests.run();
     return result ? 0 : 1;
