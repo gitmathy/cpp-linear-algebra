@@ -50,5 +50,5 @@ int main()
 
     int result = tests.run();
 
-    return result ? 0 : 1;
+    return result > 0 ? 1 : 0;
 }
