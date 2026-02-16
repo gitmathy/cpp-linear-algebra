@@ -8,9 +8,20 @@
 #include "includes/matrix.hpp"
 #include "includes/types.hpp"
 #include "includes/vector.hpp"
+#include <algorithm>
+#include <cmath>
+#include <execution>
 
 namespace la
 {
+
+/// ===============================================
+/// N O R M S
+/// ===============================================
+
+/// @brief p-norm of a vector or matrix.
+/// @return ||x||_p
+template <unsigned int p = 2, typename la_type> typename la_type::value_type norm(const la_type &x);
 
 /// ===============================================
 /// A D D I T I O N
@@ -105,6 +116,41 @@ auto operator-(const internal::operant<ExpT> &left, const matrix<T, storage_righ
 /// ===============================================
 /// T E M P L A T E   I M P L E M E N T A T I O N S
 /// ===============================================
+
+// NORMS
+//------
+
+// Some performance improvements for different common norms such as 1-, 2-, and max-norm.
+template <unsigned int p, typename la_type> typename la_type::value_type norm(const la_type &x)
+{
+    typedef typename la_type::value_type T;
+    auto first = x.begin();
+    T result = T(0);
+    if constexpr (p == 1)
+    {
+        result =
+            std::transform_reduce(std::execution::par_unseq, // Parallel and unsequenced execution
+                                  x.begin(), x.end(), 0.0, std::plus<T>(), [](const T val) { return std::abs(val); });
+        return result;
+    }
+    if constexpr (p == 2)
+    {
+        result = std::transform_reduce(std::execution::par_unseq, // Parallel and unsequenced execution
+                                       x.begin(), x.end(), 0.0, std::plus<T>(),
+                                       [](const T val) { return std::abs(val * val); });
+        return std::sqrt(result);
+    }
+    if constexpr (p == UINT_MAX)
+    {
+        for (; first != x.end(); ++first)
+            result = std::max(std::abs(*first), result);
+        return result;
+    }
+    result = std::transform_reduce(std::execution::par_unseq, // Parallel and unsequenced execution
+                                   x.begin(), x.end(), 0.0, std::plus<T>(),
+                                   [](const T val) { return std::pow(std::abs(val), p); });
+    return std::pow(result, 1. / p);
+}
 
 // ADDITION
 //---------
