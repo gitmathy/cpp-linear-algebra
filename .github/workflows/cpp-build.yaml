@@ -12,11 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8    # v6.0.1
-    - name: Building performance with g++
+    - name: Building performance tests with g++ (do not execute them)
       shell: bash
       run: |
-        cd performance || false
-        make -j 3
+        make -j 3 perf
 
   unit_tests:
     runs-on: ubuntu-latest
@@ -25,10 +24,9 @@ jobs:
     - name: Version of g++
       shell: bash
       run: g++ -v
-    - name: Building unit tests with g++
+    - name: Building unit tests with g++ and execute them
       shell: bash
       run: |
-        cd tests || false
-        make -j 3
-        ./build/test
+        make -j 3 unit
+        ./tests/build/unit/unit_tests
 

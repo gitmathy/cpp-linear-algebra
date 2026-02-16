@@ -16,7 +16,5 @@ enum storage_type
     COLUMN_WISE
 };
 
-#define UINT_MAX (unsigned int)(-1)
-
 } // namespace la
 #endif

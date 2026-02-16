@@ -1,42 +1,58 @@
-#ifndef TEST_LA_UNIT_TEST_H
-#define TEST_LA_UNIT_TEST_H
+#ifndef LA_TEST_UNIT_TEST_H
+#define LA_TEST_UNIT_TEST_H
 
-#include "includes/test_log.hpp"
+#include "includes/settings.hpp"
+#include "tests/includes/base_test.hpp"
 #include <list>
 
-namespace la_test
+namespace la
+{
+namespace test
 {
 
 /// @brief A single unit test used as a base class
-class unit_test
+class unit_test : public base_test
 {
 protected:
-    /// @brief Name of the test
-    std::string p_name;
+    /// @brief List of all errors during the test
     std::list<std::string> p_errors;
-    logger &p_logger;
+
+    /// @brief Report an error
+    void report_error(const std::string &what);
 
 public:
     /// @brief Construct a unit test
-    /// @param name Name of the test
-    /// @param log_level log level
-    unit_test(const std::string &name);
-    /// @brief Destruct a unit test
-    virtual ~unit_test() = default;
+    unit_test(const std::string &name) : base_test(name), p_errors() {}
 
-    inline const std::string &name() const { return p_name; }
+    /// @brief Destruct a unit test
+    virtual ~unit_test() {};
 
     /// @brief Setup the test
-    virtual void setup();
-    /// @brief Execute the test
-    /// @return True if the test is fine
-    virtual bool execute() = 0;
-    /// @brief Tear down the test
-    virtual void tear_down();
+    virtual void setup() {};
 
-    const std::list<std::string> &errors() const;
+    /// @brief Tear down the test
+    virtual void tear_down() {};
+
+    /// @brief Get the errors
+    const std::list<std::string> &errors() const { return p_errors; }
+
+    /// @brief True if test has been executed and an error was recorded
+    inline bool failed() const { return !p_errors.empty(); }
 };
 
-} // namespace la_test
+/// @brief Check if all values in a vector or matrix have the same given value
+template <typename la_struct> inline bool check_values(const la_struct &x, const typename la_struct::value_type &value)
+{
+    for (auto it = x.begin(); it != x.end(); ++it)
+    {
+        if ((*it - value) > LA_EPS)
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
+} // namespace test
+} // namespace la
 #endif

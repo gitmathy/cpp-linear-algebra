@@ -1,14 +1,15 @@
-#include "includes/unit_test.hpp"
+#include "tests/includes/unit_test.hpp"
 
-namespace la_test
+namespace la
+{
+namespace test
 {
 
-unit_test::unit_test(const std::string &name) : p_name(name), p_errors(), p_logger(logger::get()) {}
+void unit_test::report_error(const std::string &what)
+{
+    p_errors.push_back(what);
+    log(what, ERROR);
+}
 
-const std::list<std::string> &unit_test::errors() const { return p_errors; }
-
-void unit_test::setup() {}
-
-void unit_test::tear_down() {}
-
-} // namespace la_test
+} // namespace test
+} // namespace la
