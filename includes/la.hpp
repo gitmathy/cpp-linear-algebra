@@ -66,12 +66,10 @@ template <typename T, storage_type storage_right, typename ExpT>
 auto operator+(const internal::operant<ExpT> &left, const matrix<T, storage_right> &right);
 
 /// @brief matrix + scalar
-template <typename T, storage_type storage_left, typename ExpT>
-auto operator+(const matrix<T, storage_left> &left, const T &right);
+template <typename T, storage_type storage_left> auto operator+(const matrix<T, storage_left> &left, const T &right);
 
 /// @brief scalar + matrix
-template <typename T, storage_type storage_right, typename ExpT>
-auto operator+(const T &left, const matrix<T, storage_right> &right);
+template <typename T, storage_type storage_right> auto operator+(const T &left, const matrix<T, storage_right> &right);
 
 /// ===============================================
 /// S U B T R A C T I O N
@@ -259,8 +257,7 @@ auto operator+(const internal::operant<ExpT> &left, const matrix<T, storage_righ
 }
 
 /// @brief matrix + scalar
-template <typename T, storage_type storage_left, typename ExpT>
-auto operator+(const matrix<T, storage_left> &left, const T &right)
+template <typename T, storage_type storage_left> auto operator+(const matrix<T, storage_left> &left, const T &right)
 {
     typedef internal::binary_expression<matrix<T, storage_left>, internal::literal<T>,
                                         internal::add_operation<matrix<T, storage_left>, internal::literal<T>>>
@@ -269,8 +266,7 @@ auto operator+(const matrix<T, storage_left> &left, const T &right)
 }
 
 /// @brief scalar + matrix
-template <typename T, storage_type storage_right, typename ExpT>
-auto operator+(const T &left, const matrix<T, storage_right> &right)
+template <typename T, storage_type storage_right> auto operator+(const T &left, const matrix<T, storage_right> &right)
 {
     typedef internal::binary_expression<internal::literal<T>, matrix<T, storage_right>,
                                         internal::add_operation<internal::literal<T>, matrix<T, storage_right>>>
