@@ -1,61 +1,81 @@
-# Compiler and flags
-CXX := g++-12
-#CXXFLAGS := -Wall -Wextra -pedantic -std=c++23 -O3 -Ofast -I.
-CXXFLAGS := -Wall -Wextra -pedantic -std=c++23 -g -I.
-LDFLAGS :=
+# Tests Makefile moved to repository root — builds two test executables
+# - performance: main = tests/performance_test.cpp, built with -O3 -Ofast
+# - unit:        main = tests/unit_tests.cpp, built with -g
 
-# Directories
-SRC_DIR := src
-INC_DIR := includes
-BUILD_DIR := builds
+CXX ?= g++-12
 
-# Find all .cpp files under $(SRC_DIR) (recursive) and include top-level main.cpp if present
-SOURCES := $(shell test -f main.cpp && echo main.cpp || true) $(shell find $(SRC_DIR) -name '*.cpp' 2>/dev/null)
+# Compiler flags (exactly as requested)
+PERF_CXXFLAGS := -Wall -Wextra -pedantic -std=c++23 -O3 -Ofast -I. -MMD -MP
+UNIT_CXXFLAGS := -Wall -Wextra -pedantic -std=c++23 -g -I. -MMD -MP
 
-# Map source files to object files inside $(BUILD_DIR)
-OBJECTS := $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
+SRC_DIR := tests/src
+PERF_TEST_DIR := $(SRC_DIR)/performance_tests
+UNIT_TEST_DIR := $(SRC_DIR)/unit_tests
+BUILD_DIR := tests/build
+PERF_BUILD := $(BUILD_DIR)/perf
+UNIT_BUILD := $(BUILD_DIR)/unit
 
-# If no sources found, warn and stop early
-ifeq ($(strip $(SOURCES)),)
-$(error No source files found in $(SRC_DIR) and no top-level main.cpp present)
-endif
-TARGET := test
-TARGET_PATH := $(BUILD_DIR)/$(TARGET)
+PERF_MAIN := tests/performance_test.cpp
+UNIT_MAIN := tests/unit_tests.cpp
 
-# Default target
-all: $(TARGET_PATH)
+# Source lists
+COMMON_SRCS := $(wildcard $(SRC_DIR)/*.cpp)
+PERF_SRCS := $(wildcard $(PERF_TEST_DIR)/*.cpp)
+UNIT_SRCS := $(wildcard $(UNIT_TEST_DIR)/*.cpp)
 
-# Build executable placed in $(BUILD_DIR)
-$(TARGET_PATH): $(OBJECTS)
+# Object files — separate directories so objects are compiled with different flags
+# Map `tests/<path>.cpp` -> `tests/build/<perf|unit>/<path>.o` so pattern rules can use tests/%.cpp
+PERF_OBJS := $(patsubst tests/%.cpp,$(PERF_BUILD)/%.o,$(COMMON_SRCS) $(PERF_SRCS) $(PERF_MAIN))
+UNIT_OBJS := $(patsubst tests/%.cpp,$(UNIT_BUILD)/%.o,$(COMMON_SRCS) $(UNIT_SRCS) $(UNIT_MAIN))
+
+PERF_TARGET := $(PERF_BUILD)/performance_test
+UNIT_TARGET := $(UNIT_BUILD)/unit_tests
+
+# Auto-generated dependency files (created by -MMD)
+DEPS := $(PERF_OBJS:.o=.d) $(UNIT_OBJS:.o=.d)
+-include $(DEPS)
+
+.PHONY: all perf unit run-perf run-unit deps clean
+
+# Default: build both executables
+all: perf unit
+
+# Per-target shortcuts
+perf: $(PERF_TARGET)
+unit: $(UNIT_TARGET)
+
+# Link rules - each executable links the objects compiled with the matching flags
+$(PERF_TARGET): $(PERF_OBJS)
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CXX) $(PERF_CXXFLAGS) -o $@ $^
 
-# Compile source files to object files under $(BUILD_DIR), preserving directory structure
-# Example: src/foo/bar.cpp -> builds/src/foo/bar.o
-$(BUILD_DIR)/%.o: %.cpp
+$(UNIT_TARGET): $(UNIT_OBJS)
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
+	$(CXX) $(UNIT_CXXFLAGS) -o $@ $^
 
-# Convenience target to build the named target (keeps backward compatibility)
-$(TARGET):
-	@$(MAKE) $(TARGET_PATH)
+# Compilation rules (preserve source sub-path under tests/)
+# target: tests/build/<perf|unit>/% .o -> source: tests/%.cpp
+$(PERF_BUILD)/%.o: tests/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(PERF_CXXFLAGS) -c $< -o $@
 
-# Clean build artifacts
+$(UNIT_BUILD)/%.o: tests/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(UNIT_CXXFLAGS) -c $< -o $@
+
+# Run targets
+run-perf: $(PERF_TARGET)
+	@echo "Running performance tests..."
+	@$(PERF_TARGET)
+
+run-unit: $(UNIT_TARGET)
+	@echo "Running unit tests..."
+	@$(UNIT_TARGET)
+
+# Build dependency files (will compile object files and thereby generate .d files)
+deps: $(DEPS)
+	@echo "Dependencies updated"
+
+# Clean everything
 clean:
 	rm -rf $(BUILD_DIR)
-
-# Format all C++ files (recursive)
-format:
-	clang-format -i $(shell find $(SRC_DIR) -name '*.cpp' -or -name '*.cc' 2>/dev/null) \
-		$(shell find $(INC_DIR) -name '*.h' -or -name '*.hpp' 2>/dev/null)
-
-# Phony targets
-.PHONY: all clean format help $(TARGET)
-
-# Help target
-help:
-	@echo "Available targets:"
-	@echo "  all    - Build the $(TARGET) executable (default -> $(TARGET_PATH))"
-	@echo "  clean  - Remove the $(BUILD_DIR) directory"
-	@echo "  format - Format all C++ source and header files under $(SRC_DIR) / $(INC_DIR)"
-	@echo "  help   - Show this help message"

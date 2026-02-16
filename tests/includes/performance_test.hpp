@@ -52,7 +52,7 @@ public:
     int execute();
 
     /// @brief Get total execution time
-    duration_type total_time() const { return std::accumulate(p_timings.begin(), p_timings.end()); }
+    duration_type total_time() const { return std::accumulate(p_timings.begin(), p_timings.end(), duration_type()); }
 
     /// @brief Get average execution time
     duration_type average_time() const { return total_time() / executions(); }
@@ -66,7 +66,7 @@ template <typename T> inline double get_random() { return T((std::rand() / (T)RA
 /// @brief Initialize x with random values
 template <typename la_struct> inline void init(la_struct &x)
 {
-    for (auto it = x.begin(); it != x.end(); ++i)
+    for (auto it = x.begin(); it != x.end(); ++it)
     {
         *it = get_random<typename la_struct::value_type>();
     }
@@ -76,24 +76,45 @@ template <typename la_struct> inline void init(la_struct &x)
 class vector_performance_test : public performance_test
 {
 protected:
+    /// @brief Number of rows for the vector, i.e., size
+    size_type p_rows;
+
     /// @brief Vectors used for performance tests
-    la::vector<double> p_a, p_b;
+    la::vector<double> p_a, p_b, p_c;
 
 public:
-    /// @brief Initialize p_a and p_b
-    vector_performance_test(const std::string &name, const size_type runs, const size_type dim);
+    /// @brief Setup the test
+    vector_performance_test(const std::string &name, const size_type runs, const size_type rows);
+
+    /// @brief Allocate memory
+    void setup() override;
+
+    /// @brief Free memory
+    void tear_down() override;
 };
 
 /// @brief Base class for all matrix performance tests
 class matrix_performance_test : public performance_test
 {
 protected:
+    /// @brief matrix rows for testing
+    size_type p_rows;
+
+    /// @brief matrix columns for testing
+    size_type p_cols;
+
     /// @brief Vectors used for performance tests
-    la::matrix<double> p_a, p_b;
+    la::matrix<double> p_a, p_b, p_c;
 
 public:
     /// @brief Initialize p_a and p_b
-    matrix_performance_test(const std::string &name, const size_type runs, const size_type dim);
+    matrix_performance_test(const std::string &name, const size_type runs, const size_type m, const size_type n);
+
+    /// @brief Allocate memory
+    void setup() override;
+
+    /// @brief Free memory
+    void tear_down() override;
 };
 
 } // namespace test

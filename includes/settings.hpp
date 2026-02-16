@@ -41,5 +41,11 @@ namespace la
 /// @brief Where to write errors and logs
 #define LA_LOG_STREAM std::cout
 
+/// @brief Maximal unsinged integer
+#define LA_UINT_MAX (unsigned int)(-1)
+
+/// @brief smallest number (used for tests to zero)
+#define LA_EPS double(1e-12)
+
 } // namespace la
 #endif

@@ -2,7 +2,9 @@
 #include <memory>
 
 // Include the tests
+#include "tests/includes/performance_tests/add.hpp"
 #include "tests/includes/performance_tests/assign.hpp"
+#include "tests/includes/performance_tests/resize.hpp"
 
 using namespace la;
 using namespace la::test;
@@ -15,9 +17,19 @@ const size_type RUNS = 10;
 int main()
 {
     logger::get().set_level(DEBUG);
-    performance_test_collection tests();
+    performance_test_collection tests;
 
-    tests.transfer("vector", std::make_unique<vector_assign_add>(N, RUNS));
+    tests.transfer("vector", std::make_unique<vector_resize>(RUNS, VECTOR_N));
+    tests.transfer("vector", std::make_unique<vector_assign_add>(RUNS, VECTOR_N));
+    tests.transfer("vector", std::make_unique<vector_add>(RUNS, VECTOR_N));
+    tests.transfer("vector", std::make_unique<vector_multiple_add>(RUNS, VECTOR_N));
+    tests.transfer("vector", std::make_unique<vector_mixed_add_sub>(RUNS, VECTOR_N));
+
+    tests.transfer("vector", std::make_unique<matrix_resize>(RUNS, MATRIX_M, MATRIX_N));
+    tests.transfer("vector", std::make_unique<matrix_assign_add>(RUNS, MATRIX_M, MATRIX_N));
+    tests.transfer("vector", std::make_unique<matrix_add>(RUNS, MATRIX_M, MATRIX_N));
+    tests.transfer("vector", std::make_unique<matrix_multiple_add>(RUNS, MATRIX_M, MATRIX_N));
+    tests.transfer("vector", std::make_unique<matrix_mixed_add_sub>(RUNS, MATRIX_M, MATRIX_N));
     int result = tests.run();
 
     return result ? 0 : 1;

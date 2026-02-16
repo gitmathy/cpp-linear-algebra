@@ -2,7 +2,6 @@
 #include "tests/includes/performance_test.hpp"
 #include "tests/includes/unit_test.hpp"
 #include <iomanip>
-#include <ranges>
 #include <sstream>
 
 namespace la
@@ -46,40 +45,42 @@ int test_collection::run(const std::string &label_filter)
     strs << "    TESTING: " << p_name << '\n';
     strs << "Label          : " << label_filter << '\n';
     strs << "Number of tests: " << numer_of_tests(label_filter) << '\n';
-    strs << "================================================================================\n\n";
+    strs << "================================================================================\n";
     log(strs, INFO);
 
     int result = 0, failed_tests = 0, test_result, performed_tests = 0;
-    for (auto &labeled :
-         p_tests | std::views::filter([&](auto item) { return label_filter == "all" || item.first == label_filter; }))
+    for (auto &labeled : p_tests)
     {
-        for (auto &test : labeled.second)
+        if (label_filter == "all" || labeled.first == label_filter)
         {
-            strs << "--------- Test " << test->name() << " (" << labeled.first << ")\n";
-            log(strs, INFO);
-            strs << "Setup test: " << test->name() << '\n';
-            log(strs, DEBUG);
-            test->setup();
-            strs << "Execute test: " << test->name() << '\n';
-            log(strs, DEBUG);
-            test_result = test->execute();
-            ++performed_tests;
-            failed_tests += test_result > 0 ? 1 : 0;
-            result += test_result;
-            strs << "Tear down test: " << test->name() << '\n';
-            log(strs, DEBUG);
-            test->tear_down();
+            for (auto &test : labeled.second)
+            {
+                strs << "--------- Test " << test->name() << " (" << labeled.first << ")  ---------";
+                log(strs, INFO);
+                strs << "Setup test: " << test->name();
+                log(strs, DEBUG);
+                test->setup();
+                strs << "Execute test: " << test->name();
+                log(strs, DEBUG);
+                test_result = test->execute();
+                ++performed_tests;
+                failed_tests += test_result > 0 ? 1 : 0;
+                result += test_result;
+                strs << "Tear down test: " << test->name();
+                log(strs, DEBUG);
+                test->tear_down();
+            }
         }
     }
 
     report(label_filter);
 
-    strs << "================================================================================\n";
+    strs << "\n================================================================================\n";
     strs << "    SUMMARY: " << p_name << '\n';
     strs << "Performed tests  : " << performed_tests << '\n';
-    strs << "Total test result:" << result << '\n';
-    strs << "Failed tests     :" << failed_tests << '\n';
-    strs << "================================================================================\n\n";
+    strs << "Total test result: " << result << '\n';
+    strs << "Failed tests     : " << failed_tests << '\n';
+    strs << "================================================================================\n";
     log(strs, INFO);
     return result;
 }
@@ -87,37 +88,54 @@ int test_collection::run(const std::string &label_filter)
 void unit_test_collection::report(const std::string &label_filter)
 {
     std::stringstream strs;
-    for (auto &labeled :
-         p_tests | std::views::filter([&](auto item) { return label_filter == "all" || item.first == label_filter; }))
+    strs << "\n----------------------------------------\n";
+    strs << "    ERROR REPORT: " << p_name << '\n';
+    strs << "----------------------------------------";
+    this->log(strs, INFO);
+
+    for (auto &labeled : p_tests)
     {
-        for (auto &test : labeled.second)
+        if (label_filter == "all" || labeled.first == label_filter)
         {
-            const unit_test *const unit_test_p = dynamic_cast<unit_test *>(test.get());
-            if (unit_test_p->failed())
+            for (auto &test : labeled.second)
             {
-                for (auto &error : unit_test_p->errors())
+                const unit_test *const unit_test_p = dynamic_cast<unit_test *>(test.get());
+                if (unit_test_p->failed())
                 {
-                    strs << "* [" << test->name() << "]: " << error << '\n';
+                    for (auto &error : unit_test_p->errors())
+                    {
+                        strs << "* [" << test->name() << "]: " << error << '\n';
+                    }
+                    this->log(strs, INFO);
                 }
-                this->log(strs, INFO);
             }
         }
     }
+    this->log("----------------------------------------\n", INFO);
 }
 
 void performance_test_collection::report(const std::string &label_filter)
 {
     std::stringstream strs;
-    for (auto &labeled :
-         p_tests | std::views::filter([&](auto item) { return label_filter == "all" || item.first == label_filter; }))
+    strs << "\n----------------------------------------\n";
+    strs << "    REPORT: " << p_name << '\n';
+    strs << "----------------------------------------";
+    this->log(strs, INFO);
+    for (auto &labeled : p_tests)
     {
-        for (auto &test : labeled.second)
+        if (label_filter == "all" || labeled.first == label_filter)
         {
-            const performance_test *const perf_test_p = dynamic_cast<performance_test *>(test.get());
-            strs << "* [" << test->name() << "] (# " << perf_test_p->executions() << "): total " << std::setprecision(4)
-                 << perf_test_p->total_time() << "s, average " << perf_test_p->average_time() << "s\n";
+            for (auto &test : labeled.second)
+            {
+                const performance_test *const perf_test_p = dynamic_cast<performance_test *>(test.get());
+                strs << "* [" << test->name() << "] # " << perf_test_p->executions() << ": total "
+                     << std::setprecision(4) << perf_test_p->total_time().count() << "s, average "
+                     << perf_test_p->average_time().count() << 's';
+                this->log(strs, INFO);
+            }
         }
     }
+    this->log("----------------------------------------", INFO);
 }
 
 } // namespace test

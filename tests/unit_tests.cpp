@@ -9,7 +9,7 @@ using namespace la::test;
 int main()
 {
     logger::get().set_level(DEBUG);
-    unit_test_collection tests();
+    unit_test_collection tests;
 
     tests.transfer("vector", std::make_unique<vector_resize_test>());
     int result = tests.run();

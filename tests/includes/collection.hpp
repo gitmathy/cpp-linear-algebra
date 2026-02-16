@@ -59,7 +59,7 @@ class unit_test_collection : public test_collection
 {
 private:
     /// @brief Report all errors
-    void report(const std::string &label_filter);
+    void report(const std::string &label_filter) override;
 
 public:
     /// @brief Constructor
@@ -74,7 +74,7 @@ class performance_test_collection : public test_collection
 {
 private:
     /// @brief Report all timings
-    void report(const std::string &label_filter);
+    void report(const std::string &label_filter) override;
 
 public:
     /// @brief Constructor

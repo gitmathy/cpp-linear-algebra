@@ -1,6 +1,8 @@
 #ifndef LA_TEST_UNIT_TEST_MAT_VECTOR_RESIZE_H
 #define LA_TEST_UNIT_TEST_MAT_VECTOR_RESIZE_H
 
+#include "includes/settings.hpp"
+#include "includes/types.hpp"
 #include "tests/includes/unit_test.hpp"
 #include <list>
 #include <string>
@@ -15,7 +17,7 @@ template <typename la_struct> inline bool check_values(const la_struct &x, const
 {
     for (auto it = x.begin(); it != x.end(); ++it)
     {
-        if ((*it - value) < LA_EPS)
+        if ((*it - value) > LA_EPS)
         {
             return false;
         }
@@ -32,7 +34,7 @@ public:
     vector_resize_test() : unit_test("resize vectors") {}
 
     /// @brief Run the test
-    int execute() = 0;
+    int execute();
 };
 
 /// @brief Test resizing of matrices
@@ -44,7 +46,7 @@ public:
     matrix_resize_test() : unit_test("resize matrices") {}
 
     /// @brief Run the test
-    int execute() = 0;
+    int execute();
 };
 
 } // namespace test

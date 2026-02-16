@@ -6,6 +6,7 @@
 #include "includes/internal/operant.hpp"
 #include "includes/internal/operations.hpp"
 #include "includes/matrix.hpp"
+#include "includes/settings.hpp"
 #include "includes/types.hpp"
 #include "includes/vector.hpp"
 #include <algorithm>
@@ -140,7 +141,7 @@ template <unsigned int p, typename la_type> typename la_type::value_type norm(co
                                        [](const T val) { return std::abs(val * val); });
         return std::sqrt(result);
     }
-    if constexpr (p == UINT_MAX)
+    if constexpr (p == LA_UINT_MAX)
     {
         for (; first != x.end(); ++first)
             result = std::max(std::abs(*first), result);

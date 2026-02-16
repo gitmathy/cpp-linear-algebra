@@ -1,10 +1,12 @@
-#include "includes/timing.hpp"
+#include "tests/includes/timing.hpp"
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 
-namespace la_perf
+namespace la
+{
+namespace test
 {
 
 /// ===============================================
@@ -124,4 +126,5 @@ void time_report::report()
     std::cout << stringstr.str() << std::endl;
 }
 
-} // namespace la_perf
+} // namespace test
+} // namespace la
