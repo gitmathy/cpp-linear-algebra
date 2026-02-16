@@ -1,6 +1,19 @@
 # cpp-linear-algebra
 Basic linear algebra
 
+## Features
+
+### Computing norms of vectors and matrices
+
+```cpp
+#include "includes/la.hpp"
+
+la::vector<double> v(2);
+double norm_2 = la::norm(v);    // Same a sla::norm<2>(v)
+double norm_1 = la::norm<1>(v);
+double norm_max = la::norm<UINT_MAX>(v);
+```
+
 ## Timing reference:
 
 ### Without template expression
@@ -90,6 +103,3 @@ Timing Report
 ---------------------------|---|---------------|-------------------
 | Overall                  | 1 |       16.7358 |       N/A        |
 ```
-
-## Todo
-* [ ] Do we need dedicated vector and matrix operants?

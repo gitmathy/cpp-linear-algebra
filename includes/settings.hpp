@@ -7,7 +7,7 @@ namespace la
 /// @brief Check shapes
 #define LA_CHECK_SHAPE_C 1
 
-/// @brief Check boundaries. This has a big impackt on performance
+/// @brief Check boundaries. This has a big impact on performance
 #define LA_CHECK_BOUNDARY_C 2
 
 /// @brief Layout check, i.e., matrix row-wise or column-wise
@@ -33,10 +33,10 @@ namespace la
 #define LA_DEBUG_TRACE_C 10
 
 /// @brief Log everything
-#define LA_DEBUG_LEVEL 10
+// #define LA_DEBUG_LEVEL 10
 
 // /// @brief Log nothing
-// #define LA_DEBUG_LEVEL 0
+#define LA_DEBUG_LEVEL 0
 
 /// @brief Where to write errors and logs
 #define LA_LOG_STREAM std::cout
