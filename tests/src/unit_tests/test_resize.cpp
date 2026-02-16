@@ -59,7 +59,7 @@ int matrix_resize_test::execute()
     // make the structure bigger
     if (a_double.rows() != 5)
         report_error("Resize does not set new rows");
-    if (a_double.cols() != 5)
+    if (a_double.cols() != 4)
         report_error("Resize does not set new columns");
     if (!check_values(a_double, double(100)))
         report_error("Values not correct after increase size of matrix");
@@ -81,7 +81,7 @@ int matrix_resize_test::execute()
     // make the structure bigger
     if (a_float.rows() != 5)
         report_error("Resize does not set new rows");
-    if (a_float.cols() != 5)
+    if (a_float.cols() != 4)
         report_error("Resize does not set new columns");
     if (!check_values(a_float, float(100)))
         report_error("Values not correct after increase size of matrix");

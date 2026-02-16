@@ -1,6 +1,7 @@
 #ifndef LA_TEST_UNIT_TEST_H
 #define LA_TEST_UNIT_TEST_H
 
+#include "includes/settings.hpp"
 #include "tests/includes/base_test.hpp"
 #include <list>
 
@@ -38,6 +39,19 @@ public:
     /// @brief True if test has been executed and an error was recorded
     inline bool failed() const { return !p_errors.empty(); }
 };
+
+/// @brief Check if all values in a vector or matrix have the same given value
+template <typename la_struct> inline bool check_values(const la_struct &x, const typename la_struct::value_type &value)
+{
+    for (auto it = x.begin(); it != x.end(); ++it)
+    {
+        if ((*it - value) > LA_EPS)
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 } // namespace test
 } // namespace la

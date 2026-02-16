@@ -111,7 +111,7 @@ void unit_test_collection::report(const std::string &label_filter)
             }
         }
     }
-    this->log("----------------------------------------\n", INFO);
+    this->log("----------------------------------------", INFO);
 }
 
 void performance_test_collection::report(const std::string &label_filter)
