@@ -1,7 +1,9 @@
-#include "includes/test_log.hpp"
+#include "tests/includes/log.hpp"
 #include <iostream>
 
-namespace la_test
+namespace la
+{
+namespace test
 {
 
 logger *logger::p_instance = nullptr;
@@ -21,7 +23,7 @@ void logger::set_level(const TestLogLevel &level) { p_level = level; }
 
 void logger::log(const std::string &what, const TestLogLevel &level)
 {
-    if (level >= p_level)
+    if (level <= p_level)
     {
         std::cout << what << std::endl;
     }
@@ -31,6 +33,8 @@ void logger::log(std::stringstream &what, const TestLogLevel &level)
 {
     log(what.str(), level);
     what.str("");
+    what.clear();
 }
 
-} // namespace la_test
+} // namespace test
+} // namespace la

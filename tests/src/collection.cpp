@@ -1,47 +1,124 @@
-#include "includes/test_collection.hpp"
+#include "tests/includes/collection.hpp"
+#include "tests/includes/performance_test.hpp"
+#include "tests/includes/unit_test.hpp"
+#include <iomanip>
+#include <ranges>
 #include <sstream>
 
-namespace la_test
+namespace la
+{
+namespace test
 {
 
-test_collection::test_collection() : p_logger(logger::get()) {}
-
-void test_collection::transfer(std::unique_ptr<unit_test> new_test)
+size_type test_collection::numer_of_tests(const std::string &label) const
 {
-    if (new_test)
+    size_type number = 0;
+    if (label == "all")
     {
-        p_tests.push_back(std::move(new_test));
+        for (auto &n : p_tests)
+        {
+            number += n.second.size();
+        }
+        return number;
     }
+    auto fit = p_tests.find(label);
+    return fit == p_tests.end() ? 0 : fit->second.size();
 }
 
-bool test_collection::run()
+void test_collection::transfer(const std::string &label, std::unique_ptr<base_test> new_test)
 {
-
-    std::stringstream strs;
-    strs << "Running test collection with " << p_tests.size() << " tests\n" << "===========================";
-    p_logger.log(strs, INFO);
-    bool result = true;
-    int failed_results = 0;
-    for (auto it = p_tests.begin(); it != p_tests.end(); ++it)
+    if (new_test == nullptr)
+        return;
+    auto fit = p_tests.find(label);
+    if (fit == p_tests.end())
     {
-        strs << "--------- Test " << (*it)->name() << "-----\n";
-        strs << "* Setup test: " << (*it)->name();
-        p_logger.log(strs, INFO);
-        (*it)->setup();
-        strs << "* Execute test: " << (*it)->name();
-        p_logger.log(strs, INFO);
-        result = (*it)->execute() && result;
-        if (!result)
-        {
-            ++failed_results;
-        }
-        strs << "* Tear down test: " << (*it)->name() << '\n';
-        p_logger.log(strs, INFO);
-        (*it)->tear_down();
+        // the label does not exists so far, so create the label
+        p_tests.emplace(std::make_pair(label, std::list<std::unique_ptr<base_test>>()));
     }
-    strs << "==========\n" << "FAILED results: " << failed_results << std::endl;
-    p_logger.log(strs, INFO);
+
+    p_tests[label].push_back(std::move(new_test));
+}
+
+int test_collection::run(const std::string &label_filter)
+{
+    std::stringstream strs;
+    strs << "================================================================================\n";
+    strs << "    TESTING: " << p_name << '\n';
+    strs << "Label          : " << label_filter << '\n';
+    strs << "Number of tests: " << numer_of_tests(label_filter) << '\n';
+    strs << "================================================================================\n\n";
+    log(strs, INFO);
+
+    int result = 0, failed_tests = 0, test_result, performed_tests = 0;
+    for (auto &labeled :
+         p_tests | std::views::filter([&](auto item) { return label_filter == "all" || item.first == label_filter; }))
+    {
+        for (auto &test : labeled.second)
+        {
+            strs << "--------- Test " << test->name() << " (" << labeled.first << ")\n";
+            log(strs, INFO);
+            strs << "Setup test: " << test->name() << '\n';
+            log(strs, DEBUG);
+            test->setup();
+            strs << "Execute test: " << test->name() << '\n';
+            log(strs, DEBUG);
+            test_result = test->execute();
+            ++performed_tests;
+            failed_tests += test_result > 0 ? 1 : 0;
+            result += test_result;
+            strs << "Tear down test: " << test->name() << '\n';
+            log(strs, DEBUG);
+            test->tear_down();
+        }
+    }
+
+    report(label_filter);
+
+    strs << "================================================================================\n";
+    strs << "    SUMMARY: " << p_name << '\n';
+    strs << "Performed tests  : " << performed_tests << '\n';
+    strs << "Total test result:" << result << '\n';
+    strs << "Failed tests     :" << failed_tests << '\n';
+    strs << "================================================================================\n\n";
+    log(strs, INFO);
     return result;
 }
 
-} // namespace la_test
+void unit_test_collection::report(const std::string &label_filter)
+{
+    std::stringstream strs;
+    for (auto &labeled :
+         p_tests | std::views::filter([&](auto item) { return label_filter == "all" || item.first == label_filter; }))
+    {
+        for (auto &test : labeled.second)
+        {
+            const unit_test *const unit_test_p = dynamic_cast<unit_test *>(test.get());
+            if (unit_test_p->failed())
+            {
+                for (auto &error : unit_test_p->errors())
+                {
+                    strs << "* [" << test->name() << "]: " << error << '\n';
+                }
+                this->log(strs, INFO);
+            }
+        }
+    }
+}
+
+void performance_test_collection::report(const std::string &label_filter)
+{
+    std::stringstream strs;
+    for (auto &labeled :
+         p_tests | std::views::filter([&](auto item) { return label_filter == "all" || item.first == label_filter; }))
+    {
+        for (auto &test : labeled.second)
+        {
+            const performance_test *const perf_test_p = dynamic_cast<performance_test *>(test.get());
+            strs << "* [" << test->name() << "] (# " << perf_test_p->executions() << "): total " << std::setprecision(4)
+                 << perf_test_p->total_time() << "s, average " << perf_test_p->average_time() << "s\n";
+        }
+    }
+}
+
+} // namespace test
+} // namespace la

@@ -1,11 +1,13 @@
-#ifndef TEST_LA_PERF_TIMING_H
-#define TEST_LA_PERF_TIMING_H
+#ifndef LA_TEST_TIMING_H
+#define LA_TEST_TIMING_H
 
 #include <chrono>
 #include <string>
 #include <unordered_map>
 
-namespace la_perf
+namespace la
+{
+namespace test
 {
 
 typedef std::chrono::duration<double> duration_type;
@@ -33,6 +35,7 @@ class timer
 private:
     /// @brief Start time of the timing
     std::chrono::time_point<std::chrono::steady_clock> p_start;
+
     /// @brief End of time taking, equals nullptr when not stopped
     std::chrono::time_point<std::chrono::steady_clock> *p_end;
 
@@ -117,6 +120,7 @@ public:
 
 #define TIME_ME la_perf::scope_timer __my_function_timer__ = la_perf::scope_timer(__func__)
 
-} // namespace la_perf
+} // namespace test
+} // namespace la
 
 #endif

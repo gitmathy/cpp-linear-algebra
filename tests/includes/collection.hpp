@@ -1,37 +1,89 @@
-#ifndef TEST_LA_TEST_COLLECTION_H
-#define TEST_LA_TEST_COLLECTION_H
+#ifndef LA_TEST_TEST_COLLECTION_H
+#define LA_TEST_TEST_COLLECTION_H
 
-#include "includes/test_log.hpp"
-#include "includes/unit_test.hpp"
+#include "includes/types.hpp"
+#include "tests/includes/base_test.hpp"
+#include "tests/includes/log.hpp"
 #include <list>
 #include <memory>
+#include <string>
+#include <unordered_map>
 
-namespace la_test
+namespace la
+{
+namespace test
 {
 
-/// @brief Handling a collection of unit tests
+/// @brief Base class for all test collections
 class test_collection
 {
-private:
-    /// @brief All tests
-    std::list<std::unique_ptr<unit_test>> p_tests;
+protected:
+    /// @brief Name of the collection
+    std::string p_name;
+
+    /// @brief All tests are stored by a label and all the tests of the label
+    std::unordered_map<std::string, std::list<std::unique_ptr<base_test>>> p_tests;
 
     /// @brief Logger used for logging
     logger &p_logger;
 
-public:
-    test_collection();
-    ~test_collection() = default;
+    /// @brief Get the total number of tests
+    size_type numer_of_tests(const std::string &label) const;
 
-    /// @brief Move the unit test to the collection
-    /// @param new_test The new unit test
-    void transfer(std::unique_ptr<unit_test> new_test);
+    /// @brief Wrapping calls to the logger
+    void log(const std::string &what, const TestLogLevel &level) { p_logger.log(what, level); }
+
+    /// @brief Wrapping calls to the logger
+    void log(std::stringstream &what, const TestLogLevel &level) { p_logger.log(what, level); }
+
+    /// @brief Specialized reportings
+    virtual void report(const std::string &label_filter) = 0;
+
+public:
+    /// @brief Setup a test collection with a given name
+    test_collection(const std::string &name) : p_name(name), p_tests(), p_logger(logger::get()) {}
+
+    /// @brief Default destructor
+    virtual ~test_collection() = default;
+
+    /// @brief Move a test to the collection
+    void transfer(const std::string &label, std::unique_ptr<base_test> new_test);
 
     /// @brief Execute all tests
-    /// @return True if all tests ran fine
-    bool run();
+    /// @return Sum of all single executions
+    int run(const std::string &label_filter = "all");
 };
 
-} // namespace la_test
+/// @brief Dedicated class for collection of unit tests
+class unit_test_collection : public test_collection
+{
+private:
+    /// @brief Report all errors
+    void report(const std::string &label_filter);
 
+public:
+    /// @brief Constructor
+    unit_test_collection() : test_collection("unit tests") {}
+
+    /// @brief Default destructor
+    ~unit_test_collection() = default;
+};
+
+/// @brief Dedicated class for collection of performance tests
+class performance_test_collection : public test_collection
+{
+private:
+    /// @brief Report all timings
+    void report(const std::string &label_filter);
+
+public:
+    /// @brief Constructor
+    performance_test_collection() : test_collection("performance tests") {}
+
+    /// @brief Default destructor
+    ~performance_test_collection() = default;
+};
+
+} // namespace test
+} // namespace la
 #endif

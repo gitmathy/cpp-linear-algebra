@@ -1,19 +1,21 @@
-#ifndef TEST_LA_TEST_LOG_H
-#define TEST_LA_TEST_LOG_H
+#ifndef LA_TEST_LOG_H
+#define LA_TEST_LOG_H
 
 #include <sstream>
 #include <string>
 
-namespace la_test
+namespace la
+{
+namespace test
 {
 
 /// @brief Log level of test execution
 enum TestLogLevel
 {
-    DEBUG = 0,
-    INFO = 1,
-    WARNING = 2,
-    ERROR = 3
+    ERROR = 0,
+    WARNING = 1,
+    INFO = 2,
+    DEBUG = 3,
 };
 
 const TestLogLevel DEFAULT_LOG_LEVEL = DEBUG;
@@ -24,6 +26,7 @@ class logger
 private:
     /// @brief Implementing singleton pattern
     static logger *p_instance;
+
     /// @brief Level of logging
     TestLogLevel p_level;
 
@@ -54,5 +57,6 @@ public:
     void log(std::stringstream &what, const TestLogLevel &level);
 };
 
-} // namespace la_test
+} // namespace test
+} // namespace la
 #endif

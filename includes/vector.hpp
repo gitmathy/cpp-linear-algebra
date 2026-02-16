@@ -34,8 +34,12 @@ private:
     void allocate(size_type n);
 
 public:
-    /// @brief Construct a vector of given size, initialize elements with 0
-    explicit vector(size_type n);
+    /// @brief Construct a vector of zero size
+    explicit vector() : p_vals(nullptr), p_size(0) {}
+
+    /// @brief Construct a vector of given size, initialize elements with 0 (parameter m for alignment with matrix, but
+    /// is ignored)
+    explicit vector(size_type n, size_type m = 0);
 
     /// @brief Constructing a vector with default values
     /// @param n Size of the vector
@@ -130,7 +134,7 @@ template <typename T> void vector<T>::allocate(size_type n)
     p_size = n;
 }
 
-template <typename T> vector<T>::vector(size_type n) : p_vals(nullptr), p_size(0)
+template <typename T> vector<T>::vector(size_type n, size_type) : p_vals(nullptr), p_size(0)
 {
     allocate(n);
     for (size_type i = 0; i < n; ++i)

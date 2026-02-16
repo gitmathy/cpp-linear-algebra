@@ -16,7 +16,11 @@ enum storage_type
     COLUMN_WISE
 };
 
+/// @brief Maximal unsinged integer
 #define UINT_MAX (unsigned int)(-1)
+
+/// @brief smallest number (used for tests to zero)
+#define LA_EPS 1e-12;
 
 } // namespace la
 #endif
