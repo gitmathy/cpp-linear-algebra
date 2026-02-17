@@ -38,5 +38,5 @@ jobs:
       shell: bash
       run: |
         make -j 3 unit
-        ./tests/build/unit/unit_tests
+        ./builds/unit/unit_tests
 
