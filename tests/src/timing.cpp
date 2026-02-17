@@ -13,6 +13,14 @@ namespace test
 /// T I M E R
 /// ===============================================
 
+timer::~timer()
+{
+    if (p_end != nullptr)
+    {
+        delete p_end;
+    }
+}
+
 void timer::restart()
 {
     if (p_end != nullptr)
@@ -20,14 +28,14 @@ void timer::restart()
         delete p_end;
         p_end = nullptr;
     }
-    p_start = std::chrono::steady_clock::now();
+    p_start = std::chrono::high_resolution_clock::now();
 }
 
 duration_type timer::stop()
 {
     if (p_end == nullptr)
-        p_end = new std::chrono::time_point<std::chrono::steady_clock>;
-    *p_end = std::chrono::steady_clock::now();
+        p_end = new std::chrono::time_point<std::chrono::high_resolution_clock>;
+    *p_end = std::chrono::high_resolution_clock::now();
     return *p_end - p_start;
 }
 
