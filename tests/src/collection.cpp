@@ -114,11 +114,22 @@ void unit_test_collection::report(const std::string &label_filter)
     this->log("----------------------------------------", INFO);
 }
 
+performance_test_collection::performance_test_collection(const size_type runs, const size_type vec_n,
+                                                         const size_type mat_m, const size_type mat_n)
+    : test_collection("performance tests"), p_runs(runs), p_vector_size(vec_n), p_matrix_rows(mat_m),
+      p_matrix_cols(mat_n)
+{
+}
+
 void performance_test_collection::report(const std::string &label_filter)
 {
     std::stringstream strs;
     strs << "\n----------------------------------------\n";
-    strs << "    REPORT: " << p_name << '\n';
+    strs << "    REPORT: " << p_name << "\n\n";
+    strs << "# runs:      " << p_runs << '\n'
+         << "vector size: " << p_vector_size << '\n'
+         << "matrix rows: " << p_matrix_rows << '\n'
+         << "matrix cols: " << p_matrix_cols << '\n';
     strs << "----------------------------------------";
     this->log(strs, INFO);
     for (auto &labeled : p_tests)
@@ -127,9 +138,11 @@ void performance_test_collection::report(const std::string &label_filter)
         {
             for (auto &test : labeled.second)
             {
+                std::stringstream test_name;
+                test_name << '[' << test->name() << ']';
                 const performance_test *const perf_test_p = dynamic_cast<performance_test *>(test.get());
-                strs << "* [" << test->name() << "] # " << perf_test_p->executions() << ": total "
-                     << std::setprecision(4) << perf_test_p->total_time().count() << "s, average "
+                strs << "* " << std::left << std::setw(30) << test_name.str() << ": # " << perf_test_p->executions()
+                     << ": total " << std::setprecision(4) << perf_test_p->total_time().count() << "s, average "
                      << perf_test_p->average_time().count() << 's';
                 this->log(strs, INFO);
             }
