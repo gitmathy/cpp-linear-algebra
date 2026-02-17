@@ -34,7 +34,10 @@ int main()
     tests.transfer("matrix", std::make_unique<matrix_add>(RUNS, MATRIX_M, MATRIX_N));
     tests.transfer("matrix", std::make_unique<matrix_multiple_add>(RUNS, MATRIX_M, MATRIX_N));
     tests.transfer("matrix", std::make_unique<matrix_mixed_add_sub>(RUNS, MATRIX_M, MATRIX_N));
-    int result = tests.run();
 
-    return result ? 0 : 1;
+    tests.transfer("matrix_vector", std::make_unique<vector_assign_matrix_vector_mult>(RUNS, MATRIX_M, MATRIX_N));
+
+    int result = tests.run("matrix_vector");
+
+    return result > 0 ? 1 : 0;
 }

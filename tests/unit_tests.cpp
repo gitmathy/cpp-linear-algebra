@@ -12,6 +12,7 @@
 #include "tests/includes/unit_tests/test_iterator.hpp"
 #include "tests/includes/unit_tests/test_move_assignment.hpp"
 #include "tests/includes/unit_tests/test_move_ctor.hpp"
+#include "tests/includes/unit_tests/test_mult_ops.hpp"
 #include "tests/includes/unit_tests/test_norms.hpp"
 #include "tests/includes/unit_tests/test_resize.hpp"
 
@@ -47,6 +48,8 @@ int main()
     tests.transfer("matrix", std::make_unique<matrix_expression_temporary_test>());
     tests.transfer("matrix", std::make_unique<matrix_norms_test>());
     tests.transfer("matrix", std::make_unique<matrix_apply_func_test>());
+
+    tests.transfer("matrix_vector", std::make_unique<mat_vec_mult_test>());
 
     int result = tests.run();
 
