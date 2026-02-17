@@ -60,3 +60,41 @@ This is based on the following measurements on my device:
 |---------------|--------- |---------|---------|-----------|---------------|
 | c++17         | 2.895    | 2.85    | 0.9225  | 2.747     | 0.9631        |
 | c++20         | 2.863    | 2.881   | 0.9742  | 2.715     | 0.9552        |
+
+### Execution policy for assign add
+
+To fill the values with +=, we are using the execution policy `std::execution::par_unseq` by the code:
+
+```cpp
+    auto range = std::views::iota(size_type(0), p_size);
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] += rhs.p_vals[i]; });
+```
+
+This is based on the following measurements on my device:
+
+#### Measurements for 10 executions of size 100000000
+
+| vector assign add   | plain loop [s] | none [s] | seq [s] | par [s] | unseq [s] | par_unseq [s] |
+|---------------------|----------------|----------|---------|---------|-----------|---------------|
+| c++20 transform     | 0.8434         | 1.093    | 0.9103  | 0.8611  | 0.8767    | 0.8773        |
+| c++20 for_each      |                | 1.382    | 0.901   | 0.8357  | 0.9071    | 0.8328        |
+
+### Execution policy for assign sum
+
+To fill the values with +=, we are using the execution policy `std::execution::par_unseq` by the code:
+
+```cpp
+auto range = std::views::iota(size_type(0), p_size);
+std::for_each(execution::par_unseq, range.begin(), range.end(),
+                [this, &exp](size_type i) { this->p_vals[i] = exp.evaluate(i); });
+```
+
+This is based on the following measurements on my device:
+
+#### Measurements for 10 executions of size 100000000
+
+| vector add          | plain loop [s] | none [s] | seq [s] | par [s] | unseq [s] | par_unseq [s] |
+|---------------------|----------------|----------|---------|---------|-----------|---------------|
+| single sum          | 1.11           | 1.16     | 1.108   | 1.114   | 1.164     | 1.097         |
+| multiple sum        | 1.17           | 1.161    | 1.175   | 1.159   | 1.154     | 1.175         |
