@@ -60,7 +60,7 @@ debug: $(DEBUG_TARGET)
 
 $(DEBUG_TARGET): test.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(UNIT_CXXFLAGS) -o $@ $<
+	$(CXX) $(UNIT_CXXFLAGS) -o $@ $< -ltbb
 
 # Compilation rules (preserve source sub-path under tests/)
 # target: tests/build/<perf|unit>/% .o -> source: tests/%.cpp
