@@ -37,7 +37,7 @@ int main()
 
     tests.transfer("matrix_vector", std::make_unique<vector_assign_matrix_vector_mult>(RUNS, MATRIX_M, MATRIX_N));
 
-    int result = tests.run("matrix_vector");
+    int result = tests.run();
 
     return result > 0 ? 1 : 0;
 }
