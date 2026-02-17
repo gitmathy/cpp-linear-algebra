@@ -291,7 +291,6 @@ template <typename T> template <typename function> vector<T> &vector<T>::apply_f
 #else
     std::for_each(range.begin(), range.end(), [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
 #endif
-
     return *this;
 }
 
