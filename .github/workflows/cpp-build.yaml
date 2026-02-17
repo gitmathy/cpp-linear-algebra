@@ -8,21 +8,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  compile_performance:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8    # v6.0.1
-    - name: Install Intel Thread Building Block (TBB)
-      shell: bash
-      run: |
-        sudo apt update
-        sudo apt install libtbb-dev
-    - name: Building performance tests with g++ (do not execute them)
-      shell: bash
-      run: |
-        make -j 3 perf
-
-  unit_tests:
+  compile_all_and_run_unit_test:
+    name: Compile all and run unit tets
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8    # v6.0.1
@@ -34,9 +21,10 @@ jobs:
     - name: Version of g++
       shell: bash
       run: g++ -v
+    - name: Building executables
+      shell: bash
+      run: make -j 4 all
     - name: Building unit tests with g++ and execute them
       shell: bash
-      run: |
-        make -j 3 unit
-        ./builds/unit/unit_tests
+      run: make run-unit
 
