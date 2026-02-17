@@ -67,6 +67,30 @@ public:
     }
 };
 
+/// @brief Test a=b for matrices of different storage layout
+class matrix_assign_storage_missmatch : public matrix_performance_test
+{
+private:
+    /// @brief Matrix of other storage layout
+    la::matrix<double, COLUMN_WISE> p_x;
+
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override { p_a = p_x; }
+
+public:
+    /// @brief Set me up
+    matrix_assign_storage_missmatch(const size_type runs, const size_type m, const size_type n)
+        : matrix_performance_test("matrix_assign_storage_missmatch", runs, m, n), p_x(0, 0)
+    {
+    }
+    /// @brief Allocate memory
+    void setup() override;
+
+    /// @brief Free memory
+    void tear_down() override;
+};
+
 /// @brief Test a+=b for matrices
 class matrix_assign_add : public matrix_performance_test
 {
