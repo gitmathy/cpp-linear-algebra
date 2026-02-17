@@ -24,7 +24,7 @@ jobs:
     - name: Building executables
       shell: bash
       run: make -j 4 all
-    - name: Building unit tests with g++ and execute them
+    - name: Run unit tests
       shell: bash
       run: make run-unit
 
