@@ -34,10 +34,10 @@ class timer
 {
 private:
     /// @brief Start time of the timing
-    std::chrono::time_point<std::chrono::steady_clock> p_start;
+    std::chrono::time_point<std::chrono::high_resolution_clock> p_start;
 
     /// @brief End of time taking, equals nullptr when not stopped
-    std::chrono::time_point<std::chrono::steady_clock> *p_end;
+    std::chrono::time_point<std::chrono::high_resolution_clock> *p_end;
 
 public:
     /// @brief Constructor starts timing
@@ -45,7 +45,7 @@ public:
     inline timer() : p_end(nullptr) { restart(); }
 
     /// @brief Default destructor
-    ~timer() = default;
+    ~timer();
 
     /// @brief Reset the timer and start taking time
     void restart();
@@ -54,7 +54,7 @@ public:
     /// @return
     inline duration_type get() const
     {
-        return p_end != nullptr ? (*p_end - p_start) : (std::chrono::steady_clock::now() - p_start);
+        return p_end != nullptr ? (*p_end - p_start) : (std::chrono::high_resolution_clock::now() - p_start);
     }
 
     /// @brief Stop the timer and get the time
