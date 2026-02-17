@@ -284,14 +284,12 @@ vector<T> &vector<T>::operator-=(const internal::operant<ExpressionT> &exp)
 
 template <typename T> template <typename function> vector<T> &vector<T>::apply_func(function func)
 {
-    for (size_type i = 0; i < p_size; ++i)
-        p_vals[i] = func(p_vals[i]);
     auto range = std::views::iota(size_type(0), p_size);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, range.begin(), range.end(),
                   [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
 #else
-    std::for_each(range.begin(), range.end(), [this, &exp](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
+    std::for_each(range.begin(), range.end(), [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
 #endif
 
     return *this;
