@@ -218,7 +218,7 @@ vector<T> &vector<T>::operator=(const internal::operant<ExpressionT> &exp)
 #else
     std::for_each(range.begin(), range.end(), [this, &exp](size_type i) { this->p_vals[i] = exp.evaluate(i); });
 #endif
-    // ALTERNATIVE 1: pain for loop are pretty well here.
+    // ALTERNATIVE 1: plain for loop are pretty well here.
     // for (size_type i = 0; i < n; ++i)
     // {
     //     p_vals[i] = exp.evaluate(i);
