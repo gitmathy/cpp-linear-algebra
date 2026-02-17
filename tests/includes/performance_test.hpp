@@ -123,10 +123,10 @@ public:
     matrix_performance_test(const std::string &name, const size_type runs, const size_type m, const size_type n);
 
     /// @brief Allocate memory
-    void setup() override;
+    virtual void setup() override;
 
     /// @brief Free memory
-    void tear_down() override;
+    virtual void tear_down() override;
 
     /// @brief Get number of rows used for testing
     inline size_type rows() const override { return p_a.rows(); }
