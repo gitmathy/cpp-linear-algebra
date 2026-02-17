@@ -113,6 +113,14 @@ template <typename T, storage_type storage_right, typename ExpT>
 auto operator-(const internal::operant<ExpT> &left, const matrix<T, storage_right> &right);
 
 /// ===============================================
+/// M U L T I P L I C A T I O N
+/// ===============================================
+
+/// @brief matrix * vector
+template <typename T, storage_type storage_left>
+auto operator*(const matrix<T, storage_left> &left, const vector<T> &right);
+
+/// ===============================================
 /// T E M P L A T E   I M P L E M E N T A T I O N S
 /// ===============================================
 
@@ -375,6 +383,19 @@ auto operator-(const internal::operant<ExpT> &left, const matrix<T, storage_righ
 {
     typedef internal::binary_expression<internal::operant<ExpT>, matrix<T, storage_right>,
                                         internal::sub_operation<internal::operant<ExpT>, matrix<T, storage_right>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+// MULTIPLICATION
+//---------------
+
+/// @brief matrix * vector
+template <typename T, storage_type storage_left>
+auto operator*(const matrix<T, storage_left> &left, const vector<T> &right)
+{
+    typedef internal::binary_expression<matrix<T, storage_left>, vector<T>,
+                                        internal::mat_vec_multiplication<matrix<T, storage_left>, vector<T>>>
         new_bin_exp_type;
     return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }
