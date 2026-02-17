@@ -3,6 +3,7 @@
 
 #include "includes/assert.hpp"
 #include "includes/internal/operant.hpp"
+#include "includes/settings.hpp"
 #include "includes/types.hpp"
 #include <algorithm>
 #include <iostream>
@@ -134,19 +135,9 @@ template <typename T> void vector<T>::allocate(size_type n)
     p_size = n;
 }
 
-template <typename T> vector<T>::vector(size_type n, size_type) : p_vals(nullptr), p_size(0)
-{
-    allocate(n);
-    for (size_type i = 0; i < n; ++i)
-        p_vals[i] = T(0);
-}
+template <typename T> vector<T>::vector(size_type n, size_type) : p_vals(nullptr), p_size(0) { resize(n, T(0)); }
 
-template <typename T> vector<T>::vector(size_type n, const T &val) : p_vals(nullptr), p_size(0)
-{
-    allocate(n);
-    for (size_type i = 0; i < n; ++i)
-        p_vals[i] = val;
-}
+template <typename T> vector<T>::vector(size_type n, const T &val) : p_vals(nullptr), p_size(0) { resize(n, val); }
 
 // take ownership and leave rhs in a valid empty state
 template <typename T> vector<T>::vector(vector<T> &&rhs) noexcept : p_vals(rhs.p_vals), p_size(rhs.p_size)
@@ -167,7 +158,11 @@ vector<T>::vector(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), 
 template <typename T> void vector<T>::resize(size_type n, const T &val)
 {
     allocate(n);
+#ifdef PARALLEL
+    std::fill(execution::par_unseq, p_vals, p_vals + n, val);
+#else
     std::fill(p_vals, p_vals + n, val);
+#endif
 }
 
 template <typename T> inline const T &vector<T>::operator()(const size_type i) const
