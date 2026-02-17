@@ -26,7 +26,7 @@ matrix cols: 100000
 
 ## Improvements:
 
-### Execution policy for resize, constructor, copy constructor
+### Execution policy for resize, constructor
 
 To fill the values with defaults, we are using the execution policy `std::execution::par_unseq` by the code:
 
@@ -44,3 +44,19 @@ This is based on the following measurements on my device:
 | c++20         | 2.515    | 2.645   | 0.715   | 2.512     | 0.65          |
 
 
+### Execution policy for copy constructor and assignment
+
+To fill the values while copying, we are using the execution policy `std::execution::par_unseq` by the code:
+
+```cpp
+std::copy(std::execution::POLICY, rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
+```
+
+This is based on the following measurements on my device:
+
+#### Measurements for 10 executions of size 100000000
+
+| vector assign | none [s] | seq [s] | par [s] | unseq [s] | par_unseq [s] |
+|---------------|--------- |---------|---------|-----------|---------------|
+| c++17         | 2.895    | 2.85    | 0.9225  | 2.747     | 0.9631        |
+| c++20         | 2.863    | 2.881   | 0.9742  | 2.715     | 0.9552        |

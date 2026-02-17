@@ -182,7 +182,11 @@ template <typename T> vector<T> &vector<T>::operator=(const vector<T> &rhs)
     if (this == &rhs)
         return *this;
     allocate(rhs.p_size);
+#ifdef PARALLEL
+    std::copy(execution::par_unseq, rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
+#else
     std::copy(rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
+#endif
     return *this;
 }
 
