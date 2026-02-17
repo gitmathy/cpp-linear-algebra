@@ -59,6 +59,12 @@ public:
 
     /// @brief Get number of executions
     inline size_type executions() const { return p_timings.size(); }
+
+    /// @brief Get number of rows used for testing
+    virtual size_type rows() const = 0;
+
+    /// @brief Get number of columns used for testing
+    virtual size_type cols() const = 0;
 };
 
 template <typename T> inline double get_random() { return T((std::rand() / (T)RAND_MAX) * 2 - 1); }
@@ -91,6 +97,12 @@ public:
 
     /// @brief Free memory
     void tear_down() override;
+
+    /// @brief Get number of rows used for testing
+    inline size_type rows() const override { return p_a.rows(); }
+
+    /// @brief Get number of columns used for testing
+    inline size_type cols() const override { return p_a.cols(); }
 };
 
 /// @brief Base class for all matrix performance tests
@@ -115,6 +127,12 @@ public:
 
     /// @brief Free memory
     void tear_down() override;
+
+    /// @brief Get number of rows used for testing
+    inline size_type rows() const override { return p_a.rows(); }
+
+    /// @brief Get number of columns used for testing
+    inline size_type cols() const override { return p_a.cols(); }
 };
 
 } // namespace test

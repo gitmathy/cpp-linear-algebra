@@ -1,6 +1,19 @@
 #ifndef LA_SETTINGS_H
 #define LA_SETTINGS_H
 
+#ifdef PARALLEL
+#include <execution>
+namespace execution = std::execution;
+#else
+enum class execution
+{
+    seq,
+    unseq,
+    par_unseq,
+    par
+};
+#endif
+
 namespace la
 {
 

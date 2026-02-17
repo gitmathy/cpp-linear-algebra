@@ -5,13 +5,13 @@
 CXX ?= g++-12
 
 # Compiler flags (exactly as requested)
-PERF_CXXFLAGS := -Wall -Wextra -pedantic -std=c++17 -O3 -Ofast -I. -MMD -MP
-UNIT_CXXFLAGS := -Wall -Wextra -pedantic -std=c++17 -g -I. -MMD -MP
+PERF_CXXFLAGS := -Wall -Wextra -pedantic -std=c++20 -O3 -Ofast -I. -MMD -MP -DPARALLEL
+UNIT_CXXFLAGS := -Wall -Wextra -pedantic -std=c++20 -g -I. -MMD -MP
 
 SRC_DIR := tests/src
 PERF_TEST_DIR := $(SRC_DIR)/performance_tests
 UNIT_TEST_DIR := $(SRC_DIR)/unit_tests
-BUILD_DIR := tests/build
+BUILD_DIR := builds
 PERF_BUILD := $(BUILD_DIR)/perf
 UNIT_BUILD := $(BUILD_DIR)/unit
 
@@ -47,11 +47,20 @@ unit: $(UNIT_TARGET)
 # Link rules - each executable links the objects compiled with the matching flags
 $(PERF_TARGET): $(PERF_OBJS)
 	@mkdir -p $(dir $@)
-	$(CXX) $(PERF_CXXFLAGS) -o $@ $^
+	$(CXX) $(PERF_CXXFLAGS) -o $@ $^ -ltbb
 
 $(UNIT_TARGET): $(UNIT_OBJS)
 	@mkdir -p $(dir $@)
-	$(CXX) $(UNIT_CXXFLAGS) -o $@ $^
+	$(CXX) $(UNIT_CXXFLAGS) -o $@ $^ -ltbb
+
+# Debug binary for VS Code (builds/test) — compiles top-level test.cpp with unit flags
+DEBUG_TARGET := $(BUILD_DIR)/test
+
+debug: $(DEBUG_TARGET)
+
+$(DEBUG_TARGET): test.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(UNIT_CXXFLAGS) -o $@ $<
 
 # Compilation rules (preserve source sub-path under tests/)
 # target: tests/build/<perf|unit>/% .o -> source: tests/%.cpp

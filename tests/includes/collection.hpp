@@ -73,12 +73,25 @@ public:
 class performance_test_collection : public test_collection
 {
 private:
+    /// @brief Number of runs
+    size_type p_runs;
+
+    /// @brief Size of vectors
+    size_type p_vector_size;
+
+    /// @brief Rows of matrices
+    size_type p_matrix_rows;
+
+    /// @brief Columns of matrices
+    size_type p_matrix_cols;
+
     /// @brief Report all timings
     void report(const std::string &label_filter) override;
 
 public:
     /// @brief Constructor
-    performance_test_collection() : test_collection("performance tests") {}
+    performance_test_collection(const size_type runs, const size_type vec_n, const size_type mat_m,
+                                const size_type mat_n);
 
     /// @brief Default destructor
     ~performance_test_collection() = default;
