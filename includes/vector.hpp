@@ -7,6 +7,7 @@
 #include "includes/types.hpp"
 #include <algorithm>
 #include <iostream>
+#include <ranges>
 
 namespace la
 {
@@ -210,18 +211,31 @@ vector<T> &vector<T>::operator=(const internal::operant<ExpressionT> &exp)
     const size_type n = exp.rows();
     if (p_size != n)
         allocate(n);
-    for (size_type i = 0; i < n; ++i)
-        p_vals[i] = exp.evaluate(i);
+    auto range = std::views::iota(size_type(0), p_size);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &exp](size_type i) { this->p_vals[i] = exp.evaluate(i); });
+#else
+    std::for_each(range.begin(), range.end(), [this, &exp](size_type i) { this->p_vals[i] = exp.evaluate(i); });
+#endif
+    // ALTERNATIVE 1: pain for loop are pretty well here.
+    // for (size_type i = 0; i < n; ++i)
+    // {
+    //     p_vals[i] = exp.evaluate(i);
+    // }
     return *this;
 }
 
 template <typename T> vector<T> &vector<T>::operator+=(const vector<T> &rhs)
 {
     SHAPE_ASSERT(p_size == rhs.rows(), "Invalid shape for vector += vector");
-    for (size_type i = 0; i < p_size; ++i)
-    {
-        p_vals[i] += rhs.p_vals[i];
-    }
+    auto range = std::views::iota(size_type(0), p_size);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] += rhs.p_vals[i]; });
+#else
+    std::for_each(range.begin(), range.end(), [this, &rhs](size_type i) { this->p_vals[i] += rhs.p_vals[i]; });
+#endif
     return *this;
 }
 
@@ -230,18 +244,26 @@ template <typename ExpressionT>
 vector<T> &vector<T>::operator+=(const internal::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(rows() == exp.rows() && cols() == exp.cols(), "Invalid shape for vector += operant");
-    for (size_type i = 0; i < p_size; ++i)
-        p_vals[i] += exp.evaluate(i);
+    auto range = std::views::iota(size_type(0), p_size);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &exp](size_type i) { this->p_vals[i] += exp.evaluate(i); });
+#else
+    std::for_each(range.begin(), range.end(), [this, &exp](size_type i) { this->p_vals[i] += exp.evaluate(i); });
+#endif
     return *this;
 }
 
 template <typename T> vector<T> &vector<T>::operator-=(const vector<T> &rhs)
 {
     SHAPE_ASSERT(p_size == rhs.p_size, "Invalid shape for vector -= vector");
-    for (size_type i = 0; i < p_size; ++i)
-    {
-        p_vals[i] -= rhs.p_vals[i];
-    }
+    auto range = std::views::iota(size_type(0), p_size);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] -= rhs.p_vals[i]; });
+#else
+    std::for_each(range.begin(), range.end(), [this, &rhs](size_type i) { this->p_vals[i] -= rhs.p_vals[i]; });
+#endif
     return *this;
 }
 
@@ -250,8 +272,13 @@ template <typename ExpressionT>
 vector<T> &vector<T>::operator-=(const internal::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(rows() == exp.rows() && cols() == exp.cols(), "Invalid shape for vector -= operant");
-    for (size_type i = 0; i < p_size; ++i)
-        p_vals[i] -= exp.evaluate(i);
+    auto range = std::views::iota(size_type(0), p_size);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &exp](size_type i) { this->p_vals[i] -= exp.evaluate(i); });
+#else
+    std::for_each(range.begin(), range.end(), [this, &exp](size_type i) { this->p_vals[i] -= exp.evaluate(i); });
+#endif
     return *this;
 }
 
@@ -259,6 +286,14 @@ template <typename T> template <typename function> vector<T> &vector<T>::apply_f
 {
     for (size_type i = 0; i < p_size; ++i)
         p_vals[i] = func(p_vals[i]);
+    auto range = std::views::iota(size_type(0), p_size);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
+#else
+    std::for_each(range.begin(), range.end(), [this, &exp](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
+#endif
+
     return *this;
 }
 
