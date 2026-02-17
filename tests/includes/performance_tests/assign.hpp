@@ -35,6 +35,21 @@ public:
     }
 };
 
+/// @brief Test c=(a+b) for vectors
+class vector_assign_add_sum : public vector_performance_test
+{
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override { p_c += (p_a + p_b); }
+
+public:
+    /// @brief Set me up
+    vector_assign_add_sum(const size_type runs, const size_type dim)
+        : vector_performance_test("vector_assign_add_sum", runs, dim)
+    {
+    }
+};
+
 /// @brief Test a=b for matrices
 class matrix_assign : public matrix_performance_test
 {
@@ -61,6 +76,21 @@ public:
     /// @brief Set me up
     matrix_assign_add(const size_type runs, const size_type m, const size_type n)
         : matrix_performance_test("matrix_assign_add", runs, m, n)
+    {
+    }
+};
+
+/// @brief Test c+=(a+b) for matrices
+class matrix_assign_add_sum : public matrix_performance_test
+{
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override { p_a += p_b; }
+
+public:
+    /// @brief Set me up
+    matrix_assign_add_sum(const size_type runs, const size_type m, const size_type n)
+        : matrix_performance_test("matrix_assign_add_sum", runs, m, n)
     {
     }
 };
