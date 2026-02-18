@@ -73,8 +73,8 @@ int matrix_construct_test::execute()
     if (mi->rows() != 2 || mi->cols() != 2) {
         report_error("Constructor by initializer lis set wrong size of matrix");
     }
-    if (!((*mi)(0, 0) == 1 && (*mi)(0, 1) == 2) && (*mi)(1, 0) == 3 && (*mi)(1, 1) == 4) {
-        report_error("Matrix values set by initializer list are not correct");
+    if (!((*mi)(0, 0) == 1 && (*mi)(0, 1) == 2 && (*mi)(1, 0) == 3 && (*mi)(1, 1) == 4)) {
+        report_error("Matrix(row-wise) values set by initializer list are not correct");
     }
     delete mi;
 
@@ -82,9 +82,9 @@ int matrix_construct_test::execute()
     if (mi_col->rows() != 2 || mi_col->cols() != 2) {
         report_error("Constructor by initializer lis set wrong size of matrix");
     }
-    if (!((*mi_col)(0, 0) == 1 && (*mi_col)(0, 1) == 2) && (*mi_col)(1, 0) == 3 &&
-        (*mi_col)(1, 1) == 4) {
-        report_error("Matrix values set by initializer list are not correct");
+    if (!((*mi_col)(0, 0) == 1 && (*mi_col)(0, 1) == 3 && (*mi_col)(1, 0) == 2 &&
+          (*mi_col)(1, 1) == 4)) {
+        report_error("Matrix(column-wise) values set by initializer list are not correct");
     }
     delete mi_col;
 

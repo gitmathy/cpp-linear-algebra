@@ -14,6 +14,7 @@
 #include "tests/includes/unit_tests/test_move_ctor.hpp"
 #include "tests/includes/unit_tests/test_mult_ops.hpp"
 #include "tests/includes/unit_tests/test_norms.hpp"
+#include "tests/includes/unit_tests/test_read_write.hpp"
 #include "tests/includes/unit_tests/test_resize.hpp"
 
 using namespace la::test;
@@ -35,6 +36,7 @@ int main()
     tests.transfer("vector", std::make_unique<vector_expression_temporary_test>());
     tests.transfer("vector", std::make_unique<vector_norms_test>());
     tests.transfer("vector", std::make_unique<vector_apply_func_test>());
+    tests.transfer("vector", std::make_unique<vector_read_write_test>());
 
     tests.transfer("matrix", std::make_unique<matrix_resize_test>());
     tests.transfer("matrix", std::make_unique<matrix_construct_test>());
@@ -48,6 +50,7 @@ int main()
     tests.transfer("matrix", std::make_unique<matrix_expression_temporary_test>());
     tests.transfer("matrix", std::make_unique<matrix_norms_test>());
     tests.transfer("matrix", std::make_unique<matrix_apply_func_test>());
+    tests.transfer("matrix", std::make_unique<matrix_read_write_test>());
 
     tests.transfer("matrix_vector", std::make_unique<mat_vec_mult_test>());
 
