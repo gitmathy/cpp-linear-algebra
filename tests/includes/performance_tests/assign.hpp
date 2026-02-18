@@ -64,11 +64,11 @@ public:
     {}
 };
 
-/// @brief Test a=b for matrices of different storage layout
+/// @brief Test a=b for matrices of different StorageT layout
 class matrix_assign_storage_missmatch : public matrix_performance_test
 {
 private:
-    /// @brief Matrix of other storage layout
+    /// @brief Matrix of other StorageT layout
     la::matrix<double, COLUMN_WISE> p_x;
 
 protected:

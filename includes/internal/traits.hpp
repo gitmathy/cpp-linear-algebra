@@ -9,7 +9,7 @@ template <typename T>
 class vector;
 
 // forward-declare matrix so we can specialize expression_traits for it
-template <typename T, storage_type storage>
+template <typename T, storage_type StorageT>
 class matrix;
 
 // forward-declare literal so we can specialize expression_traits for it
@@ -38,12 +38,12 @@ struct expression_traits<la::vector<T>> {
     typedef T value_type;
 };
 
-/// @brief Specialization for `la::matrix<T,storage>`: store as a reference in expression nodes
+/// @brief Specialization for `la::matrix<T,StorageT>`: store as a reference in expression nodes
 /// This avoids copying large matrix objects into expression trees; operant/binary_expression
 /// will hold references to existing vectors while `operant` itself still owns temporaries.
-template <typename T, storage_type storage>
-struct expression_traits<la::matrix<T, storage>> {
-    typedef const la::matrix<T, storage> &expression_type;
+template <typename T, storage_type StorageT>
+struct expression_traits<la::matrix<T, StorageT>> {
+    typedef const la::matrix<T, StorageT> &expression_type;
     typedef T value_type;
 };
 
