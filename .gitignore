@@ -44,3 +44,5 @@
 builds/*
 dummy.cpp
 dummy
+
+doxygen/**
