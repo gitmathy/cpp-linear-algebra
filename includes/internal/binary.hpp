@@ -1,3 +1,12 @@
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file includes/internal/binary.hpp
+/// @brief Definition and declaration of binary expressions
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
 #ifndef LA_INTERNAL_BINARY_H
 #define LA_INTERNAL_BINARY_H
 
@@ -6,17 +15,16 @@
 #include <algorithm>
 #include <memory>
 
-namespace la
-{
-namespace internal
-{
+namespace la {
+namespace internal {
 
-/// @brief Representing a binary expression consisting of two "operants" and an operation, e.g., (vector, scalar, add)
-///     or (matrix, matrix, substract)
+/// @brief Representing a binary expression consisting of two "operants" and an operation, e.g.,
+/// (vector, scalar, add) or (matrix, matrix, substract)
 /// @tparam ExpTLeft type of left expression
 /// @tparam ExpTRight type of right expression
 /// @tparam OpsT type of operation
-template <typename ExpTLeft, typename ExpTRight, typename OpsT> class binary_expression
+template <typename ExpTLeft, typename ExpTRight, typename OpsT>
+class binary_expression
 {
 public:
     /// @brief Value type
@@ -42,19 +50,21 @@ public:
     /// @brief Construct by values
     binary_expression(const left_expression_type &left, const right_expression_type &right)
         : p_left(left), p_right(right)
-    {
-    }
+    {}
 
     /// @brief Copying a binary_expression
     binary_expression(const binary_expression &bin) : p_left(bin.p_left), p_right(bin.p_right) {}
 
     /// @brief Moving a binary_expression
-    binary_expression(binary_expression &&bin) noexcept : p_left(std::move(bin.p_left)), p_right(std::move(bin.p_right))
-    {
-    }
+    binary_expression(binary_expression &&bin) noexcept
+        : p_left(std::move(bin.p_left)), p_right(std::move(bin.p_right))
+    {}
 
     /// @brief Evaluate binary_expression
-    inline value_type evaluate(const size_type i) const { return OpsT::evaluate(p_left, p_right, i); }
+    inline value_type evaluate(const size_type i) const
+    {
+        return OpsT::evaluate(p_left, p_right, i);
+    }
 
     /// @brief Evaluate binary_expression (2d access)
     inline value_type evaluate(const size_type i, const size_type j) const
@@ -79,12 +89,10 @@ public:
 template <typename ExpTLeft, typename ExpTRight, typename OpsT>
 size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::rows() const
 {
-    if (p_left.dimension() == 0)
-    {
+    if (p_left.dimension() == 0) {
         return p_right.rows();
     }
-    if (p_right.dimension() == 0)
-    {
+    if (p_right.dimension() == 0) {
         return p_left.rows();
     }
     return p_left.rows();
@@ -93,12 +101,10 @@ size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::rows() const
 template <typename ExpTLeft, typename ExpTRight, typename OpsT>
 size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::cols() const
 {
-    if (p_left.dimension() == 0)
-    {
+    if (p_left.dimension() == 0) {
         return p_right.cols();
     }
-    if (p_right.dimension() == 0)
-    {
+    if (p_right.dimension() == 0) {
         return p_left.cols();
     }
     return p_right.cols();
@@ -107,12 +113,10 @@ size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::cols() const
 template <typename ExpTLeft, typename ExpTRight, typename OpsT>
 size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::dimension() const
 {
-    if (p_left.dimension() == 0)
-    {
+    if (p_left.dimension() == 0) {
         return p_right.dimension();
     }
-    if (p_right.dimension() == 0)
-    {
+    if (p_right.dimension() == 0) {
         return p_left.dimension();
     }
     // matrix * matrix => 2d

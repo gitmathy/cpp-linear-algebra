@@ -3,10 +3,8 @@
 
 #include "tests/includes/unit_test.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 /// @brief Test norms for vectors (and simple matrix sanity)
 class vector_norms_test : public unit_test

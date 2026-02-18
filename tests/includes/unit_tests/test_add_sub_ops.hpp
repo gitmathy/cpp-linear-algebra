@@ -3,10 +3,8 @@
 
 #include "tests/includes/unit_test.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 /// @brief Test add and sub of vectors
 class vector_add_sub_ops_test : public unit_test

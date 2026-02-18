@@ -5,10 +5,8 @@
 #include "tests/includes/base_test.hpp"
 #include <list>
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 /// @brief A single unit test used as a base class
 class unit_test : public base_test
@@ -25,13 +23,13 @@ public:
     unit_test(const std::string &name) : base_test(name), p_errors() {}
 
     /// @brief Destruct a unit test
-    virtual ~unit_test() {};
+    virtual ~unit_test(){};
 
     /// @brief Setup the test
-    virtual void setup() {};
+    virtual void setup(){};
 
     /// @brief Tear down the test
-    virtual void tear_down() {};
+    virtual void tear_down(){};
 
     /// @brief Get the errors
     const std::list<std::string> &errors() const { return p_errors; }
@@ -41,12 +39,11 @@ public:
 };
 
 /// @brief Check if all values in a vector or matrix have the same given value
-template <typename la_struct> inline bool check_values(const la_struct &x, const typename la_struct::value_type &value)
+template <typename la_struct>
+inline bool check_values(const la_struct &x, const typename la_struct::value_type &value)
 {
-    for (auto it = x.begin(); it != x.end(); ++it)
-    {
-        if ((*it - value) > LA_EPS)
-        {
+    for (auto it = x.begin(); it != x.end(); ++it) {
+        if ((*it - value) > LA_EPS) {
             return false;
         }
     }

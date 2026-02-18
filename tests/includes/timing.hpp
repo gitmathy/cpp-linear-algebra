@@ -5,10 +5,8 @@
 #include <string>
 #include <unordered_map>
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 typedef std::chrono::duration<double> duration_type;
 
@@ -17,8 +15,7 @@ typedef std::chrono::duration<double> duration_type;
 /// ===============================================
 
 /// @brief A single entry in time report, total duration and number of calls
-struct timing_entry
-{
+struct timing_entry {
     /// @brief Total duration
     duration_type duration;
     /// @brief Total number of calls
@@ -54,7 +51,8 @@ public:
     /// @return
     inline duration_type get() const
     {
-        return p_end != nullptr ? (*p_end - p_start) : (std::chrono::high_resolution_clock::now() - p_start);
+        return p_end != nullptr ? (*p_end - p_start)
+                                : (std::chrono::high_resolution_clock::now() - p_start);
     }
 
     /// @brief Stop the timer and get the time

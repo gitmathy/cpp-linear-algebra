@@ -3,10 +3,8 @@
 #include "includes/types.hpp"
 #include "includes/vector.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 int vector_resize_test::execute()
 {

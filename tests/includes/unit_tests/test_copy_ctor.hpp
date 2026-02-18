@@ -3,10 +3,8 @@
 
 #include "tests/includes/unit_test.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 /// @brief Test copy constructor of vectors
 class vector_copy_ctor_test : public unit_test

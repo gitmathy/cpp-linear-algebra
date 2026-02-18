@@ -2,10 +2,8 @@
 #include "includes/matrix.hpp"
 #include "includes/vector.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 int vector_copy_ctor_test::execute()
 {
@@ -16,8 +14,7 @@ int vector_copy_ctor_test::execute()
     la::vector<double> dst(src); // copy-ctor
     if (dst.rows() != src.rows())
         report_error("Copy-constructed vector has incorrect size");
-    for (la::size_type i = 0; i < dst.rows(); ++i)
-    {
+    for (la::size_type i = 0; i < dst.rows(); ++i) {
         if (std::abs(dst(i) - src(i)) > LA_EPS)
             report_error("Copy-constructed vector has incorrect value");
     }

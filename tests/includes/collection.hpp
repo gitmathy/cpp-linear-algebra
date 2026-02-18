@@ -9,10 +9,8 @@
 #include <string>
 #include <unordered_map>
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 /// @brief Base class for all test collections
 class test_collection

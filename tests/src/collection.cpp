@@ -4,18 +4,14 @@
 #include <iomanip>
 #include <sstream>
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 size_type test_collection::numer_of_tests(const std::string &label) const
 {
     size_type number = 0;
-    if (label == "all")
-    {
-        for (auto &n : p_tests)
-        {
+    if (label == "all") {
+        for (auto &n : p_tests) {
             number += n.second.size();
         }
         return number;
@@ -29,8 +25,7 @@ void test_collection::transfer(const std::string &label, std::unique_ptr<base_te
     if (new_test == nullptr)
         return;
     auto fit = p_tests.find(label);
-    if (fit == p_tests.end())
-    {
+    if (fit == p_tests.end()) {
         // the label does not exists so far, so create the label
         p_tests.emplace(std::make_pair(label, std::list<std::unique_ptr<base_test>>()));
     }
@@ -49,13 +44,11 @@ int test_collection::run(const std::string &label_filter)
     log(strs, INFO);
 
     int result = 0, failed_tests = 0, test_result, performed_tests = 0;
-    for (auto &labeled : p_tests)
-    {
-        if (label_filter == "all" || labeled.first == label_filter)
-        {
-            for (auto &test : labeled.second)
-            {
-                strs << "--------- Test " << test->name() << " (" << labeled.first << ")  ---------";
+    for (auto &labeled : p_tests) {
+        if (label_filter == "all" || labeled.first == label_filter) {
+            for (auto &test : labeled.second) {
+                strs << "--------- Test " << test->name() << " (" << labeled.first
+                     << ")  ---------";
                 log(strs, INFO);
                 strs << "Setup test: " << test->name();
                 log(strs, DEBUG);
@@ -93,17 +86,12 @@ void unit_test_collection::report(const std::string &label_filter)
     strs << "----------------------------------------";
     this->log(strs, INFO);
 
-    for (auto &labeled : p_tests)
-    {
-        if (label_filter == "all" || labeled.first == label_filter)
-        {
-            for (auto &test : labeled.second)
-            {
+    for (auto &labeled : p_tests) {
+        if (label_filter == "all" || labeled.first == label_filter) {
+            for (auto &test : labeled.second) {
                 const unit_test *const unit_test_p = dynamic_cast<unit_test *>(test.get());
-                if (unit_test_p->failed())
-                {
-                    for (auto &error : unit_test_p->errors())
-                    {
+                if (unit_test_p->failed()) {
+                    for (auto &error : unit_test_p->errors()) {
                         strs << "* [" << test->name() << "]: " << error << '\n';
                     }
                     this->log(strs, INFO);
@@ -114,12 +102,13 @@ void unit_test_collection::report(const std::string &label_filter)
     this->log("----------------------------------------", INFO);
 }
 
-performance_test_collection::performance_test_collection(const size_type runs, const size_type vec_n,
-                                                         const size_type mat_m, const size_type mat_n)
-    : test_collection("performance tests"), p_runs(runs), p_vector_size(vec_n), p_matrix_rows(mat_m),
-      p_matrix_cols(mat_n)
-{
-}
+performance_test_collection::performance_test_collection(const size_type runs,
+                                                         const size_type vec_n,
+                                                         const size_type mat_m,
+                                                         const size_type mat_n)
+    : test_collection("performance tests"), p_runs(runs), p_vector_size(vec_n),
+      p_matrix_rows(mat_m), p_matrix_cols(mat_n)
+{}
 
 void performance_test_collection::report(const std::string &label_filter)
 {
@@ -132,17 +121,16 @@ void performance_test_collection::report(const std::string &label_filter)
          << "matrix cols: " << p_matrix_cols << '\n';
     strs << "----------------------------------------";
     this->log(strs, INFO);
-    for (auto &labeled : p_tests)
-    {
-        if (label_filter == "all" || labeled.first == label_filter)
-        {
-            for (auto &test : labeled.second)
-            {
+    for (auto &labeled : p_tests) {
+        if (label_filter == "all" || labeled.first == label_filter) {
+            for (auto &test : labeled.second) {
                 std::stringstream test_name;
                 test_name << '[' << test->name() << ']';
-                const performance_test *const perf_test_p = dynamic_cast<performance_test *>(test.get());
-                strs << "* " << std::left << std::setw(30) << test_name.str() << ": # " << perf_test_p->executions()
-                     << ": total " << std::setprecision(4) << perf_test_p->total_time().count() << "s, average "
+                const performance_test *const perf_test_p =
+                    dynamic_cast<performance_test *>(test.get());
+                strs << "* " << std::left << std::setw(30) << test_name.str() << ": # "
+                     << perf_test_p->executions() << ": total " << std::setprecision(4)
+                     << perf_test_p->total_time().count() << "s, average "
                      << perf_test_p->average_time().count() << 's';
                 this->log(strs, INFO);
             }

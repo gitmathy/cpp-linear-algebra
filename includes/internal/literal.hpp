@@ -1,17 +1,25 @@
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file includes/internal/literal.hpp
+/// @brief Definition and declaration of literals representing scalars
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
 #ifndef LA_INTERNAL_LITERAL_H
 #define LA_INTERNAL_LITERAL_H
 
 #include "includes/types.hpp"
 #include <memory>
 
-namespace la
-{
-namespace internal
-{
+namespace la {
+namespace internal {
 
 /// @brief A Literal stores a literal, i.e., scalar value.
 /// @tparam T type of the scalar value, e.g., int, double, float, etc.
-template <typename T> class literal
+template <typename T>
+class literal
 {
 public:
     /// @brief Type of the value

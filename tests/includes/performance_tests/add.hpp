@@ -6,10 +6,8 @@
 #include "includes/vector.hpp"
 #include "tests/includes/performance_test.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 /// @brief Test c=a+b for vectors
 class vector_add : public vector_performance_test
@@ -20,7 +18,9 @@ protected:
 
 public:
     /// @brief Set me up
-    vector_add(const size_type runs, const size_type dim) : vector_performance_test("vector_add", runs, dim) {}
+    vector_add(const size_type runs, const size_type dim)
+        : vector_performance_test("vector_add", runs, dim)
+    {}
 };
 
 /// @brief Test c=a+b+a+b
@@ -34,8 +34,7 @@ public:
     /// @brief Set me up
     vector_multiple_add(const size_type runs, const size_type dim)
         : vector_performance_test("vector_multiple_add", runs, dim)
-    {
-    }
+    {}
 };
 
 /// @brief Test c = a - b - 2 + a - b + 2 for vector
@@ -49,8 +48,7 @@ public:
     /// @brief Set me up
     vector_mixed_add_sub(const size_type runs, const size_type dim)
         : vector_performance_test("vector_mixed_add_sub", runs, dim)
-    {
-    }
+    {}
 };
 
 /// @brief Test c=a+b for matrices
@@ -64,8 +62,7 @@ public:
     /// @brief Set me up
     matrix_add(const size_type runs, const size_type m, const size_t n)
         : matrix_performance_test("matrix_add", runs, m, n)
-    {
-    }
+    {}
 };
 
 /// @brief Test c=a+b+a+b
@@ -79,8 +76,7 @@ public:
     /// @brief Set me up
     matrix_multiple_add(const size_type runs, const size_type m, const size_t n)
         : matrix_performance_test("matrix_multiple_add", runs, m, n)
-    {
-    }
+    {}
 };
 
 /// @brief Test c = a - b - 2 + a - b + 2 for matrices
@@ -94,8 +90,7 @@ public:
     /// @brief Set me up
     matrix_mixed_add_sub(const size_type runs, const size_type m, const size_t n)
         : matrix_performance_test("matrix_mixed_add_sub", runs, m, n)
-    {
-    }
+    {}
 };
 
 /// @brief Test c = a - b - 2 + a - b + 2 for vector

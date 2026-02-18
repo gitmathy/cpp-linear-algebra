@@ -4,10 +4,8 @@
 #include "tests/includes/log.hpp"
 #include <list>
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 /// @brief A single test used as a base class for unit tests and performance tests
 class base_test

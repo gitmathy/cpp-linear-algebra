@@ -1,3 +1,12 @@
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file includes/assert.hpp
+/// @brief Definition of macros to perform asserts and throw errors
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
 #ifndef LA_ASSERT_H
 #define LA_ASSERT_H
 
@@ -6,8 +15,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace la
-{
+namespace la {
 
 class error : public std::runtime_error
 {
@@ -21,8 +29,7 @@ public:
     /// @param code Error codes
     inline error(const std::string &message, const std::string &code)
         : std::runtime_error(message + " (code: " + code + ")")
-    {
-    }
+    {}
 
     /// @brief Default destructor
     ~error() = default;
@@ -36,8 +43,7 @@ public:
 template <typename AssertionT>
 inline void __assert(AssertionT assertion, const std::string &message, const std::string &code)
 {
-    if (!bool(assertion))
-    {
+    if (!bool(assertion)) {
         LOG_ERROR("Error detected: " << message);
         throw error(message, code);
     }
