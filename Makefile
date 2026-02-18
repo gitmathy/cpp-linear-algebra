@@ -35,7 +35,7 @@ UNIT_TARGET := $(UNIT_BUILD)/unit_tests
 DEPS := $(PERF_OBJS:.o=.d) $(UNIT_OBJS:.o=.d)
 -include $(DEPS)
 
-.PHONY: all perf unit run-perf run-unit deps clean
+.PHONY: all perf unit run-perf run-unit run-debug deps clean doxygen clean-doxygen
 
 # Default: build both executables
 all: perf unit
@@ -88,3 +88,10 @@ deps: $(DEPS)
 # Clean everything
 clean:
 	rm -rf $(BUILD_DIR)
+
+# Doxygen
+doxygen:
+	doxygen Doxyfile
+
+clean-doxygen:
+	rm -rf doxygen
