@@ -13,7 +13,9 @@
 #include "includes/assert.hpp"
 #include "includes/types.hpp"
 #include <algorithm>
+#include <fstream>
 #include <ranges>
+#include <string>
 
 namespace la {
 
@@ -189,6 +191,12 @@ public:
     /// @tparam function, supports func(T)
     template <typename function>
     matrix<T, StorageT> &apply_func(function func);
+
+    /// @brief Write matrix to a file (default in binary mode)
+    void to_file(const std::string &filename, const bool binary = true);
+
+    /// @brief Read matrix from a file (default in binary mode)
+    void from_file(const std::string &filename, const bool binary = true);
 };
 
 /// ===============================================
@@ -225,25 +233,29 @@ template <typename T, storage_type StorageT>
 matrix<T, StorageT>::matrix(const std::initializer_list<std::initializer_list<T>> &init_list)
     : p_vals(nullptr), p_rows(0), p_cols(0)
 {
-    if (StorageT == COLUMN_WISE) {
-        LOG_WARNING("Unoptimized StorageT access due to StorageT layout");
-    }
     if (init_list.begin()->size() == 0) {
         LOG_WARNING("Empty matrix, due to empty first list of row values");
         allocate(0, 0);
         return;
     }
-    const size_type m = init_list.size();
-    const size_type n = init_list.begin()->size();
+    const size_type m = (StorageT == ROW_WISE) ? init_list.size() : init_list.begin()->size();
+    const size_type n = (StorageT == ROW_WISE) ? init_list.begin()->size() : init_list.size();
     allocate(m, n);
-    size_type i = 0;
-    for (std::initializer_list<T> row_vals : init_list) {
-        size_type j = 0;
-        SHAPE_ASSERT(row_vals.size() == n, "Invalid number of row elements in matrix init");
-        for (T val : row_vals) {
-            (*this)(i, j++) = val;
+    if constexpr (StorageT == ROW_WISE) {
+        size_type i = 0;
+        for (std::initializer_list<T> row_vals : init_list) {
+            SHAPE_ASSERT(row_vals.size() == n, "Invalid number of row elements in matrix init");
+            std::copy(row_vals.begin(), row_vals.end(), row_begin(i));
+            ++i;
         }
-        ++i;
+    } else {
+        // Column-wise matrix
+        size_type j = 0;
+        for (std::initializer_list<T> col_vals : init_list) {
+            SHAPE_ASSERT(col_vals.size() == m, "Invalid number of column elements in matrix init");
+            std::copy(col_vals.begin(), col_vals.end(), col_begin(j));
+            ++j;
+        }
     }
 }
 
@@ -578,6 +590,64 @@ matrix<T, StorageT> &matrix<T, StorageT>::apply_func(function func)
                   [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
 #endif
     return *this;
+}
+
+template <typename T, storage_type StorageT>
+void matrix<T, StorageT>::to_file(const std::string &filename, const bool binary)
+{
+    std::ios_base::openmode mode = binary ? std::ios::out : std::ios::binary | std::ios::out;
+    std::ofstream ofs(filename, mode);
+    if (!ofs) {
+        throw error("Cannot open file for write.", "file_io");
+    }
+    if (binary) {
+        ofs.write(reinterpret_cast<const char *>(&p_rows), sizeof(size_type));
+        ofs.write(reinterpret_cast<const char *>(&p_cols), sizeof(size_type));
+        ofs.write(reinterpret_cast<const char *>(p_vals), p_rows * p_cols * sizeof(T));
+    } else {
+        ofs << p_rows << ' ' << p_cols << ' ';
+        std::copy(p_vals, p_vals + p_rows * p_cols, std::ostream_iterator<T>(ofs, " "));
+    }
+}
+
+template <typename T, storage_type StorageT>
+void matrix<T, StorageT>::from_file(const std::string &filename, const bool binary)
+{
+    std::ios_base::openmode mode = binary ? std::ios::in : std::ios::binary | std::ios::in;
+    std::ifstream ifs(filename, mode);
+    if (!ifs) {
+        throw error("Cannot open file for read.", "file_io");
+    }
+    // Read size information
+    size_type rows, cols;
+    if (binary) {
+        ifs.read(reinterpret_cast<char *>(&rows), sizeof(size_type));
+        ifs.read(reinterpret_cast<char *>(&cols), sizeof(size_type));
+        if (!ifs) {
+            throw error("Cannot read header for read.", "file_io");
+        }
+    } else {
+        if (!(ifs >> rows >> cols)) {
+            throw error("Cannot read header for read.", "file_io");
+        }
+    }
+    allocate(rows, cols);
+    std::cout << "Reading matrix of size " << p_rows << " x " << p_cols << std::endl;
+    if (binary) {
+        ifs.read(reinterpret_cast<char *>(p_vals), rows * cols * sizeof(T));
+        if (!ifs) {
+            throw error("Cannot read binary data.", "file_io");
+        }
+    } else {
+        T value;
+        for (T *first = begin(); first != end(); ++first) {
+            if (ifs >> value) {
+                *first = value;
+            } else {
+                throw error("Cannot read text data.", "file_io");
+            }
+        }
+    }
 }
 
 template <typename T, storage_type StorageT>
