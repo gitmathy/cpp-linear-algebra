@@ -10,8 +10,7 @@ namespace la {
 namespace internal {
 
 /// @brief Representing a binary expression consisting of two "operants" and an operation, e.g.,
-/// (vector, scalar, add)
-///     or (matrix, matrix, substract)
+/// (vector, scalar, add) or (matrix, matrix, substract)
 /// @tparam ExpTLeft type of left expression
 /// @tparam ExpTRight type of right expression
 /// @tparam OpsT type of operation
