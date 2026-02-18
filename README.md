@@ -43,3 +43,4 @@ For this project we try hard to follow this formatting rules. Some of them are e
 |                      | All blocks should be enclosed by curly braces              |
 | file suffixes        | Use `.hpp` for header files and `.cpp` for implementations |
 | variable prefixes    | class or instance variables should be prefixed with `p_`   |
+| class and struct     | struct if only public members                              |
