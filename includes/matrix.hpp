@@ -2,13 +2,19 @@
 #define LA_MATRIX_H
 
 #include "includes/assert.hpp"
-#include "includes/internal/operant.hpp"
 #include "includes/types.hpp"
 #include <algorithm>
 #include <ranges>
 
 namespace la
 {
+
+namespace internal
+{
+/// @brief Forward declaration to not include internals
+/// @tparam ExpressionT
+template <typename ExpressionT> class operant;
+} // namespace internal
 
 /// @brief Dense matrix
 /// @tparam T Type of every element
