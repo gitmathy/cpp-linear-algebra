@@ -64,6 +64,9 @@ public:
     /// @param val default value for all elements
     explicit matrix(size_type m, size_type n, const T &val = T(0));
 
+    /// @brief Construct a matrix with a list of values
+    explicit matrix(const std::initializer_list<std::initializer_list<T>> &init_list);
+
     /// @brief Move a matrix
     explicit matrix(matrix<T, StorageT> &&rhs) noexcept;
 
@@ -218,6 +221,32 @@ matrix<T, StorageT>::matrix(size_type m, size_type n, const T &val)
     resize(m, n, val);
 }
 
+template <typename T, storage_type StorageT>
+matrix<T, StorageT>::matrix(const std::initializer_list<std::initializer_list<T>> &init_list)
+    : p_vals(nullptr), p_rows(0), p_cols(0)
+{
+    if (StorageT == COLUMN_WISE) {
+        LOG_WARNING("Unoptimized StorageT access due to StorageT layout");
+    }
+    if (init_list.begin()->size() == 0) {
+        LOG_WARNING("Empty matrix, due to empty first list of row values");
+        allocate(0, 0);
+        return;
+    }
+    const size_type m = init_list.size();
+    const size_type n = init_list.begin()->size();
+    allocate(m, n);
+    size_type i = 0;
+    for (std::initializer_list<T> row_vals : init_list) {
+        size_type j = 0;
+        SHAPE_ASSERT(row_vals.size() == n, "Invalid number of row elements in matrix init");
+        for (T val : row_vals) {
+            (*this)(i, j++) = val;
+        }
+        ++i;
+    }
+}
+
 // take ownership and leave rhs in a valid empty state
 template <typename T, storage_type StorageT>
 matrix<T, StorageT>::matrix(matrix<T, StorageT> &&rhs) noexcept
@@ -281,56 +310,56 @@ inline T &matrix<T, StorageT>::operator()(size_type i, size_type j)
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::iterator matrix<T, StorageT>::row_begin(size_type i)
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layour for matrix::row_begin");
+    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_begin");
     return p_vals + i * p_cols;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::iterator matrix<T, StorageT>::row_end(size_type i)
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layour for matrix::row_end");
+    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_end");
     return p_vals + (i + 1) * p_cols;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::citerator matrix<T, StorageT>::row_begin(size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layour for matrix::row_begin const");
+    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_begin const");
     return p_vals + i * p_cols;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::citerator matrix<T, StorageT>::row_end(size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layour for matrix::row_end const");
+    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_end const");
     return p_vals + (i + 1) * p_cols;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::iterator matrix<T, StorageT>::col_begin(size_type i)
 {
-    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layour for matrix::col_begin");
+    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layout for matrix::col_begin");
     return p_vals + i * p_rows;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::iterator matrix<T, StorageT>::col_end(size_type i)
 {
-    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layour for matrix::col_end");
+    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layout for matrix::col_end");
     return p_vals + (i + 1) * p_rows;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::citerator matrix<T, StorageT>::col_begin(size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layour for matrix::col_begin const");
+    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layout for matrix::col_begin const");
     return p_vals + i * p_rows;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::citerator matrix<T, StorageT>::col_end(size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layour for matrix::col_end const");
+    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layout for matrix::col_end const");
     return p_vals + (i + 1) * p_rows;
 }
 

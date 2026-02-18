@@ -14,6 +14,7 @@
 #include "includes/settings.hpp"
 #include "includes/types.hpp"
 #include <algorithm>
+#include <initializer_list>
 #include <iostream>
 #include <ranges>
 
@@ -57,6 +58,9 @@ public:
 
     /// @brief Construct a vector of given size and initialize elements with a default value
     explicit vector(size_type n, const T &val = T(0));
+
+    /// @brief Construct a vector with a list of values
+    explicit vector(const std::initializer_list<T> &init_list);
 
     /// @brief Move a vector
     explicit vector(vector<T> &&rhs) noexcept;
@@ -166,6 +170,17 @@ template <typename T>
 vector<T>::vector(size_type n, const T &val) : p_vals(nullptr), p_size(0)
 {
     resize(n, val);
+}
+
+template <typename T>
+vector<T>::vector(const std::initializer_list<T> &init_list) : p_vals(nullptr), p_size(0)
+{
+    allocate(init_list.size());
+#ifdef PARALLEL
+    std::copy(execution::par_unseq, init_list.begin(), init_list.end(), p_vals);
+#else
+    std::copy(init_list.begin(), init_list.end(), p_vals);
+#endif
 }
 
 // take ownership and leave rhs in a valid empty state
