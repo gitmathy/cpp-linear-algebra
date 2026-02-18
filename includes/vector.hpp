@@ -142,6 +142,12 @@ public:
     /// @tparam function, supports func(T)
     template <typename function>
     vector<T> &apply_func(function func);
+
+    /// @brief Write a vector to a file (default in binary mode)
+    void to_file(const std::string &filename, const bool binary = true);
+
+    /// @brief Read vector from a file (default in binary mode)
+    void from_file(const std::string &filename, const bool binary = true);
 };
 
 /// ===============================================
@@ -360,6 +366,61 @@ vector<T> &vector<T>::apply_func(function func)
                   [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
 #endif
     return *this;
+}
+
+template <typename T>
+void vector<T>::to_file(const std::string &filename, const bool binary)
+{
+    std::ios_base::openmode mode = binary ? std::ios::out : std::ios::binary | std::ios::out;
+    std::ofstream ofs(filename, mode);
+    if (!ofs) {
+        throw error("Cannot open file for write.", "file_io");
+    }
+    if (binary) {
+        ofs.write(reinterpret_cast<const char *>(&p_size), sizeof(size_type));
+        ofs.write(reinterpret_cast<const char *>(p_vals), p_size * sizeof(T));
+    } else {
+        ofs << p_size << ' ';
+        std::copy(p_vals, p_vals + p_size, std::ostream_iterator<T>(ofs, " "));
+    }
+}
+
+template <typename T>
+void vector<T>::from_file(const std::string &filename, const bool binary)
+{
+    std::ios_base::openmode mode = binary ? std::ios::in : std::ios::binary | std::ios::in;
+    std::ifstream ifs(filename, mode);
+    if (!ifs) {
+        throw error("Cannot open file for read.", "file_io");
+    }
+    // Read size information
+    size_type size;
+    if (binary) {
+        ifs.read(reinterpret_cast<char *>(&size), sizeof(size_type));
+        if (!ifs) {
+            throw error("Cannot read header for read.", "file_io");
+        }
+    } else {
+        if (!(ifs >> size)) {
+            throw error("Cannot read header for read.", "file_io");
+        }
+    }
+    allocate(size);
+    if (binary) {
+        ifs.read(reinterpret_cast<char *>(p_vals), p_size * sizeof(T));
+        if (!ifs) {
+            throw error("Cannot read data.", "file_io");
+        }
+    } else {
+        T value;
+        for (size_type i = 0; i < p_size; ++i) {
+            if (ifs >> value) {
+                (*this)(i) = value;
+            } else {
+                throw error("Cannot read data.", "file_io");
+            }
+        }
+    }
 }
 
 template <typename T>
