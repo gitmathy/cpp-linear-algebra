@@ -141,6 +141,14 @@ public:
 };
 
 /// ===============================================
+/// P U B L I C   F U N C T I O N S
+/// ===============================================
+
+/// @brief Write a vector to an output stream
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const vector<T> &vec);
+
+/// ===============================================
 /// T E M P L A T E   I M P L E M E N T A T I O N S
 /// ===============================================
 
@@ -337,6 +345,13 @@ vector<T> &vector<T>::apply_func(function func)
                   [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
 #endif
     return *this;
+}
+
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const vector<T> &vec)
+{
+    std::copy(vec.begin(), vec.end(), std::ostream_iterator<T>(os, " "));
+    return os;
 }
 
 } // namespace la

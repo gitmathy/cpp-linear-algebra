@@ -189,6 +189,14 @@ public:
 };
 
 /// ===============================================
+/// P U B L I C   F U N C T I O N S
+/// ===============================================
+
+/// @brief Write a vector to an output stream
+template <typename T, storage_type StorageT>
+std::ostream &operator<<(std::ostream &os, const matrix<T, StorageT> &mat);
+
+/// ===============================================
 /// T E M P L A T E   I M P L E M E N T A T I O N S
 /// ===============================================
 
@@ -542,5 +550,29 @@ matrix<T, StorageT> &matrix<T, StorageT>::apply_func(function func)
 #endif
     return *this;
 }
+
+template <typename T, storage_type StorageT>
+std::ostream &operator<<(std::ostream &os, const matrix<T, StorageT> &mat)
+{
+    for (size_type i = 0; i < mat.rows(); ++i) {
+        for (size_type j = 0; j < mat.cols(); ++j) {
+            os << mat(i, j) << (j != mat.cols() - 1 ? '\t' : ' ');
+        }
+        os << '\n';
+    }
+    return os;
+}
+
+// specialized for ROW_WISE matrices
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const matrix<T, ROW_WISE> &mat)
+{
+    for (size_type i = 0; i < mat.rows(); ++i) {
+        std::copy(mat.row_begin(i), mat.row_end(i), std::ostream_iterator<T>(os, "\t"));
+        os << '\n';
+    }
+    return os;
+}
+
 } // namespace la
 #endif
