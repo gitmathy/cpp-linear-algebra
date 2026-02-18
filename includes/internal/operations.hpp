@@ -18,6 +18,32 @@ namespace la {
 namespace internal {
 
 /// ===============================================
+/// M I N U S
+/// ===============================================
+
+/// @brief Minus of an expression
+/// @tparam ExpressionT type of the expression
+template <typename ExpressionT>
+struct minus_operation
+{
+    /// @brief We silently assume that the value type for both expressions is the same
+    typedef typename ExpressionT::value_type value_type;
+
+    /// @brief Invert at element i
+    static inline value_type evaluate(const ExpressionT &x, const la::size_type i)
+    {
+        return -x.evaluate(i);
+    }
+
+    /// @brief Add at element i, j
+    static inline value_type evaluate(const ExpressionT &x, const la::size_type i,
+                                      const la::size_type j)
+    {
+        return -x.evaluate(i, j);
+    }
+};
+
+/// ===============================================
 /// A D D I T I O N
 /// ===============================================
 
@@ -25,13 +51,11 @@ namespace internal {
 /// @tparam ExpressionLeft type of first summand
 /// @tparam ExpressionRight type of second summand
 template <typename ExpressionLeft, typename ExpressionRight>
-class add_operation
+struct add_operation
 {
-public:
     /// @brief We silently assume that the value type for both expressions is the same
     typedef typename ExpressionLeft::value_type value_type;
 
-public:
     /// @brief Add at element i
     static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y,
                                       const la::size_type i)
@@ -55,13 +79,11 @@ public:
 /// @tparam ExpressionLeft type of minuend
 /// @tparam ExpressionRight type of subtrahend
 template <typename ExpressionLeft, typename ExpressionRight>
-class sub_operation
+struct sub_operation
 {
-public:
     /// @brief We silently assume that the value type for both expressions is the same
     typedef typename ExpressionLeft::value_type value_type;
 
-public:
     /// @brief Substract at element i
     static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y,
                                       const la::size_type i)
@@ -85,9 +107,8 @@ public:
 /// @tparam MatType Matrix type
 /// @tparam VecType Vector type
 template <typename MatType, typename VecType>
-class mat_vec_multiplication
+struct mat_vec_multiplication
 {
-public:
     /// @brief We silently assume that the value type for both expressions is the same
     typedef typename MatType::value_type value_type;
 

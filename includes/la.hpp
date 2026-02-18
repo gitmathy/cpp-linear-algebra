@@ -14,6 +14,7 @@
 #include "includes/internal/literal.hpp"
 #include "includes/internal/operant.hpp"
 #include "includes/internal/operations.hpp"
+#include "includes/internal/unary.hpp"
 #include "includes/matrix.hpp"
 #include "includes/settings.hpp"
 #include "includes/types.hpp"
@@ -32,6 +33,22 @@ namespace la {
 /// @return ||x||_p
 template <unsigned int p = 2, typename la_type>
 typename la_type::value_type norm(const la_type &x);
+
+/// ===============================================
+/// M I N U S
+/// ===============================================
+
+/// @brief -vector
+template <typename T>
+auto operator-(const vector<T> &right);
+
+/// @brief -matrix
+template <typename T>
+auto operator-(const matrix<T> &right);
+
+/// @brief -operant
+template <typename ExpT>
+auto operator-(const internal::operant<ExpT> &right);
 
 /// ===============================================
 /// A D D I T I O N
@@ -181,6 +198,37 @@ typename la_type::value_type norm(const la_type &x)
                                    x.begin(), x.end(), 0.0, std::plus<T>(),
                                    [](const T val) { return std::pow(std::abs(val), p); });
     return std::pow(result, 1. / p);
+}
+
+// MINUS
+//---------
+
+/// @brief -vector
+template <typename T>
+auto operator-(const vector<T> &right)
+{
+    typedef internal::unary_expression<vector<T>, internal::minus_operation<vector<T>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(right));
+}
+
+/// @brief -matrix
+template <typename T>
+auto operator-(const matrix<T> &right)
+{
+    typedef internal::unary_expression<matrix<T>, internal::minus_operation<matrix<T>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(right));
+}
+
+/// @brief -operant
+template <typename ExpT>
+auto operator-(const internal::operant<ExpT> &right)
+{
+    typedef internal::unary_expression<internal::operant<ExpT>,
+                                       internal::minus_operation<internal::operant<ExpT>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(right));
 }
 
 // ADDITION
