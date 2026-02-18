@@ -1,10 +1,8 @@
 #include "tests/includes/performance_tests/assign.hpp"
 #include <numeric>
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 void matrix_assign_storage_missmatch::setup()
 {

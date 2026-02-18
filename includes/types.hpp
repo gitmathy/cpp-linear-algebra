@@ -3,18 +3,13 @@
 
 #include <cstddef>
 
-namespace la
-{
+namespace la {
 
 /// @brief Type used to index vectors and matrices
 typedef std::size_t size_type;
 
 /// @brief Storing matrix row- or column-wise
-enum storage_type
-{
-    ROW_WISE,
-    COLUMN_WISE
-};
+enum storage_type { ROW_WISE, COLUMN_WISE };
 
 } // namespace la
 #endif

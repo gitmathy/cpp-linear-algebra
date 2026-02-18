@@ -6,19 +6,19 @@
 #include <algorithm>
 #include <ranges>
 
-namespace la
-{
+namespace la {
 
-namespace internal
-{
+namespace internal {
 /// @brief Forward declaration to not include internals
 /// @tparam ExpressionT
-template <typename ExpressionT> class operant;
+template <typename ExpressionT>
+class operant;
 } // namespace internal
 
 /// @brief Dense matrix
 /// @tparam T Type of every element
-template <typename T, storage_type storage = ROW_WISE> class matrix
+template <typename T, storage_type storage = ROW_WISE>
+class matrix
 {
 public:
     /// @brief Type of every element
@@ -60,10 +60,12 @@ public:
 
     /// @brief Copy from matrix with other storage type
     /// @tparam other_storage The other storage type
-    template <storage_type other_storage> matrix(const matrix<T, other_storage> &rhs);
+    template <storage_type other_storage>
+    matrix(const matrix<T, other_storage> &rhs);
 
     /// @brief Construct from expression
-    template <typename ExpressionT> matrix(const internal::operant<ExpressionT> &exp);
+    template <typename ExpressionT>
+    matrix(const internal::operant<ExpressionT> &exp);
 
     /// @brief Destruct a matrix
     ~matrix() { delete[] p_vals; }
@@ -125,45 +127,52 @@ public:
     matrix<T, storage> &operator=(const matrix<T, storage> &rhs);
 
     /// @brief Assign another matrix with another storage type
-    template <storage_type other_storage> matrix<T, storage> &operator=(const matrix<T, other_storage> &rhs);
+    template <storage_type other_storage>
+    matrix<T, storage> &operator=(const matrix<T, other_storage> &rhs);
 
     /// @brief Move assign a matix
     matrix<T, storage> &operator=(matrix<T, storage> &&rhs) noexcept;
 
     /// @brief Assign from expression
-    template <typename ExpressionT> matrix<T, storage> &operator=(const internal::operant<ExpressionT> &exp);
+    template <typename ExpressionT>
+    matrix<T, storage> &operator=(const internal::operant<ExpressionT> &exp);
 
     /// @brief Add another matix
     matrix<T, storage> &operator+=(const matrix<T, storage> &rhs);
 
     /// @brief Add another matix with another storage type
-    template <storage_type other_storage> matrix<T, storage> &operator+=(const matrix<T, other_storage> &rhs);
+    template <storage_type other_storage>
+    matrix<T, storage> &operator+=(const matrix<T, other_storage> &rhs);
 
     /// @brief Add from another expression
-    template <typename ExpressionT> matrix<T, storage> &operator+=(const internal::operant<ExpressionT> &exp);
+    template <typename ExpressionT>
+    matrix<T, storage> &operator+=(const internal::operant<ExpressionT> &exp);
 
     /// @brief Subtract another matix
     matrix<T, storage> &operator-=(const matrix<T, storage> &rhs);
 
     /// @brief Substract another matix with another storage type
-    template <storage_type other_storage> matrix<T, storage> &operator-=(const matrix<T, other_storage> &rhs);
+    template <storage_type other_storage>
+    matrix<T, storage> &operator-=(const matrix<T, other_storage> &rhs);
 
     /// @brief subtract from another expression
-    template <typename ExpressionT> matrix<T, storage> &operator-=(const internal::operant<ExpressionT> &exp);
+    template <typename ExpressionT>
+    matrix<T, storage> &operator-=(const internal::operant<ExpressionT> &exp);
 
     /// @brief Apply a function to every entry, i.e., A(i,j)=func(A(i,j))
     /// @tparam function, supports func(T)
-    template <typename function> matrix<T, storage> &apply_func(function func);
+    template <typename function>
+    matrix<T, storage> &apply_func(function func);
 };
 
 /// ===============================================
 /// T E M P L A T E   I M P L E M E N T A T I O N S
 /// ===============================================
 
-template <typename T, storage_type storage> void matrix<T, storage>::allocate(size_type m, size_type n)
+template <typename T, storage_type storage>
+void matrix<T, storage>::allocate(size_type m, size_type n)
 {
-    if (p_vals != nullptr)
-    {
+    if (p_vals != nullptr) {
         delete[] p_vals;
     }
     p_vals = new T[m * n];
@@ -178,7 +187,8 @@ matrix<T, storage>::matrix(size_type m, size_type n) : p_vals(nullptr), p_rows(0
 }
 
 template <typename T, storage_type storage>
-matrix<T, storage>::matrix(size_type m, size_type n, const T &val) : p_vals(nullptr), p_rows(0), p_cols(0)
+matrix<T, storage>::matrix(size_type m, size_type n, const T &val)
+    : p_vals(nullptr), p_rows(0), p_cols(0)
 {
     resize(m, n, val);
 }
@@ -194,14 +204,16 @@ matrix<T, storage>::matrix(matrix<T, storage> &&rhs) noexcept
 }
 
 template <typename T, storage_type storage>
-matrix<T, storage>::matrix(const matrix<T, storage> &rhs) : p_vals(nullptr), p_rows(rhs.p_rows), p_cols(rhs.p_cols)
+matrix<T, storage>::matrix(const matrix<T, storage> &rhs)
+    : p_vals(nullptr), p_rows(rhs.p_rows), p_cols(rhs.p_cols)
 {
     *this = rhs;
 }
 
 template <typename T, storage_type storage>
 template <storage_type other_storage>
-matrix<T, storage>::matrix(const matrix<T, other_storage> &rhs) : p_vals(nullptr), p_rows(0), p_cols(0)
+matrix<T, storage>::matrix(const matrix<T, other_storage> &rhs)
+    : p_vals(nullptr), p_rows(0), p_cols(0)
 {
     *this = rhs;
 }
@@ -213,7 +225,8 @@ matrix<T, storage>::matrix(const internal::operant<ExpressionT> &exp) : p_vals(n
     *this = exp;
 }
 
-template <typename T, storage_type storage> void matrix<T, storage>::resize(size_type m, size_type n, const T &val)
+template <typename T, storage_type storage>
+void matrix<T, storage>::resize(size_type m, size_type n, const T &val)
 {
     allocate(m, n);
 #ifdef PARALLEL
@@ -230,7 +243,8 @@ inline const T &matrix<T, storage>::operator()(size_type i, size_type j) const
     return storage == ROW_WISE ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
 }
 
-template <typename T, storage_type storage> inline T &matrix<T, storage>::operator()(size_type i, size_type j)
+template <typename T, storage_type storage>
+inline T &matrix<T, storage>::operator()(size_type i, size_type j)
 {
     BOUNDARY_ASSERT(i < p_rows && j < p_cols, "Index out of bound: matrix write element");
     return storage == ROW_WISE ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
@@ -318,19 +332,15 @@ matrix<T, storage> &matrix<T, storage>::operator=(const matrix<T, other_storage>
     LOG_WARNING("Unoptimized storage access due to storage layout");
     auto range = std::views::iota(size_type(0), p_rows);
 #ifdef PARALLEL
-    std::for_each(execution::par, range.begin(), range.end(),
-                  [this, &rhs](size_type i)
-                  {
-                      for (size_type j = 0; j < this->p_cols; ++j)
-                          (*this)(i, j) = rhs(i, j);
-                  });
+    std::for_each(execution::par, range.begin(), range.end(), [this, &rhs](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j)
+            (*this)(i, j) = rhs(i, j);
+    });
 #else
-    std::for_each(range.begin(), range.end(),
-                  [this, &rhs](size_type i)
-                  {
-                      for (size_type j = 0; j < this->p_cols; ++j)
-                          (*this)(i, j) = rhs(i, j);
-                  });
+    std::for_each(range.begin(), range.end(), [this, &rhs](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j)
+            (*this)(i, j) = rhs(i, j);
+    });
 #endif
     return *this;
 }
@@ -358,19 +368,15 @@ matrix<T, storage> &matrix<T, storage>::operator=(const internal::operant<Expres
         allocate(exp.rows(), exp.cols());
     auto range = std::views::iota(size_type(0), p_rows);
 #ifdef PARALLEL
-    std::for_each(execution::par_unseq, range.begin(), range.end(),
-                  [this, &exp](size_type i)
-                  {
-                      for (size_type j = 0; j < this->p_cols; ++j)
-                          (*this)(i, j) = exp.evaluate(i, j);
-                  });
+    std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &exp](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j)
+            (*this)(i, j) = exp.evaluate(i, j);
+    });
 #else
-    std::for_each(range.begin(), range.end(),
-                  [this, &exp](size_type i)
-                  {
-                      for (size_type j = 0; j < this->p_cols; ++j)
-                          (*this)(i, j) = exp.evaluate(i, j);
-                  });
+    std::for_each(range.begin(), range.end(), [this, &exp](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j)
+            (*this)(i, j) = exp.evaluate(i, j);
+    });
 #endif
     return *this;
 }
@@ -378,13 +384,15 @@ matrix<T, storage> &matrix<T, storage>::operator=(const internal::operant<Expres
 template <typename T, storage_type storage>
 matrix<T, storage> &matrix<T, storage>::operator+=(const matrix<T, storage> &rhs)
 {
-    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(), "Invalid shape for matrix += matrix");
+    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
+                 "Invalid shape for matrix += matrix");
     auto range = std::views::iota(size_type(0), rows() * cols());
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, range.begin(), range.end(),
                   [this, &rhs](size_type i) { this->p_vals[i] += rhs.p_vals[i]; });
 #else
-    std::for_each(range.begin(), range.end(), [this, &rhs](size_type i) { this->p_vals[i] += rhs.p_vals[i]; });
+    std::for_each(range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] += rhs.p_vals[i]; });
 #endif
     return *this;
 }
@@ -398,19 +406,15 @@ matrix<T, storage> &matrix<T, storage>::operator+=(const matrix<T, other_storage
     LOG_WARNING("Unoptimized storage access due to storage layout");
     auto range = std::views::iota(size_type(0), p_rows);
 #ifdef PARALLEL
-    std::for_each(execution::par_unseq, range.begin(), range.end(),
-                  [this, &rhs](size_type i)
-                  {
-                      for (size_type j = 0; j < this->p_cols; ++j)
-                          (*this)(i, j) += rhs(i, j);
-                  });
+    std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &rhs](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j)
+            (*this)(i, j) += rhs(i, j);
+    });
 #else
-    std::for_each(range.begin(), range.end(),
-                  [this, &rhs](size_type i)
-                  {
-                      for (size_type j = 0; j < this->p_cols; ++j)
-                          (*this)(i, j) += rhs(i, j);
-                  });
+    std::for_each(range.begin(), range.end(), [this, &rhs](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j)
+            (*this)(i, j) += rhs(i, j);
+    });
 #endif
     return *this;
 }
@@ -419,22 +423,19 @@ template <typename T, storage_type storage>
 template <typename ExpressionT>
 matrix<T, storage> &matrix<T, storage>::operator+=(const internal::operant<ExpressionT> &exp)
 {
-    SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(), "Invalid shape for matrix += operant");
+    SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(),
+                 "Invalid shape for matrix += operant");
     auto range = std::views::iota(size_type(0), p_rows);
 #ifdef PARALLEL
-    std::for_each(execution::par_unseq, range.begin(), range.end(),
-                  [this, &exp](size_type i)
-                  {
-                      for (size_type j = 0; j < this->p_cols; ++j)
-                          (*this)(i, j) += exp.evaluate(i, j);
-                  });
+    std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &exp](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j)
+            (*this)(i, j) += exp.evaluate(i, j);
+    });
 #else
-    std::for_each(range.begin(), range.end(),
-                  [this, &exp](size_type i)
-                  {
-                      for (size_type j = 0; j < this->p_cols; ++j)
-                          (*this)(i, j) += exp.evaluate(i, j);
-                  });
+    std::for_each(range.begin(), range.end(), [this, &exp](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j)
+            (*this)(i, j) += exp.evaluate(i, j);
+    });
 #endif
     return *this;
 }
@@ -442,13 +443,15 @@ matrix<T, storage> &matrix<T, storage>::operator+=(const internal::operant<Expre
 template <typename T, storage_type storage>
 matrix<T, storage> &matrix<T, storage>::operator-=(const matrix<T, storage> &rhs)
 {
-    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(), "Invalid shape for matrix -= matrix");
+    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
+                 "Invalid shape for matrix -= matrix");
     auto range = std::views::iota(size_type(0), rows() * cols());
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, range.begin(), range.end(),
                   [this, &rhs](size_type i) { this->p_vals[i] -= rhs.p_vals[i]; });
 #else
-    std::for_each(range.begin(), range.end(), [this, &rhs](size_type i) { this->p_vals[i] -= rhs.p_vals[i]; });
+    std::for_each(range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] -= rhs.p_vals[i]; });
 #endif
     return *this;
 }
@@ -462,19 +465,15 @@ matrix<T, storage> &matrix<T, storage>::operator-=(const matrix<T, other_storage
     LOG_WARNING("Unoptimized storage access due to storage layout");
     auto range = std::views::iota(size_type(0), p_rows);
 #ifdef PARALLEL
-    std::for_each(execution::par_unseq, range.begin(), range.end(),
-                  [this, &rhs](size_type i)
-                  {
-                      for (size_type j = 0; j < this->p_cols; ++j)
-                          (*this)(i, j) -= rhs(i, j);
-                  });
+    std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &rhs](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j)
+            (*this)(i, j) -= rhs(i, j);
+    });
 #else
-    std::for_each(range.begin(), range.end(),
-                  [this, &rhs](size_type i)
-                  {
-                      for (size_type j = 0; j < this->p_cols; ++j)
-                          (*this)(i, j) -= rhs(i, j);
-                  });
+    std::for_each(range.begin(), range.end(), [this, &rhs](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j)
+            (*this)(i, j) -= rhs(i, j);
+    });
 #endif
     return *this;
 }
@@ -483,22 +482,19 @@ template <typename T, storage_type storage>
 template <typename ExpressionT>
 matrix<T, storage> &matrix<T, storage>::operator-=(const internal::operant<ExpressionT> &exp)
 {
-    SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(), "Invalid shape for matrix -= operant");
+    SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(),
+                 "Invalid shape for matrix -= operant");
     auto range = std::views::iota(size_type(0), p_rows);
 #ifdef PARALLEL
-    std::for_each(execution::par_unseq, range.begin(), range.end(),
-                  [this, &exp](size_type i)
-                  {
-                      for (size_type j = 0; j < this->p_cols; ++j)
-                          (*this)(i, j) -= exp.evaluate(i, j);
-                  });
+    std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &exp](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j)
+            (*this)(i, j) -= exp.evaluate(i, j);
+    });
 #else
-    std::for_each(range.begin(), range.end(),
-                  [this, &exp](size_type i)
-                  {
-                      for (size_type j = 0; j < this->p_cols; ++j)
-                          (*this)(i, j) -= exp.evaluate(i, j);
-                  });
+    std::for_each(range.begin(), range.end(), [this, &exp](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j)
+            (*this)(i, j) -= exp.evaluate(i, j);
+    });
 #endif
     return *this;
 }
@@ -512,7 +508,8 @@ matrix<T, storage> &matrix<T, storage>::apply_func(function func)
     std::for_each(execution::par_unseq, range.begin(), range.end(),
                   [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
 #else
-    std::for_each(range.begin(), range.end(), [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
+    std::for_each(range.begin(), range.end(),
+                  [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
 #endif
     return *this;
 }

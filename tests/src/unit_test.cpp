@@ -1,9 +1,7 @@
 #include "tests/includes/unit_test.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 void unit_test::report_error(const std::string &what)
 {

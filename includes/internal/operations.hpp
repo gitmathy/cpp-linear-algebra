@@ -5,10 +5,8 @@
 #include "includes/types.hpp"
 #include <functional>
 
-namespace la
-{
-namespace internal
-{
+namespace la {
+namespace internal {
 
 /// ===============================================
 /// A D D I T I O N
@@ -17,7 +15,8 @@ namespace internal
 /// @brief Add operation
 /// @tparam ExpressionLeft type of first summand
 /// @tparam ExpressionRight type of second summand
-template <typename ExpressionLeft, typename ExpressionRight> class add_operation
+template <typename ExpressionLeft, typename ExpressionRight>
+class add_operation
 {
 public:
     /// @brief We silently assume that the value type for both expressions is the same
@@ -25,14 +24,15 @@ public:
 
 public:
     /// @brief Add at element i
-    static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y, const la::size_type i)
+    static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y,
+                                      const la::size_type i)
     {
         return std::plus<value_type>()(x.evaluate(i), y.evaluate(i));
     }
 
     /// @brief Add at element i, j
-    static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y, const la::size_type i,
-                                      const la::size_type j)
+    static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y,
+                                      const la::size_type i, const la::size_type j)
     {
         return std::plus<value_type>()(x.evaluate(i, j), y.evaluate(i, j));
     }
@@ -45,7 +45,8 @@ public:
 /// @brief Substract operation
 /// @tparam ExpressionLeft type of minuent
 /// @tparam ExpressionRight type of subtrahent
-template <typename ExpressionLeft, typename ExpressionRight> class sub_operation
+template <typename ExpressionLeft, typename ExpressionRight>
+class sub_operation
 {
 public:
     /// @brief We silently assume that the value type for both expressions is the same
@@ -53,14 +54,15 @@ public:
 
 public:
     /// @brief Substract at element i
-    static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y, const la::size_type i)
+    static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y,
+                                      const la::size_type i)
     {
         return std::minus<value_type>()(x.evaluate(i), y.evaluate(i));
     }
 
     /// @brief Substract at element i, j
-    static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y, const la::size_type i,
-                                      const la::size_type j)
+    static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y,
+                                      const la::size_type i, const la::size_type j)
     {
         return std::minus<value_type>()(x.evaluate(i, j), y.evaluate(i, j));
     }
@@ -73,7 +75,8 @@ public:
 /// @brief Multiplying a matrix with a vector
 /// @tparam MatType Matrix type
 /// @tparam VecType Vecor type
-template <typename MatType, typename VecType> class mat_vec_multiplication
+template <typename MatType, typename VecType>
+class mat_vec_multiplication
 {
 public:
     /// @brief We silently assume that the value type for both expressions is the same
@@ -85,15 +88,15 @@ public:
     {
         SHAPE_ASSERT(x.cols() == y.rows(), "Multiplying matrix*vector");
         value_type init = value_type(0);
-        for (size_type j = 0; j < y.rows(); ++j)
-        {
+        for (size_type j = 0; j < y.rows(); ++j) {
             init += x.evaluate(i, j) * y.evaluate(j);
         }
         return init;
     }
 
     /// @brief Multiply at element (i,j)
-    static inline value_type evaluate(const MatType &x, const VecType &y, const la::size_type i, const la::size_type j)
+    static inline value_type evaluate(const MatType &x, const VecType &y, const la::size_type i,
+                                      const la::size_type j)
     {
         throw error("No matrix-vector multiplication at an element (i,j)");
     }

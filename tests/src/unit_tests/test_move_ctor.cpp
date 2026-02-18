@@ -2,10 +2,8 @@
 #include "includes/matrix.hpp"
 #include "includes/vector.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 int vector_move_ctor_test::execute()
 {
@@ -17,8 +15,7 @@ int vector_move_ctor_test::execute()
     if (dst.rows() != 4)
         report_error("Moved-to vector has incorrect size");
 
-    for (la::size_type i = 0; i < dst.rows(); ++i)
-    {
+    for (la::size_type i = 0; i < dst.rows(); ++i) {
         if (std::abs(dst(i) - static_cast<double>(i * 10 + 1)) > LA_EPS)
             report_error("Moved-to vector has incorrect value");
     }

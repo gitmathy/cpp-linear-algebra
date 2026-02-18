@@ -5,10 +5,8 @@
 #include <list>
 #include <string>
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 /// @brief Test resizing of vectors
 class vector_resize_test : public unit_test

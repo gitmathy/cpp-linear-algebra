@@ -3,10 +3,8 @@
 #include "includes/types.hpp"
 #include "includes/vector.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 int matrix_copy_assignment_test::execute()
 {
@@ -41,10 +39,8 @@ int vector_copy_assignment_test::execute()
     if (dst.rows() != src.rows())
         report_error("Copy-assigned vector has incorrect size");
 
-    for (la::size_type i = 0; i < dst.rows(); ++i)
-    {
-        if (std::abs(dst(i) - src(i)) > LA_EPS)
-        {
+    for (la::size_type i = 0; i < dst.rows(); ++i) {
+        if (std::abs(dst(i) - src(i)) > LA_EPS) {
             std::stringstream ss;
             ss << "Copy-assigned vector has incorrect value at " << i;
             report_error(ss.str());
@@ -52,10 +48,8 @@ int vector_copy_assignment_test::execute()
     }
 
     // source must remain unchanged
-    for (la::size_type i = 0; i < src.rows(); ++i)
-    {
-        if (std::abs(src(i) - static_cast<double>(i * 3 + 2)) > LA_EPS)
-        {
+    for (la::size_type i = 0; i < src.rows(); ++i) {
+        if (std::abs(src(i) - static_cast<double>(i * 3 + 2)) > LA_EPS) {
             report_error("Source vector changed after copy-assignment");
             break;
         }

@@ -5,17 +5,10 @@
 #include <execution>
 namespace execution = std::execution;
 #else
-enum class execution
-{
-    seq,
-    unseq,
-    par_unseq,
-    par
-};
+enum class execution { seq, unseq, par_unseq, par };
 #endif
 
-namespace la
-{
+namespace la {
 
 /// @brief Check shapes
 #define LA_CHECK_SHAPE_C 1

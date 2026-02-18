@@ -4,14 +4,13 @@
 #include "includes/types.hpp"
 #include <memory>
 
-namespace la
-{
-namespace internal
-{
+namespace la {
+namespace internal {
 
 /// @brief A Literal stores a literal, i.e., scalar value.
 /// @tparam T type of the scalar value, e.g., int, double, float, etc.
-template <typename T> class literal
+template <typename T>
+class literal
 {
 public:
     /// @brief Type of the value

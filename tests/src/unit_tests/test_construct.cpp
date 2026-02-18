@@ -2,10 +2,8 @@
 #include "includes/matrix.hpp"
 #include "includes/vector.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 int vector_construct_test::execute()
 {

@@ -6,8 +6,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace la
-{
+namespace la {
 
 class error : public std::runtime_error
 {
@@ -21,8 +20,7 @@ public:
     /// @param code Error codes
     inline error(const std::string &message, const std::string &code)
         : std::runtime_error(message + " (code: " + code + ")")
-    {
-    }
+    {}
 
     /// @brief Default destructor
     ~error() = default;
@@ -36,8 +34,7 @@ public:
 template <typename AssertionT>
 inline void __assert(AssertionT assertion, const std::string &message, const std::string &code)
 {
-    if (!bool(assertion))
-    {
+    if (!bool(assertion)) {
         LOG_ERROR("Error detected: " << message);
         throw error(message, code);
     }

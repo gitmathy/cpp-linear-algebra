@@ -1,15 +1,12 @@
 #include "tests/includes/performance_test.hpp"
 #include <numeric>
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 int performance_test::execute()
 {
-    for (size_type i = 0; i < p_runs; ++i)
-    {
+    for (size_type i = 0; i < p_runs; ++i) {
         start_single_test();
         run_single_test();
         stop_single_test();
@@ -17,10 +14,10 @@ int performance_test::execute()
     return 0;
 }
 
-vector_performance_test::vector_performance_test(const std::string &name, const size_type runs, const size_type rows)
+vector_performance_test::vector_performance_test(const std::string &name, const size_type runs,
+                                                 const size_type rows)
     : performance_test(name, runs), p_rows(rows), p_a(), p_b(), p_c()
-{
-}
+{}
 
 void vector_performance_test::setup()
 {
@@ -39,11 +36,10 @@ void vector_performance_test::tear_down()
     p_c.resize(0);
 }
 
-matrix_performance_test::matrix_performance_test(const std::string &name, const size_type runs, const size_type m,
-                                                 const size_type n)
+matrix_performance_test::matrix_performance_test(const std::string &name, const size_type runs,
+                                                 const size_type m, const size_type n)
     : performance_test(name, runs), p_rows(m), p_cols(n), p_a(0, 0), p_b(0, 0), p_c(0, 0)
-{
-}
+{}
 
 void matrix_performance_test::setup()
 {

@@ -3,10 +3,8 @@
 
 #include "tests/includes/unit_test.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 /// @brief Test vector expression temporary
 class vector_expression_temporary_test : public unit_test

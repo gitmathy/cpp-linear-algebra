@@ -4,14 +4,11 @@
 #include <sstream>
 #include <string>
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 /// @brief Log level of test execution
-enum TestLogLevel
-{
+enum TestLogLevel {
     ERROR = 0,
     WARNING = 1,
     INFO = 2,

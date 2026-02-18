@@ -9,10 +9,8 @@
 #include <list>
 #include <numeric>
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 /// @brief Single performance test used as a base class
 class performance_test : public base_test
@@ -38,21 +36,26 @@ protected:
 
 public:
     /// @brief Construct a performance test
-    performance_test(const std::string &name, const size_type runs) : base_test(name), p_runs(runs), p_timings() {}
+    performance_test(const std::string &name, const size_type runs)
+        : base_test(name), p_runs(runs), p_timings()
+    {}
 
     /// @brief Destruct a performance test
     virtual ~performance_test() = default;
 
     /// @brief Setup the test
-    virtual void setup() {};
+    virtual void setup(){};
 
     /// @brief Tear down the test
-    virtual void tear_down() {};
+    virtual void tear_down(){};
 
     int execute();
 
     /// @brief Get total execution time
-    duration_type total_time() const { return std::accumulate(p_timings.begin(), p_timings.end(), duration_type()); }
+    duration_type total_time() const
+    {
+        return std::accumulate(p_timings.begin(), p_timings.end(), duration_type());
+    }
 
     /// @brief Get average execution time
     duration_type average_time() const { return total_time() / executions(); }
@@ -67,13 +70,17 @@ public:
     virtual size_type cols() const = 0;
 };
 
-template <typename T> inline double get_random() { return T((std::rand() / (T)RAND_MAX) * 2 - 1); }
+template <typename T>
+inline double get_random()
+{
+    return T((std::rand() / (T)RAND_MAX) * 2 - 1);
+}
 
 /// @brief Initialize x with random values
-template <typename la_struct> inline void init(la_struct &x)
+template <typename la_struct>
+inline void init(la_struct &x)
 {
-    for (auto it = x.begin(); it != x.end(); ++it)
-    {
+    for (auto it = x.begin(); it != x.end(); ++it) {
         *it = get_random<typename la_struct::value_type>();
     }
 }
@@ -120,7 +127,8 @@ protected:
 
 public:
     /// @brief Initialize p_a and p_b
-    matrix_performance_test(const std::string &name, const size_type runs, const size_type m, const size_type n);
+    matrix_performance_test(const std::string &name, const size_type runs, const size_type m,
+                            const size_type n);
 
     /// @brief Allocate memory
     virtual void setup() override;

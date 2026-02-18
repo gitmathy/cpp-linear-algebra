@@ -5,10 +5,8 @@
 #include "includes/vector.hpp"
 #include "tests/includes/performance_test.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 /// @brief Test resize a vector (free memory, allocate memory, and assign default value)
 class vector_resize : public vector_performance_test
@@ -19,7 +17,9 @@ protected:
 
 public:
     /// @brief Set me up
-    vector_resize(const size_type runs, const size_type dim) : vector_performance_test("vector_resize", runs, dim) {}
+    vector_resize(const size_type runs, const size_type dim)
+        : vector_performance_test("vector_resize", runs, dim)
+    {}
 };
 
 /// @brief Test resize a matrix (free memory, allocate memory, and assign default value)
@@ -33,8 +33,7 @@ public:
     /// @brief Set me up
     matrix_resize(const size_type runs, const size_type m, const size_type n)
         : matrix_performance_test("matrix_resize", runs, m, n)
-    {
-    }
+    {}
 };
 
 } // namespace test

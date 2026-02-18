@@ -3,10 +3,8 @@
 #include "includes/matrix.hpp"
 #include "includes/vector.hpp"
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 int vector_add_sub_ops_test::execute()
 {

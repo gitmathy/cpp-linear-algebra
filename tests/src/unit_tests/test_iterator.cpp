@@ -4,10 +4,8 @@
 #include "includes/vector.hpp"
 #include <numeric>
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 int vector_iterator_test::execute()
 {
@@ -56,12 +54,14 @@ int matrix_iterator_test::execute()
             cm(i, j) = ++cnt; // 1..10 column-major
 
     pos = 0;
-    for (la::matrix<la::size_type, COLUMN_WISE>::citerator it = cm.begin(); it != cm.end(); ++it, ++pos)
+    for (la::matrix<la::size_type, COLUMN_WISE>::citerator it = cm.begin(); it != cm.end();
+         ++it, ++pos)
         if (*it != pos + 1)
             report_error("Iterator over column-wise read incorrect value");
 
     pos = 2;
-    for (la::matrix<la::size_type>::citerator it = cm.col_begin(1); it != cm.col_end(1); ++it, ++pos)
+    for (la::matrix<la::size_type>::citerator it = cm.col_begin(1); it != cm.col_end(1);
+         ++it, ++pos)
         if (*it != pos + 1)
             report_error("Column iterator read incorrect value");
 

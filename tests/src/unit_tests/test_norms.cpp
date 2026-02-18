@@ -4,10 +4,8 @@
 #include "includes/vector.hpp"
 #include <cmath>
 
-namespace la
-{
-namespace test
-{
+namespace la {
+namespace test {
 
 int vector_norms_test::execute()
 {
