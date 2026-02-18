@@ -35,7 +35,7 @@ UNIT_TARGET := $(UNIT_BUILD)/unit_tests
 DEPS := $(PERF_OBJS:.o=.d) $(UNIT_OBJS:.o=.d)
 -include $(DEPS)
 
-.PHONY: all perf unit run-perf run-unit deps clean
+.PHONY: all perf unit run-perf run-unit run-debug deps clean
 
 # Default: build both executables
 all: perf unit
@@ -80,6 +80,10 @@ run-perf: $(PERF_TARGET)
 run-unit: $(UNIT_TARGET)
 	@echo "Running unit tests..."
 	@$(UNIT_TARGET)
+
+run-debug: $(DEBUG_TARGET)
+	@echo "Running debug build..."
+	@$(DEBUG_TARGET)
 
 # Build dependency files (will compile object files and thereby generate .d files)
 deps: $(DEPS)
