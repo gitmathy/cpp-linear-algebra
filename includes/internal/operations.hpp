@@ -1,3 +1,12 @@
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file includes/internal/operations.hpp
+/// @brief Definition and declaration of operations available to matrices and vectors
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
 #ifndef LA_INTERNAL_ADD_H
 #define LA_INTERNAL_ADD_H
 

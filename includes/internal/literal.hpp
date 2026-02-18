@@ -1,3 +1,12 @@
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file includes/internal/literal.hpp
+/// @brief Definition and declaration of literals representing scalars
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
 #ifndef LA_INTERNAL_LITERAL_H
 #define LA_INTERNAL_LITERAL_H
 
