@@ -17,7 +17,8 @@ template <typename ExpressionT>
 class operant;
 } // namespace internal
 
-/// @brief Defining a vector used for numerical computations
+/// @brief Defining a vector used for numerical computations. All elements are stored in a plain
+/// array
 /// @tparam T Type of every element
 template <typename T>
 class vector
@@ -45,14 +46,8 @@ public:
     /// @brief Construct a vector of zero size
     explicit vector() : p_vals(nullptr), p_size(0) {}
 
-    /// @brief Construct a vector of given size, initialize elements with 0 (parameter m for
-    /// alignment with matrix, but is ignored)
-    explicit vector(size_type n, size_type m = 0);
-
-    /// @brief Constructing a vector with default values
-    /// @param n Size of the vector
-    /// @param val Default value
-    vector(size_type n, const T &val);
+    /// @brief Construct a vector of given size and initialize elements with a default value
+    explicit vector(size_type n, const T &val = T(0));
 
     /// @brief Move a vector
     explicit vector(vector<T> &&rhs) noexcept;
@@ -61,6 +56,9 @@ public:
     vector(const vector<T> &rhs);
 
     /// @brief Construct from expression
+    ///
+    /// Every element is set to the evaluated element, i.e., x(i) = exp.evaluate(i). This is used
+    /// when writing code like x = y+z;
     template <typename ExpressionT>
     vector(const internal::operant<ExpressionT> &exp);
 
@@ -148,12 +146,6 @@ void vector<T>::allocate(size_type n)
 }
 
 template <typename T>
-vector<T>::vector(size_type n, size_type) : p_vals(nullptr), p_size(0)
-{
-    resize(n, T(0));
-}
-
-template <typename T>
 vector<T>::vector(size_type n, const T &val) : p_vals(nullptr), p_size(0)
 {
     resize(n, val);
@@ -208,8 +200,9 @@ inline T &vector<T>::operator()(const size_type i)
 template <typename T>
 vector<T> &vector<T>::operator=(const vector<T> &rhs)
 {
-    if (this == &rhs)
+    if (this == &rhs) {
         return *this;
+    }
     allocate(rhs.p_size);
 #ifdef PARALLEL
     std::copy(execution::par_unseq, rhs.p_vals, rhs.p_vals + rhs.p_size, p_vals);
@@ -222,8 +215,9 @@ vector<T> &vector<T>::operator=(const vector<T> &rhs)
 template <typename T>
 vector<T> &vector<T>::operator=(vector<T> &&rhs) noexcept
 {
-    if (this == &rhs)
+    if (this == &rhs) {
         return *this;
+    }
     delete[] p_vals;
     p_vals = nullptr;
     p_size = 0;
@@ -238,8 +232,9 @@ vector<T> &vector<T>::operator=(const internal::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(exp.cols() == 1, "Invalid shape for vector = operant (2d)");
     const size_type n = exp.rows();
-    if (p_size != n)
+    if (p_size != n) {
         allocate(n);
+    }
     auto range = std::views::iota(size_type(0), p_size);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, range.begin(), range.end(),
