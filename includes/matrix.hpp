@@ -15,7 +15,10 @@ template <typename ExpressionT>
 class operant;
 } // namespace internal
 
-/// @brief Dense matrix
+/// @brief Class representing a dense matrix, i.e., all values are stored
+///
+/// All values are stored in a single array of elements. Depending on the template parameter
+/// StorageT, the values are either stored by rows (ROW_WISE) or by columns (COLUMN_WISE).
 /// @tparam T Type of every element
 template <typename T, storage_type StorageT = ROW_WISE>
 class matrix
@@ -39,18 +42,15 @@ private:
     /// @brief Number of columns
     size_type p_cols;
 
-    /// @brief Allocate memory and set dimensions
-    /// @param n Size of the vector
+    /// @brief Allocate memory and set shape
     void allocate(size_type m, size_type n);
 
 public:
     /// @brief Construct a matrix of given size, initialize elements with 0
     /// @param m number of rows
     /// @param n number of columns
-    explicit matrix(size_type m, size_type n);
-
-    /// @brief Construct a amtrix with a given value
-    matrix(size_type m, size_type n, const T &val);
+    /// @param val default value for all elements
+    explicit matrix(size_type m, size_type n, const T &val = T(0));
 
     /// @brief Move a matrix
     explicit matrix(matrix<T, StorageT> &&rhs) noexcept;
@@ -59,11 +59,15 @@ public:
     matrix(const matrix<T, StorageT> &rhs);
 
     /// @brief Copy from matrix with other StorageT type
-    /// @tparam other_storage The other StorageT type
-    template <storage_type other_storage>
-    matrix(const matrix<T, other_storage> &rhs);
+    /// @tparam OtherStorage The other StorageT type
+    template <storage_type OtherStorage>
+    matrix(const matrix<T, OtherStorage> &rhs);
 
     /// @brief Construct from expression
+    /// @tparam ExpressionT expression of the operant
+    ///
+    /// evaluate the expression for every element in the matrix and assigns this value to the matrix
+    /// element
     template <typename ExpressionT>
     matrix(const internal::operant<ExpressionT> &exp);
 
@@ -73,6 +77,7 @@ public:
     /// @brief Resize a matrix. And set all values to val
     /// @param m number of rows
     /// @param n number of columns
+    /// @param val value applied to every element of the matrix
     void resize(size_type m, size_type n, const T &val = T(0));
 
     /// @brief Get number of rows
@@ -81,7 +86,7 @@ public:
     /// @brief Get number of columns
     inline size_type cols() const { return p_cols; }
 
-    /// @brief A matrix is two dimensional
+    /// @brief Get the dimension of a matrix (2)
     inline size_type dimension() const { return 2; }
 
     /// @brief Get element (i,j) for reading
@@ -127,33 +132,39 @@ public:
     matrix<T, StorageT> &operator=(const matrix<T, StorageT> &rhs);
 
     /// @brief Assign another matrix with another StorageT type
-    template <storage_type other_storage>
-    matrix<T, StorageT> &operator=(const matrix<T, other_storage> &rhs);
+    ///
+    /// Note this should be avoided as memory access is not optimized!
+    template <storage_type OtherStorage>
+    matrix<T, StorageT> &operator=(const matrix<T, OtherStorage> &rhs);
 
-    /// @brief Move assign a matix
+    /// @brief Move assign a matrix
     matrix<T, StorageT> &operator=(matrix<T, StorageT> &&rhs) noexcept;
 
     /// @brief Assign from expression
     template <typename ExpressionT>
     matrix<T, StorageT> &operator=(const internal::operant<ExpressionT> &exp);
 
-    /// @brief Add another matix
+    /// @brief Add another matrix
     matrix<T, StorageT> &operator+=(const matrix<T, StorageT> &rhs);
 
-    /// @brief Add another matix with another StorageT type
-    template <storage_type other_storage>
-    matrix<T, StorageT> &operator+=(const matrix<T, other_storage> &rhs);
+    /// @brief Add another matrix with another StorageT type
+    ///
+    /// Note this should be avoided as memory access is not optimized!
+    template <storage_type OtherStorage>
+    matrix<T, StorageT> &operator+=(const matrix<T, OtherStorage> &rhs);
 
     /// @brief Add from another expression
     template <typename ExpressionT>
     matrix<T, StorageT> &operator+=(const internal::operant<ExpressionT> &exp);
 
-    /// @brief Subtract another matix
+    /// @brief Subtract another matrix
     matrix<T, StorageT> &operator-=(const matrix<T, StorageT> &rhs);
 
-    /// @brief Substract another matix with another StorageT type
-    template <storage_type other_storage>
-    matrix<T, StorageT> &operator-=(const matrix<T, other_storage> &rhs);
+    /// @brief Substract another matrix with another StorageT type
+    ///
+    /// Note this should be avoided as memory access is not optimized!
+    template <storage_type OtherStorage>
+    matrix<T, StorageT> &operator-=(const matrix<T, OtherStorage> &rhs);
 
     /// @brief subtract from another expression
     template <typename ExpressionT>
@@ -181,12 +192,6 @@ void matrix<T, StorageT>::allocate(size_type m, size_type n)
 }
 
 template <typename T, storage_type StorageT>
-matrix<T, StorageT>::matrix(size_type m, size_type n) : p_vals(nullptr), p_rows(0), p_cols(0)
-{
-    resize(m, n);
-}
-
-template <typename T, storage_type StorageT>
 matrix<T, StorageT>::matrix(size_type m, size_type n, const T &val)
     : p_vals(nullptr), p_rows(0), p_cols(0)
 {
@@ -211,8 +216,8 @@ matrix<T, StorageT>::matrix(const matrix<T, StorageT> &rhs)
 }
 
 template <typename T, storage_type StorageT>
-template <storage_type other_storage>
-matrix<T, StorageT>::matrix(const matrix<T, other_storage> &rhs)
+template <storage_type OtherStorage>
+matrix<T, StorageT>::matrix(const matrix<T, OtherStorage> &rhs)
     : p_vals(nullptr), p_rows(0), p_cols(0)
 {
     *this = rhs;
@@ -312,8 +317,9 @@ typename matrix<T, StorageT>::citerator matrix<T, StorageT>::col_end(size_type i
 template <typename T, storage_type StorageT>
 matrix<T, StorageT> &matrix<T, StorageT>::operator=(const matrix<T, StorageT> &rhs)
 {
-    if (this == &rhs)
+    if (this == &rhs) {
         return *this;
+    }
     allocate(rhs.p_rows, rhs.p_cols);
 #ifdef PARALLEL
     std::copy(execution::par_unseq, rhs.p_vals, rhs.p_vals + rhs.rows() * rhs.cols(), p_vals);
@@ -325,8 +331,8 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator=(const matrix<T, StorageT> &r
 }
 
 template <typename T, storage_type StorageT>
-template <storage_type other_storage>
-matrix<T, StorageT> &matrix<T, StorageT>::operator=(const matrix<T, other_storage> &rhs)
+template <storage_type OtherStorage>
+matrix<T, StorageT> &matrix<T, StorageT>::operator=(const matrix<T, OtherStorage> &rhs)
 {
     allocate(rhs.rows(), rhs.cols());
     LOG_WARNING("Unoptimized StorageT access due to StorageT layout");
@@ -348,8 +354,9 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator=(const matrix<T, other_storag
 template <typename T, storage_type StorageT>
 matrix<T, StorageT> &matrix<T, StorageT>::operator=(matrix<T, StorageT> &&rhs) noexcept
 {
-    if (this == &rhs)
+    if (this == &rhs) {
         return *this;
+    }
     delete[] p_vals;
     p_vals = nullptr;
     p_rows = 0;
@@ -364,8 +371,9 @@ template <typename T, storage_type StorageT>
 template <typename ExpressionT>
 matrix<T, StorageT> &matrix<T, StorageT>::operator=(const internal::operant<ExpressionT> &exp)
 {
-    if (exp.rows() != p_rows || exp.cols() != p_cols)
+    if (exp.rows() != p_rows || exp.cols() != p_cols) {
         allocate(exp.rows(), exp.cols());
+    }
     auto range = std::views::iota(size_type(0), p_rows);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &exp](size_type i) {
@@ -374,8 +382,9 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator=(const internal::operant<Expr
     });
 #else
     std::for_each(range.begin(), range.end(), [this, &exp](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j)
+        for (size_type j = 0; j < this->p_cols; ++j) {
             (*this)(i, j) = exp.evaluate(i, j);
+        }
     });
 #endif
     return *this;
@@ -398,8 +407,8 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator+=(const matrix<T, StorageT> &
 }
 
 template <typename T, storage_type StorageT>
-template <storage_type other_storage>
-matrix<T, StorageT> &matrix<T, StorageT>::operator+=(const matrix<T, other_storage> &rhs)
+template <storage_type OtherStorage>
+matrix<T, StorageT> &matrix<T, StorageT>::operator+=(const matrix<T, OtherStorage> &rhs)
 {
     SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
                  "Invalid shape for matrix += matrix with different storage_type");
@@ -407,13 +416,15 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator+=(const matrix<T, other_stora
     auto range = std::views::iota(size_type(0), p_rows);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &rhs](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j)
+        for (size_type j = 0; j < this->p_cols; ++j) {
             (*this)(i, j) += rhs(i, j);
+        }
     });
 #else
     std::for_each(range.begin(), range.end(), [this, &rhs](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j)
+        for (size_type j = 0; j < this->p_cols; ++j) {
             (*this)(i, j) += rhs(i, j);
+        }
     });
 #endif
     return *this;
@@ -428,13 +439,15 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator+=(const internal::operant<Exp
     auto range = std::views::iota(size_type(0), p_rows);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &exp](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j)
+        for (size_type j = 0; j < this->p_cols; ++j) {
             (*this)(i, j) += exp.evaluate(i, j);
+        }
     });
 #else
     std::for_each(range.begin(), range.end(), [this, &exp](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j)
+        for (size_type j = 0; j < this->p_cols; ++j) {
             (*this)(i, j) += exp.evaluate(i, j);
+        }
     });
 #endif
     return *this;
@@ -457,8 +470,8 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator-=(const matrix<T, StorageT> &
 }
 
 template <typename T, storage_type StorageT>
-template <storage_type other_storage>
-matrix<T, StorageT> &matrix<T, StorageT>::operator-=(const matrix<T, other_storage> &rhs)
+template <storage_type OtherStorage>
+matrix<T, StorageT> &matrix<T, StorageT>::operator-=(const matrix<T, OtherStorage> &rhs)
 {
     SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
                  "Invalid shape for matrix -= matrix with different storage_type");
@@ -466,13 +479,15 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator-=(const matrix<T, other_stora
     auto range = std::views::iota(size_type(0), p_rows);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &rhs](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j)
+        for (size_type j = 0; j < this->p_cols; ++j) {
             (*this)(i, j) -= rhs(i, j);
+        }
     });
 #else
     std::for_each(range.begin(), range.end(), [this, &rhs](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j)
+        for (size_type j = 0; j < this->p_cols; ++j) {
             (*this)(i, j) -= rhs(i, j);
+        }
     });
 #endif
     return *this;
@@ -487,13 +502,15 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator-=(const internal::operant<Exp
     auto range = std::views::iota(size_type(0), p_rows);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &exp](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j)
+        for (size_type j = 0; j < this->p_cols; ++j) {
             (*this)(i, j) -= exp.evaluate(i, j);
+        }
     });
 #else
     std::for_each(range.begin(), range.end(), [this, &exp](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j)
+        for (size_type j = 0; j < this->p_cols; ++j) {
             (*this)(i, j) -= exp.evaluate(i, j);
+        }
     });
 #endif
     return *this;
