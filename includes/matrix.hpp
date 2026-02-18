@@ -46,6 +46,9 @@ private:
     void allocate(size_type m, size_type n);
 
 public:
+    /// @brief Default constructor creates an empty matrix
+    explicit matrix() : p_vals(nullptr), p_rows(0), p_cols(0) {}
+
     /// @brief Construct a matrix of given size, initialize elements with 0
     /// @param m number of rows
     /// @param n number of columns
