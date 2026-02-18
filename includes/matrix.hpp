@@ -13,7 +13,9 @@
 #include "includes/assert.hpp"
 #include "includes/types.hpp"
 #include <algorithm>
+#include <fstream>
 #include <ranges>
+#include <string>
 
 namespace la {
 
@@ -63,6 +65,9 @@ public:
     /// @param n number of columns
     /// @param val default value for all elements
     explicit matrix(size_type m, size_type n, const T &val = T(0));
+
+    /// @brief Construct a matrix with a list of values
+    explicit matrix(const std::initializer_list<std::initializer_list<T>> &init_list);
 
     /// @brief Move a matrix
     explicit matrix(matrix<T, StorageT> &&rhs) noexcept;
@@ -186,7 +191,21 @@ public:
     /// @tparam function, supports func(T)
     template <typename function>
     matrix<T, StorageT> &apply_func(function func);
+
+    /// @brief Write matrix to a file (default in binary mode)
+    void to_file(const std::string &filename, const bool binary = true);
+
+    /// @brief Read matrix from a file (default in binary mode)
+    void from_file(const std::string &filename, const bool binary = true);
 };
+
+/// ===============================================
+/// P U B L I C   F U N C T I O N S
+/// ===============================================
+
+/// @brief Write a vector to an output stream
+template <typename T, storage_type StorageT>
+std::ostream &operator<<(std::ostream &os, const matrix<T, StorageT> &mat);
 
 /// ===============================================
 /// T E M P L A T E   I M P L E M E N T A T I O N S
@@ -208,6 +227,36 @@ matrix<T, StorageT>::matrix(size_type m, size_type n, const T &val)
     : p_vals(nullptr), p_rows(0), p_cols(0)
 {
     resize(m, n, val);
+}
+
+template <typename T, storage_type StorageT>
+matrix<T, StorageT>::matrix(const std::initializer_list<std::initializer_list<T>> &init_list)
+    : p_vals(nullptr), p_rows(0), p_cols(0)
+{
+    if (init_list.begin()->size() == 0) {
+        LOG_WARNING("Empty matrix, due to empty first list of row values");
+        allocate(0, 0);
+        return;
+    }
+    const size_type m = (StorageT == ROW_WISE) ? init_list.size() : init_list.begin()->size();
+    const size_type n = (StorageT == ROW_WISE) ? init_list.begin()->size() : init_list.size();
+    allocate(m, n);
+    if constexpr (StorageT == ROW_WISE) {
+        size_type i = 0;
+        for (std::initializer_list<T> row_vals : init_list) {
+            SHAPE_ASSERT(row_vals.size() == n, "Invalid number of row elements in matrix init");
+            std::copy(row_vals.begin(), row_vals.end(), row_begin(i));
+            ++i;
+        }
+    } else {
+        // Column-wise matrix
+        size_type j = 0;
+        for (std::initializer_list<T> col_vals : init_list) {
+            SHAPE_ASSERT(col_vals.size() == m, "Invalid number of column elements in matrix init");
+            std::copy(col_vals.begin(), col_vals.end(), col_begin(j));
+            ++j;
+        }
+    }
 }
 
 // take ownership and leave rhs in a valid empty state
@@ -273,56 +322,56 @@ inline T &matrix<T, StorageT>::operator()(size_type i, size_type j)
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::iterator matrix<T, StorageT>::row_begin(size_type i)
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layour for matrix::row_begin");
+    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_begin");
     return p_vals + i * p_cols;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::iterator matrix<T, StorageT>::row_end(size_type i)
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layour for matrix::row_end");
+    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_end");
     return p_vals + (i + 1) * p_cols;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::citerator matrix<T, StorageT>::row_begin(size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layour for matrix::row_begin const");
+    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_begin const");
     return p_vals + i * p_cols;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::citerator matrix<T, StorageT>::row_end(size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layour for matrix::row_end const");
+    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_end const");
     return p_vals + (i + 1) * p_cols;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::iterator matrix<T, StorageT>::col_begin(size_type i)
 {
-    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layour for matrix::col_begin");
+    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layout for matrix::col_begin");
     return p_vals + i * p_rows;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::iterator matrix<T, StorageT>::col_end(size_type i)
 {
-    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layour for matrix::col_end");
+    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layout for matrix::col_end");
     return p_vals + (i + 1) * p_rows;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::citerator matrix<T, StorageT>::col_begin(size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layour for matrix::col_begin const");
+    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layout for matrix::col_begin const");
     return p_vals + i * p_rows;
 }
 
 template <typename T, storage_type StorageT>
 typename matrix<T, StorageT>::citerator matrix<T, StorageT>::col_end(size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layour for matrix::col_end const");
+    LAYOUT_ASSERT(StorageT == COLUMN_WISE, "Invalid layout for matrix::col_end const");
     return p_vals + (i + 1) * p_rows;
 }
 
@@ -542,5 +591,87 @@ matrix<T, StorageT> &matrix<T, StorageT>::apply_func(function func)
 #endif
     return *this;
 }
+
+template <typename T, storage_type StorageT>
+void matrix<T, StorageT>::to_file(const std::string &filename, const bool binary)
+{
+    std::ios_base::openmode mode = binary ? std::ios::out : std::ios::binary | std::ios::out;
+    std::ofstream ofs(filename, mode);
+    if (!ofs) {
+        throw error("Cannot open file for write.", "file_io");
+    }
+    if (binary) {
+        ofs.write(reinterpret_cast<const char *>(&p_rows), sizeof(size_type));
+        ofs.write(reinterpret_cast<const char *>(&p_cols), sizeof(size_type));
+        ofs.write(reinterpret_cast<const char *>(p_vals), p_rows * p_cols * sizeof(T));
+    } else {
+        ofs << p_rows << ' ' << p_cols << ' ';
+        std::copy(p_vals, p_vals + p_rows * p_cols, std::ostream_iterator<T>(ofs, " "));
+    }
+}
+
+template <typename T, storage_type StorageT>
+void matrix<T, StorageT>::from_file(const std::string &filename, const bool binary)
+{
+    std::ios_base::openmode mode = binary ? std::ios::in : std::ios::binary | std::ios::in;
+    std::ifstream ifs(filename, mode);
+    if (!ifs) {
+        throw error("Cannot open file for read.", "file_io");
+    }
+    // Read size information
+    size_type rows, cols;
+    if (binary) {
+        ifs.read(reinterpret_cast<char *>(&rows), sizeof(size_type));
+        ifs.read(reinterpret_cast<char *>(&cols), sizeof(size_type));
+        if (!ifs) {
+            throw error("Cannot read header for read.", "file_io");
+        }
+    } else {
+        if (!(ifs >> rows >> cols)) {
+            throw error("Cannot read header for read.", "file_io");
+        }
+    }
+    allocate(rows, cols);
+    std::cout << "Reading matrix of size " << p_rows << " x " << p_cols << std::endl;
+    if (binary) {
+        ifs.read(reinterpret_cast<char *>(p_vals), rows * cols * sizeof(T));
+        if (!ifs) {
+            throw error("Cannot read binary data.", "file_io");
+        }
+    } else {
+        T value;
+        for (T *first = begin(); first != end(); ++first) {
+            if (ifs >> value) {
+                *first = value;
+            } else {
+                throw error("Cannot read text data.", "file_io");
+            }
+        }
+    }
+}
+
+template <typename T, storage_type StorageT>
+std::ostream &operator<<(std::ostream &os, const matrix<T, StorageT> &mat)
+{
+    for (size_type i = 0; i < mat.rows(); ++i) {
+        for (size_type j = 0; j < mat.cols(); ++j) {
+            os << mat(i, j) << (j != mat.cols() - 1 ? '\t' : ' ');
+        }
+        os << '\n';
+    }
+    return os;
+}
+
+// specialized for ROW_WISE matrices
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const matrix<T, ROW_WISE> &mat)
+{
+    for (size_type i = 0; i < mat.rows(); ++i) {
+        std::copy(mat.row_begin(i), mat.row_end(i), std::ostream_iterator<T>(os, "\t"));
+        os << '\n';
+    }
+    return os;
+}
+
 } // namespace la
 #endif
