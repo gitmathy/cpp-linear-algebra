@@ -19,7 +19,7 @@ Copy the files and directory from [./includes/](./includes/) to your setup and m
 #include "includes/la.hpp"
 
 la::vector<double> v(2);
-double norm_2 = la::norm(v);    // Same a sla::norm<2>(v)
+double norm_2 = la::norm(v);    // Same as la::norm<2>(v)
 double norm_1 = la::norm<1>(v);
 double norm_max = la::norm<UINT_MAX>(v);
 ```
