@@ -5,4 +5,3 @@ UseTab: Never
 BreakBeforeBraces: Allman
 AccessModifierOffset: -4
 IndentCaseLabels: true
-
