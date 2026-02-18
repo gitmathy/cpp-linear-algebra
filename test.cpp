@@ -7,17 +7,9 @@ using namespace la;
 
 int main()
 {
-    matrix<int> A(2, 3);
-    A(0, 0) = 1;
-    A(0, 1) = 2;
-    A(0, 2) = 3;
-    A(1, 0) = 4;
-    A(1, 1) = 5;
-    A(1, 2) = 6;
-    vector<int> x(3);
-    x(0) = 1;
-    x(1) = 2;
-    x(2) = 3;
-    vector<int> y = A * x;
-    std::cout << y(0) << ", " << y(1) << std::endl;
+    matrix<double> A({{1, 2, 3}, {4, 5, 6}});
+    A.to_file("a_dummy.mat", true);
+    la::matrix<double, ROW_WISE> A_row_txt;
+    A_row_txt.from_file("a_dummy.mat", true);
+    std::cout << A_row_txt << std::endl;
 }
