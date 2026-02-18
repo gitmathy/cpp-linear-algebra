@@ -43,8 +43,8 @@ public:
 /// ===============================================
 
 /// @brief Substract operation
-/// @tparam ExpressionLeft type of minuent
-/// @tparam ExpressionRight type of subtrahent
+/// @tparam ExpressionLeft type of minuend
+/// @tparam ExpressionRight type of subtrahend
 template <typename ExpressionLeft, typename ExpressionRight>
 class sub_operation
 {
@@ -74,7 +74,7 @@ public:
 
 /// @brief Multiplying a matrix with a vector
 /// @tparam MatType Matrix type
-/// @tparam VecType Vecor type
+/// @tparam VecType Vector type
 template <typename MatType, typename VecType>
 class mat_vec_multiplication
 {
