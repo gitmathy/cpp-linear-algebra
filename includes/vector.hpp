@@ -48,10 +48,6 @@ private:
     /// @brief Dimension of the vector
     size_type p_size;
 
-    /// @brief Allocate memory and set size
-    /// @param n Size of the vector
-    void allocate(size_type n);
-
 public:
     /// @brief Construct a vector of zero size
     explicit vector() : p_vals(nullptr), p_size(0) {}
@@ -77,6 +73,11 @@ public:
 
     /// @brief Destructing a vector
     ~vector() { delete[] p_vals; }
+
+    /// @brief Allocate memory and set size
+    /// WARNING: elements are not assigned!
+    /// @param n Size of the vector
+    void allocate(size_type n);
 
     /// @brief Resize a vector. Set all elements to default value
     /// @param n New size
