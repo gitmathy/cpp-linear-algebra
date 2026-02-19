@@ -44,3 +44,27 @@ For this project we try hard to follow this formatting rules. Some of them are e
 | file suffixes        | Use `.hpp` for header files and `.cpp` for implementations |
 | variable prefixes    | class or instance variables should be prefixed with `p_`   |
 | class and struct     | struct if only public members                              |
+
+
+## How to use CMake:
+
+1. Build debug things
+
+   ```bash
+   mkdir build_debug
+   cd build_debug
+   cmake -DCMAKE_BUILD_TYPE=Debug ..
+   make unit_tests
+   ./unit/unit_tests
+   ./debug/debug_test
+   ```
+
+1. Build debug things
+
+   ```bash
+   mkdir build_perf
+   cd build_perf
+   cmake -DCMAKE_BUILD_TYPE=Release ..
+   make performance_test
+   ./perf/performance_test
+   ```
