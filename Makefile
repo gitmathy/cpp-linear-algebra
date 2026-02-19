@@ -81,6 +81,10 @@ run-unit: $(UNIT_TARGET)
 	@echo "Running unit tests..."
 	@$(UNIT_TARGET)
 
+run-debug: $(DEBUG_TARGET)
+	@echo "Running debug build..."
+	@$(DEBUG_TARGET)
+
 # Build dependency files (will compile object files and thereby generate .d files)
 deps: $(DEPS)
 	@echo "Dependencies updated"

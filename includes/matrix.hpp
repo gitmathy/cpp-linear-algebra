@@ -632,7 +632,6 @@ void matrix<T, StorageT>::from_file(const std::string &filename, const bool bina
         }
     }
     allocate(rows, cols);
-    std::cout << "Reading matrix of size " << p_rows << " x " << p_cols << std::endl;
     if (binary) {
         ifs.read(reinterpret_cast<char *>(p_vals), rows * cols * sizeof(T));
         if (!ifs) {
