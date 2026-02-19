@@ -4,6 +4,7 @@
 // Include the tests
 #include "tests/includes/performance_tests/add.hpp"
 #include "tests/includes/performance_tests/assign.hpp"
+#include "tests/includes/performance_tests/decompose.hpp"
 #include "tests/includes/performance_tests/resize.hpp"
 
 using namespace la;
@@ -12,6 +13,7 @@ using namespace la::test;
 const size_type VECTOR_N = 100000000;
 const size_type MATRIX_M = 1000;
 const size_type MATRIX_N = 100000;
+const size_type MATRIX_SOLVE = 1000;
 const size_type RUNS = 10;
 
 int main()
@@ -39,6 +41,13 @@ int main()
 
     tests.transfer("matrix_vector",
                    std::make_unique<vector_assign_matrix_vector_mult>(RUNS, MATRIX_M, MATRIX_N));
+
+    tests.transfer("algorithms",
+                   std::make_unique<decompose_row_solve_row_matrix>(RUNS, MATRIX_SOLVE));
+    tests.transfer("algorithms",
+                   std::make_unique<decompose_row_solve_col_matrix>(RUNS, MATRIX_SOLVE));
+    tests.transfer("algorithms",
+                   std::make_unique<decompose_col_solve_col_matrix>(RUNS, MATRIX_SOLVE));
 
     int result = tests.run();
 
