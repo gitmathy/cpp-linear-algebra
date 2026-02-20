@@ -12,6 +12,7 @@
 
 #include "includes/assert.hpp"
 #include "includes/log.hpp"
+#include "includes/settings.hpp"
 #include "includes/types.hpp"
 #include <algorithm>
 #include <fstream>
