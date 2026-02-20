@@ -11,11 +11,16 @@
 #define LA_MATRIX_H
 
 #include "includes/assert.hpp"
+#include "includes/log.hpp"
 #include "includes/types.hpp"
 #include <algorithm>
 #include <fstream>
 #include <ranges>
 #include <string>
+
+#ifdef _MSC_VER
+#define LOG_WARNING(a) ((void)0)
+#endif
 
 namespace la {
 

@@ -16,7 +16,7 @@ bool delete_file(const std::string &filename)
             throw error("Cannot delete temporary file", "file_error");
         }
         return false;
-    } catch (const std::filesystem::filesystem_error &e) {
+    } catch (const std::filesystem::filesystem_error &) {
         LOG_ERROR("Failed to delete temporary file");
         throw error("Cannot delete temporary file", "file_error");
     }
@@ -40,7 +40,7 @@ int vector_read_write_test::execute()
               std::abs(v_bin(2) - 3.) < LA_EPS && std::abs(v_bin(3) - 4.) < LA_EPS)) {
             report_error("Wrong elements read");
         }
-    } catch (const error &e) {
+    } catch (const error &) {
         report_error("Vector binary: Cannot write to or read from file");
     }
 
@@ -58,7 +58,7 @@ int vector_read_write_test::execute()
               std::abs(v_txt(2) - 3.) < LA_EPS && std::abs(v_txt(3) - 4.) < LA_EPS)) {
             report_error("Wrong elements read");
         }
-    } catch (const error &e) {
+    } catch (const error &) {
         report_error("Vector ascii: Cannot write to or read from file");
     }
     delete_file(filename);
@@ -85,7 +85,7 @@ int matrix_read_write_test::execute()
             report_error("Wrong elements read");
         }
         A_row_bin.resize(0, 0);
-    } catch (const error &e) {
+    } catch (const error &) {
         report_error("Matrix binary ascii: Cannot write to or read from file");
     }
     delete_file(filename);
@@ -104,7 +104,7 @@ int matrix_read_write_test::execute()
             report_error("Wrong elements read");
         }
         A_row_txt.resize(0, 0);
-    } catch (const error &e) {
+    } catch (const error &) {
         report_error("Matrix row ascii: Cannot write to or read from file");
     }
     delete_file(filename);

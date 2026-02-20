@@ -8,7 +8,7 @@ namespace test {
 
 int vector_unary_assignment_test::execute()
 {
-    la::vector<int> a(3, 1.0);
+    la::vector<int> a(3, 1);
     la::vector<int> b = -a;
 
     if (!check_values(b, -1))

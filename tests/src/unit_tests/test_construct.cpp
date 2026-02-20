@@ -24,11 +24,10 @@ int vector_construct_test::execute()
     if (vf->rows() != 2) {
         report_error("Constructor set wrong sizes of float matrix");
     }
-    if (!check_values(*vf, 3.14)) {
+    if (!check_values(*vf, 3.14f)) {
         report_error("Values not correct after constructing a float vector");
     }
     delete vf;
-    return (int)errors().size();
 
     // test with initializer list
     // ----------------
@@ -41,6 +40,8 @@ int vector_construct_test::execute()
     }
 
     delete vi;
+
+    return (int)errors().size();
 }
 
 int matrix_construct_test::execute()
@@ -62,7 +63,7 @@ int matrix_construct_test::execute()
     if (mf->rows() != 2 || mf->cols() != 3) {
         report_error("Constructor set wrong sizes of float matrix");
     }
-    if (!check_values(*mf, 3.14)) {
+    if (!check_values(*mf, 3.14f)) {
         report_error("Values not correct after constructing a float matrix");
     }
     delete mf;
