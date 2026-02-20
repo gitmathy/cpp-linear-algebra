@@ -28,7 +28,6 @@ int vector_construct_test::execute()
         report_error("Values not correct after constructing a float vector");
     }
     delete vf;
-    return (int)errors().size();
 
     // test with initializer list
     // ----------------
@@ -41,6 +40,8 @@ int vector_construct_test::execute()
     }
 
     delete vi;
+
+    return (int)errors().size();
 }
 
 int matrix_construct_test::execute()
