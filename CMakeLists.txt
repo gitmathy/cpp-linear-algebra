@@ -8,14 +8,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_program(GCC12_COMPILER g++-12)
 if(GCC12_COMPILER)
     set(CMAKE_CXX_COMPILER ${GCC12_COMPILER})
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Ofast")
+elseif(MSVC)
+    message(STATUS "MSVC detected, adding compile flags")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+    set(CMAKE_CXX_FLAGS_RELEASE "/O2 /Ot /Oi /GL /Gw /W4 /permissive-")
 else()
     message(WARNING "g++-12 not found. Using default C++ compiler.")
 endif()
 
 # Set compiler flags
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Ofast")
 
 # Include the root directory for headers
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
