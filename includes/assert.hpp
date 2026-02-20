@@ -17,6 +17,10 @@
 
 namespace la {
 
+#ifdef _MSC_VER
+#define LOG_ERROR(a) ((void)0)
+#endif
+
 class error : public std::runtime_error
 {
 public:
