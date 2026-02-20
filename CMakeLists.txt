@@ -24,8 +24,8 @@ endif()
 # Include the root directory for headers
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-# Find the TBB library (required for linking)
-find_package(TBB REQUIRED)
+# Find the TBB library (optional, for performance tests)
+find_package(TBB)
 
 # --- Common Source Files ---
 file(GLOB COMMON_SRCS "tests/src/*.cpp")
@@ -33,7 +33,6 @@ file(GLOB COMMON_SRCS "tests/src/*.cpp")
 # --- Unit Test Target ---
 file(GLOB UNIT_TEST_SRCS "tests/src/unit_tests/*.cpp")
 add_executable(unit_tests tests/unit_tests.cpp ${COMMON_SRCS} ${UNIT_TEST_SRCS})
-target_link_libraries(unit_tests PRIVATE TBB::tbb)
 set_target_properties(unit_tests PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/unit"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/unit/archives"
@@ -43,8 +42,13 @@ set_target_properties(unit_tests PROPERTIES
 # --- Performance Test Target ---
 file(GLOB PERF_TEST_SRCS "tests/src/performance_tests/*.cpp")
 add_executable(performance_test tests/performance_test.cpp ${COMMON_SRCS} ${PERF_TEST_SRCS})
-target_compile_definitions(performance_test PRIVATE PARALLEL)
-target_link_libraries(performance_test PRIVATE TBB::tbb)
+if(TBB_FOUND)
+    message(STATUS "TBB found, enabling parallel support for performance_test.")
+    target_compile_definitions(performance_test PRIVATE PARALLEL)
+    target_link_libraries(performance_test PRIVATE TBB::tbb)
+else()
+    message(STATUS "TBB not found, performance_test will run without parallel support.")
+endif()
 set_target_properties(performance_test PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/perf"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/perf/archives"
@@ -53,7 +57,6 @@ set_target_properties(performance_test PROPERTIES
 
 # --- Debug Target ---
 add_executable(debug_test test.cpp)
-target_link_libraries(debug_test PRIVATE TBB::tbb)
 set_target_properties(debug_test PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/debug"
 )

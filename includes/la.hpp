@@ -21,7 +21,9 @@
 #include "includes/vector.hpp"
 #include <algorithm>
 #include <cmath>
-#include <execution>
+#ifndef PARALLEL
+#include <numeric>
+#endif
 
 namespace la {
 
@@ -174,29 +176,48 @@ template <unsigned int p, typename la_type>
 typename la_type::value_type norm(const la_type &x)
 {
     typedef typename la_type::value_type T;
-    auto first = x.begin();
     T result = T(0);
     if constexpr (p == 1) {
-        result = std::transform_reduce(
-            std::execution::par_unseq, // Parallel and unsequenced execution
-            x.begin(), x.end(), 0.0, std::plus<T>(), [](const T val) { return std::abs(val); });
+#ifdef PARALLEL
+        result = std::transform_reduce(execution::par_unseq, // Parallel and unsequenced execution
+                                       x.begin(), x.end(), T(0), std::plus<T>(),
+                                       [](const T val) { return std::abs(val); });
+#else
+        result = std::accumulate(x.begin(), x.end(), T(0),
+                                 [](const T sum, const T val) { return sum + std::abs(val); });
+#endif
         return result;
     }
     if constexpr (p == 2) {
+#ifdef PARALLEL
         result =
             std::transform_reduce(std::execution::par_unseq, // Parallel and unsequenced execution
-                                  x.begin(), x.end(), 0.0, std::plus<T>(),
+                                  x.begin(), x.end(), T(0), std::plus<T>(),
                                   [](const T val) { return std::abs(val * val); });
+#else
+        result = std::accumulate(x.begin(), x.end(), T(0), [](const T sum, const T val) {
+            return sum + std::abs(val * val);
+        });
+#endif
         return std::sqrt(result);
     }
     if constexpr (p == LA_UINT_MAX) {
-        for (; first != x.end(); ++first)
-            result = std::max(std::abs(*first), result);
+        result = std::abs(*std::max_element(
+#if PARALLEL
+            std::execution::par_unseq,
+#endif
+            x.begin(), x.end(), [](T a, T b) { return std::abs(a) < std::abs(b); }));
         return result;
     }
+#ifdef PARALLEL
     result = std::transform_reduce(std::execution::par_unseq, // Parallel and unsequenced execution
-                                   x.begin(), x.end(), 0.0, std::plus<T>(),
+                                   x.begin(), x.end(), T(0), std::plus<T>(),
                                    [](const T val) { return std::pow(std::abs(val), p); });
+#else
+    result = std::accumulate(x.begin(), x.end(), T(0), [](const T sum, const T val) {
+        return sum + std::pow(std::abs(val), p);
+    });
+#endif
     return std::pow(result, 1. / p);
 }
 
