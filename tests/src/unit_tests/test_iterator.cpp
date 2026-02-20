@@ -21,7 +21,7 @@ int vector_iterator_test::execute()
             report_error("Vector const-iterator reads incorrect value");
 
     // test algorithm on const-iterators (std::accumulate)
-    la::size_type sum = std::accumulate(cv.begin(), cv.end(), 0);
+    la::size_type sum = std::accumulate(cv.begin(), cv.end(), size_type(0));
     const la::size_type expect = 1 + 2 + 3 + 4 + 5 + 6;
     if (sum != expect)
         report_error("std::accumulate over const-iterator produced wrong sum");
