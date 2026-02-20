@@ -2,8 +2,6 @@ name: Makefile CI
 description: Build the executable by g++
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
