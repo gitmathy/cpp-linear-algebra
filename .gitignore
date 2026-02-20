@@ -47,3 +47,6 @@ dummy.cpp
 dummy
 
 doxygen/**
+
+.vs/*
+out/*
