@@ -69,7 +69,7 @@ public:
     inline size_type cols() const { return p_expression.cols(); }
 
     /// @brief Dimension of the operant is defined by the expression
-    inline size_type dimension() const { return p_expression.dimension(); }
+    const static size_type dimension = ExpressionT::dimension;
 };
 
 } // namespace internal

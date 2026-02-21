@@ -6,6 +6,28 @@
 namespace la {
 namespace test {
 
+/// @brief Test elementwise multiplication of vectors
+class vec_vec_mult_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    vec_vec_mult_test() : unit_test("vector mult vector") {}
+
+    /// @brief Run the test
+    int execute() override;
+};
+
+/// @brief Matrix-matrix multiplication
+class mat_mat_mult_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    mat_mat_mult_test() : unit_test("multiplying matrix with matrix") {}
+
+    /// @brief Run the test
+    int execute() override;
+};
+
 /// @brief Test add and sub of vectors
 class mat_vec_mult_test : public unit_test
 {

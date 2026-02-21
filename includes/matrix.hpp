@@ -63,6 +63,12 @@ private:
     void allocate(size_type m, size_type n);
 
 public:
+    /// public variable members
+
+    /// @brief Dimension of a matrix
+    const static size_type dimension = size_type(2);
+
+public:
     /// @brief Default constructor creates an empty matrix
     explicit matrix() : p_vals(nullptr), p_rows(0), p_cols(0) {}
 
@@ -73,7 +79,7 @@ public:
     explicit matrix(size_type m, size_type n, const T &val = T(0));
 
     /// @brief Construct a matrix with a list of values
-    explicit matrix(const std::initializer_list<std::initializer_list<T>> &init_list);
+    matrix(const std::initializer_list<std::initializer_list<T>> &init_list);
 
     /// @brief Move a matrix
     explicit matrix(matrix<T, StorageT> &&rhs) noexcept;
@@ -109,9 +115,6 @@ public:
     /// @brief Get number of columns
     inline size_type cols() const { return p_cols; }
 
-    /// @brief Get the dimension of a matrix (2)
-    inline size_type dimension() const { return 2; }
-
     /// @brief Get element (i,j) for reading
     inline const T &operator()(size_type i, size_type j) const;
 
@@ -120,6 +123,9 @@ public:
 
     /// @brief Evaluate matrix at (i,j), i.e., read element (i,j)
     inline const T &evaluate(size_type i, size_type j) const { return (*this)(i, j); }
+
+    /// @brief Evaluate matrix at (i) raises an error
+    inline const T &evaluate(size_type i) const;
 
     /// @brief Iterator to begin
     inline iterator begin() { return p_vals; }
@@ -167,6 +173,10 @@ public:
     template <typename ExpressionT>
     matrix<T, StorageT> &operator=(const internal::operant<ExpressionT> &exp);
 
+    /// @brief Assign from initializer list
+    matrix<T, StorageT> &
+    operator=(const std::initializer_list<std::initializer_list<T>> &init_list);
+
     /// @brief Add another matrix
     matrix<T, StorageT> &operator+=(const matrix<T, StorageT> &rhs);
 
@@ -179,6 +189,22 @@ public:
     /// @brief Add from another expression
     template <typename ExpressionT>
     matrix<T, StorageT> &operator+=(const internal::operant<ExpressionT> &exp);
+
+    /// @brief Multiply another matrix
+    matrix<T, StorageT> &operator*=(const matrix<T, StorageT> &rhs);
+
+    /// @brief Multiply with a scalar
+    matrix<T, StorageT> &operator*=(const T &rhs);
+
+    /// @brief Multiply another matrix with another StorageT type
+    ///
+    /// Note this should be avoided as memory access is not optimized!
+    template <storage_type OtherStorage>
+    matrix<T, StorageT> &operator*=(const matrix<T, OtherStorage> &rhs);
+
+    /// @brief Multiply from another expression
+    template <typename ExpressionT>
+    matrix<T, StorageT> &operator*=(const internal::operant<ExpressionT> &exp);
 
     /// @brief Subtract another matrix
     matrix<T, StorageT> &operator-=(const matrix<T, StorageT> &rhs);
@@ -239,30 +265,7 @@ template <typename T, storage_type StorageT>
 matrix<T, StorageT>::matrix(const std::initializer_list<std::initializer_list<T>> &init_list)
     : p_vals(nullptr), p_rows(0), p_cols(0)
 {
-    if (init_list.begin()->size() == 0) {
-        LOG_WARNING("Empty matrix, due to empty first list of row values");
-        allocate(0, 0);
-        return;
-    }
-    const size_type m = (StorageT == ROW_WISE) ? init_list.size() : init_list.begin()->size();
-    const size_type n = (StorageT == ROW_WISE) ? init_list.begin()->size() : init_list.size();
-    allocate(m, n);
-    if constexpr (StorageT == ROW_WISE) {
-        size_type i = 0;
-        for (std::initializer_list<T> row_vals : init_list) {
-            SHAPE_ASSERT(row_vals.size() == n, "Invalid number of row elements in matrix init");
-            std::copy(row_vals.begin(), row_vals.end(), row_begin(i));
-            ++i;
-        }
-    } else {
-        // Column-wise matrix
-        size_type j = 0;
-        for (std::initializer_list<T> col_vals : init_list) {
-            SHAPE_ASSERT(col_vals.size() == m, "Invalid number of column elements in matrix init");
-            std::copy(col_vals.begin(), col_vals.end(), col_begin(j));
-            ++j;
-        }
-    }
+    *this = init_list;
 }
 
 // take ownership and leave rhs in a valid empty state
@@ -320,6 +323,12 @@ inline T &matrix<T, StorageT>::operator()(size_type i, size_type j)
 {
     BOUNDARY_ASSERT(i < p_rows && j < p_cols, "Index out of bound: matrix write element");
     return StorageT == ROW_WISE ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
+}
+
+template <typename T, storage_type StorageT>
+inline const T &matrix<T, StorageT>::evaluate(size_type) const
+{
+    throw error("Evaluate matrix at i is not implemented");
 }
 
 // ITERATORS
@@ -458,6 +467,37 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator=(const internal::operant<Expr
 }
 
 template <typename T, storage_type StorageT>
+matrix<T, StorageT> &
+matrix<T, StorageT>::operator=(const std::initializer_list<std::initializer_list<T>> &init_list)
+{
+    if (init_list.begin()->size() == 0) {
+        LOG_WARNING("Empty matrix, due to empty first list of row values");
+        allocate(0, 0);
+        return *this;
+    }
+    const size_type m = (StorageT == ROW_WISE) ? init_list.size() : init_list.begin()->size();
+    const size_type n = (StorageT == ROW_WISE) ? init_list.begin()->size() : init_list.size();
+    allocate(m, n);
+    if constexpr (StorageT == ROW_WISE) {
+        size_type i = 0;
+        for (std::initializer_list<T> row_vals : init_list) {
+            SHAPE_ASSERT(row_vals.size() == n, "Invalid number of row elements in matrix init");
+            std::copy(row_vals.begin(), row_vals.end(), row_begin(i));
+            ++i;
+        }
+    } else {
+        // Column-wise matrix
+        size_type j = 0;
+        for (std::initializer_list<T> col_vals : init_list) {
+            SHAPE_ASSERT(col_vals.size() == m, "Invalid number of column elements in matrix init");
+            std::copy(col_vals.begin(), col_vals.end(), col_begin(j));
+            ++j;
+        }
+    }
+    return *this;
+}
+
+template <typename T, storage_type StorageT>
 matrix<T, StorageT> &matrix<T, StorageT>::operator+=(const matrix<T, StorageT> &rhs)
 {
     SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
@@ -517,6 +557,54 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator+=(const internal::operant<Exp
         }
     });
 #endif
+    return *this;
+}
+template <typename T, storage_type StorageT>
+matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const matrix<T, StorageT> &rhs)
+{
+    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
+                 "Invalid shape for matrix *= matrix");
+    matrix<T, StorageT> tmp(*this * rhs);
+    *this = std::move(tmp);
+    return *this;
+}
+
+template <typename T, storage_type StorageT>
+matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const T &rhs)
+{
+    auto range = std::views::iota(size_type(0), rows() * cols());
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs; });
+#else
+    std::for_each(range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs; });
+#endif
+    return *this;
+}
+
+template <typename T, storage_type StorageT>
+template <storage_type OtherStorage>
+matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const matrix<T, OtherStorage> &rhs)
+{
+    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
+                 "Invalid shape for matrix *= matrix with different storage_type");
+    LOG_WARNING("Unoptimized StorageT access due to StorageT layout");
+    matrix<T, StorageT> tmp(*this * rhs);
+    *this = std::move(tmp);
+    return *this;
+}
+
+template <typename T, storage_type StorageT>
+template <typename ExpressionT>
+matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const internal::operant<ExpressionT> &exp)
+{
+    std::cerr << "*= Assigning matrix" << std::endl;
+    SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(),
+                 "Invalid shape for matrix *= operant");
+    LOG_WARNING("Copying matrix for assignment with an expression");
+    matrix<T, StorageT> tmp(*this * exp);
+    *this = std::move(tmp);
     return *this;
 }
 

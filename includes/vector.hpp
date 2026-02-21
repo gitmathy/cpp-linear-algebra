@@ -49,6 +49,12 @@ private:
     size_type p_size;
 
 public:
+    /// public variable members
+
+    /// @brief Dimension of a matrix
+    const static size_type dimension = size_type(1);
+
+public:
     /// @brief Construct a vector of zero size
     explicit vector() : p_vals(nullptr), p_size(0) {}
 
@@ -56,7 +62,7 @@ public:
     explicit vector(size_type n, const T &val = T(0));
 
     /// @brief Construct a vector with a list of values
-    explicit vector(const std::initializer_list<T> &init_list);
+    vector(const std::initializer_list<T> &init_list);
 
     /// @brief Move a vector
     explicit vector(vector<T> &&rhs) noexcept;
@@ -90,9 +96,6 @@ public:
     /// @brief Vectors only have one column
     inline size_type cols() const { return 1; }
 
-    /// @brief A vector is one dimensional
-    inline size_type dimension() const { return 1; }
-
     /// @brief Get i'th element for reading
     inline const T &operator()(const size_type i) const;
 
@@ -125,12 +128,25 @@ public:
     template <typename ExpressionT>
     vector<T> &operator=(const internal::operant<ExpressionT> &exp);
 
+    /// @brief Assign from initializer list
+    vector<T> &operator=(const std::initializer_list<T> &init_list);
+
     /// @brief Add another vector
     vector<T> &operator+=(const vector<T> &rhs);
 
     /// @brief Add from another expression
     template <typename ExpressionT>
     vector<T> &operator+=(const internal::operant<ExpressionT> &exp);
+
+    /// @brief Multiply with a scalar
+    vector<T> &operator*=(const T &rhs);
+
+    /// @brief Multiply (element wise) another vector
+    vector<T> &operator*=(const vector<T> &rhs);
+
+    /// @brief Multiply (element wise) from another expression
+    template <typename ExpressionT>
+    vector<T> &operator*=(const internal::operant<ExpressionT> &exp);
 
     /// @brief Substract another vector
     vector<T> &operator-=(const vector<T> &rhs);
@@ -182,12 +198,7 @@ vector<T>::vector(size_type n, const T &val) : p_vals(nullptr), p_size(0)
 template <typename T>
 vector<T>::vector(const std::initializer_list<T> &init_list) : p_vals(nullptr), p_size(0)
 {
-    allocate(init_list.size());
-#ifdef PARALLEL
-    std::copy(execution::par_unseq, init_list.begin(), init_list.end(), p_vals);
-#else
-    std::copy(init_list.begin(), init_list.end(), p_vals);
-#endif
+    *this = init_list;
 }
 
 // take ownership and leave rhs in a valid empty state
@@ -291,6 +302,18 @@ vector<T> &vector<T>::operator=(const internal::operant<ExpressionT> &exp)
 }
 
 template <typename T>
+vector<T> &vector<T>::operator=(const std::initializer_list<T> &init_list)
+{
+    allocate(init_list.size());
+#ifdef PARALLEL
+    std::copy(execution::par_unseq, init_list.begin(), init_list.end(), p_vals);
+#else
+    std::copy(init_list.begin(), init_list.end(), p_vals);
+#endif
+    return *this;
+}
+
+template <typename T>
 vector<T> &vector<T>::operator+=(const vector<T> &rhs)
 {
     SHAPE_ASSERT(p_size == rhs.rows(), "Invalid shape for vector += vector");
@@ -318,6 +341,52 @@ vector<T> &vector<T>::operator+=(const internal::operant<ExpressionT> &exp)
 #else
     std::for_each(range.begin(), range.end(),
                   [this, &exp](size_type i) { this->p_vals[i] += exp.evaluate(i); });
+#endif
+    return *this;
+}
+
+template <typename T>
+vector<T> &vector<T>::operator*=(const T &rhs)
+{
+    auto range = std::views::iota(size_type(0), p_size);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs; });
+#else
+    std::for_each(range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs; });
+#endif
+    return *this;
+}
+
+template <typename T>
+vector<T> &vector<T>::operator*=(const vector<T> &rhs)
+{
+    SHAPE_ASSERT(p_size == rhs.rows(), "Invalid shape for vector *= vector");
+    auto range = std::views::iota(size_type(0), p_size);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs.p_vals[i]; });
+#else
+    std::for_each(range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs.p_vals[i]; });
+#endif
+    return *this;
+}
+
+template <typename T>
+template <typename ExpressionT>
+vector<T> &vector<T>::operator*=(const internal::operant<ExpressionT> &exp)
+{
+    SHAPE_ASSERT(rows() == exp.rows() && cols() == exp.cols(),
+                 "Invalid shape for vector *= operant");
+    auto range = std::views::iota(size_type(0), p_size);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &exp](size_type i) { this->p_vals[i] *= exp.evaluate(i); });
+#else
+    std::for_each(range.begin(), range.end(),
+                  [this, &exp](size_type i) { this->p_vals[i] *= exp.evaluate(i); });
 #endif
     return *this;
 }

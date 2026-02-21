@@ -100,37 +100,60 @@ struct sub_operation
 };
 
 /// =======================================================
-/// M A T R I X   V E C T O R   M U L T I P L I C A T I O N
+/// M U L T I P L I C A T I O N
 /// =======================================================
 
-/// @brief Multiplying a matrix with a vector
-/// @tparam MatType Matrix type
-/// @tparam VecType Vector type
-template <typename MatType, typename VecType>
-struct mat_vec_multiplication
+/// @brief Multiplication operation
+/// @tparam ExpressionLeft type of left factor
+/// @tparam ExpressionRight type of right factor
+template <typename ExpressionLeft, typename ExpressionRight>
+struct mult_operation
 {
     /// @brief We silently assume that the value type for both expressions is the same
-    typedef typename MatType::value_type value_type;
+    typedef typename ExpressionLeft::value_type value_type;
 
-    /// @brief Multiply at row i: (i'th row of matrix with the vector)
+    /// @brief Multiply at row i (result is one-dimensional)
     /// We are parallelizing at outer loop to evaluate the expression yielding from this operation
-    static inline value_type evaluate(const MatType &x, const VecType &y, const la::size_type i)
+    static inline value_type evaluate(const ExpressionLeft &left, const ExpressionRight &right,
+                                      const size_type i)
     {
-        SHAPE_ASSERT(x.cols() == y.rows(), "Multiplying matrix*vector");
-        value_type init = value_type(0);
-        for (size_type j = 0; j < y.rows(); ++j) {
-            init += x.evaluate(i, j) * y.evaluate(j);
+        LAYOUT_ASSERT(ExpressionRight::dimension < 2,
+                      "Multiplication at (i) is only valid for zero- or one-dimensional rhs");
+        if constexpr (ExpressionLeft::dimension == 2 && ExpressionRight::dimension == 1) {
+            // multiplying a matrix-like left hand side with a vector-like right hand side
+            SHAPE_ASSERT(left.cols() == right.rows(), "Multiplying matrix*vector");
+            value_type init = value_type(0);
+            for (size_type j = 0; j < right.rows(); ++j) {
+                init += left.evaluate(i, j) * right.evaluate(j);
+            }
+            return init;
         }
-        return init;
+        // vector*vector, scalar*vector, or vector*scalar
+        return left.evaluate(i) * right.evaluate(i);
     }
 
-    /// @brief Multiply at element (i,j)
-    static inline value_type evaluate(const MatType &x, const VecType &y, const la::size_type i,
-                                      const la::size_type j)
+    /// @brief Multiply at element (i,j) (result is two-dimensional)
+    static inline value_type evaluate(const ExpressionLeft &left, const ExpressionRight &right,
+                                      const la::size_type i, const la::size_type j)
     {
-        throw error("No matrix-vector multiplication at an element (i,j)");
+        LAYOUT_ASSERT((ExpressionLeft::dimension == 2 && ExpressionRight::dimension == 2) ||
+                          (ExpressionLeft::dimension == 2 && ExpressionRight::dimension == 0) ||
+                          (ExpressionLeft::dimension == 0 && ExpressionRight::dimension == 2),
+                      "Multiplication at (i) is only valid for zero- or one-dimensional rhs");
+        if constexpr (ExpressionLeft::dimension == 2 && ExpressionRight::dimension == 2) {
+            // multiplying a matrix-like left hand side with a matrix-like right hand side
+            SHAPE_ASSERT(left.cols() == right.rows(), "Multiplying matrix*vector");
+            value_type init = value_type(0);
+            for (size_type k = 0; k < right.rows(); ++k) {
+                init += left.evaluate(i, k) * right.evaluate(k, j);
+            }
+            return init;
+        }
+        // either left or right is zero-dimensional
+        return left.evaluate(i, j) * right.evaluate(i, j);
     }
 };
+
 } // namespace internal
 } // namespace la
 

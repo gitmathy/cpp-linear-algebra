@@ -79,7 +79,8 @@ public:
     inline size_type cols() const;
 
     /// @brief Get dimension of result
-    inline size_type dimension() const;
+    const static size_type dimension =
+        ExpTLeft::dimension == 0 ? ExpTRight::dimension : ExpTLeft::dimension;
 };
 
 /// ===============================================
@@ -89,10 +90,10 @@ public:
 template <typename ExpTLeft, typename ExpTRight, typename OpsT>
 size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::rows() const
 {
-    if (p_left.dimension() == 0) {
+    if constexpr (ExpTLeft::dimension == 0) {
         return p_right.rows();
     }
-    if (p_right.dimension() == 0) {
+    if constexpr (ExpTRight::dimension == 0) {
         return p_left.rows();
     }
     return p_left.rows();
@@ -101,32 +102,16 @@ size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::rows() const
 template <typename ExpTLeft, typename ExpTRight, typename OpsT>
 size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::cols() const
 {
-    if (p_left.dimension() == 0) {
+    if constexpr (ExpTLeft::dimension == 0) {
         return p_right.cols();
     }
-    if (p_right.dimension() == 0) {
+    if constexpr (ExpTRight::dimension == 0) {
         return p_left.cols();
     }
     return p_right.cols();
 }
 
-template <typename ExpTLeft, typename ExpTRight, typename OpsT>
-size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::dimension() const
-{
-    if (p_left.dimension() == 0) {
-        return p_right.dimension();
-    }
-    if (p_right.dimension() == 0) {
-        return p_left.dimension();
-    }
-    // matrix * matrix => 2d
-    // matrix * vector => 1d
-    // vector * vector => 1d
-    return std::min(p_left.dimension(), p_right.dimension());
-}
-
 } // namespace internal
-
 } // namespace la
 
 #endif
