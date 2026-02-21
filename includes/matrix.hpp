@@ -599,7 +599,6 @@ template <typename T, storage_type StorageT>
 template <typename ExpressionT>
 matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const internal::operant<ExpressionT> &exp)
 {
-    std::cerr << "*= Assigning matrix" << std::endl;
     SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(),
                  "Invalid shape for matrix *= operant");
     LOG_WARNING("Copying matrix for assignment with an expression");
@@ -713,7 +712,7 @@ void matrix<T, StorageT>::from_file(const std::string &filename, const bool bina
         throw error("Cannot open file for read.", "file_io");
     }
     // Read size information
-    size_type rows, cols;
+    size_type rows = size_type(0), cols = size_type(0);
     if (binary) {
         ifs.read(reinterpret_cast<char *>(&rows), sizeof(size_type));
         ifs.read(reinterpret_cast<char *>(&cols), sizeof(size_type));
@@ -732,7 +731,7 @@ void matrix<T, StorageT>::from_file(const std::string &filename, const bool bina
             throw error("Cannot read binary data.", "file_io");
         }
     } else {
-        T value;
+        T value = T(0);
         for (T *first = begin(); first != end(); ++first) {
             if (ifs >> value) {
                 *first = value;
