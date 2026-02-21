@@ -184,6 +184,19 @@ public:
     template <typename ExpressionT>
     matrix<T, StorageT> &operator+=(const internal::operant<ExpressionT> &exp);
 
+    /// @brief Multiply another matrix
+    matrix<T, StorageT> &operator*=(const matrix<T, StorageT> &rhs);
+
+    /// @brief Multiply another matrix with another StorageT type
+    ///
+    /// Note this should be avoided as memory access is not optimized!
+    template <storage_type OtherStorage>
+    matrix<T, StorageT> &operator*=(const matrix<T, OtherStorage> &rhs);
+
+    /// @brief Multiply from another expression
+    template <typename ExpressionT>
+    matrix<T, StorageT> &operator*=(const internal::operant<ExpressionT> &exp);
+
     /// @brief Subtract another matrix
     matrix<T, StorageT> &operator-=(const matrix<T, StorageT> &rhs);
 
@@ -526,6 +539,68 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator+=(const internal::operant<Exp
     std::for_each(range.begin(), range.end(), [this, &exp](size_type i) {
         for (size_type j = 0; j < this->p_cols; ++j) {
             (*this)(i, j) += exp.evaluate(i, j);
+        }
+    });
+#endif
+    return *this;
+}
+template <typename T, storage_type StorageT>
+matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const matrix<T, StorageT> &rhs)
+{
+    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
+                 "Invalid shape for matrix *= matrix");
+    auto range = std::views::iota(size_type(0), rows() * cols());
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs.p_vals[i]; });
+#else
+    std::for_each(range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs.p_vals[i]; });
+#endif
+    return *this;
+}
+
+template <typename T, storage_type StorageT>
+template <storage_type OtherStorage>
+matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const matrix<T, OtherStorage> &rhs)
+{
+    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
+                 "Invalid shape for matrix *= matrix with different storage_type");
+    LOG_WARNING("Unoptimized StorageT access due to StorageT layout");
+    auto range = std::views::iota(size_type(0), p_rows);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &rhs](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j) {
+            (*this)(i, j) *= rhs(i, j);
+        }
+    });
+#else
+    std::for_each(range.begin(), range.end(), [this, &rhs](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j) {
+            (*this)(i, j) *= rhs(i, j);
+        }
+    });
+#endif
+    return *this;
+}
+
+template <typename T, storage_type StorageT>
+template <typename ExpressionT>
+matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const internal::operant<ExpressionT> &exp)
+{
+    SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(),
+                 "Invalid shape for matrix *= operant");
+    auto range = std::views::iota(size_type(0), p_rows);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &exp](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j) {
+            (*this)(i, j) *= exp.evaluate(i, j);
+        }
+    });
+#else
+    std::for_each(range.begin(), range.end(), [this, &exp](size_type i) {
+        for (size_type j = 0; j < this->p_cols; ++j) {
+            (*this)(i, j) *= exp.evaluate(i, j);
         }
     });
 #endif
