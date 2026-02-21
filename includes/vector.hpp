@@ -56,7 +56,10 @@ public:
     explicit vector(size_type n, const T &val = T(0));
 
     /// @brief Construct a vector with a list of values
-    explicit vector(const std::initializer_list<T> &init_list);
+    vector(const std::initializer_list<T> &init_list) : p_vals(nullptr), p_size(0)
+    {
+        *this = init_list;
+    }
 
     /// @brief Move a vector
     explicit vector(vector<T> &&rhs) noexcept;
@@ -125,6 +128,9 @@ public:
     template <typename ExpressionT>
     vector<T> &operator=(const internal::operant<ExpressionT> &exp);
 
+    /// @brief Assign from initializer list
+    vector<T> &operator=(const std::initializer_list<T> &init_list);
+
     /// @brief Add another vector
     vector<T> &operator+=(const vector<T> &rhs);
 
@@ -177,17 +183,6 @@ template <typename T>
 vector<T>::vector(size_type n, const T &val) : p_vals(nullptr), p_size(0)
 {
     resize(n, val);
-}
-
-template <typename T>
-vector<T>::vector(const std::initializer_list<T> &init_list) : p_vals(nullptr), p_size(0)
-{
-    allocate(init_list.size());
-#ifdef PARALLEL
-    std::copy(execution::par_unseq, init_list.begin(), init_list.end(), p_vals);
-#else
-    std::copy(init_list.begin(), init_list.end(), p_vals);
-#endif
 }
 
 // take ownership and leave rhs in a valid empty state
@@ -287,6 +282,18 @@ vector<T> &vector<T>::operator=(const internal::operant<ExpressionT> &exp)
     // {
     //     p_vals[i] = exp.evaluate(i);
     // }
+    return *this;
+}
+
+template <typename T>
+vector<T> &vector<T>::operator=(const std::initializer_list<T> &init_list)
+{
+    allocate(init_list.size());
+#ifdef PARALLEL
+    std::copy(execution::par_unseq, init_list.begin(), init_list.end(), p_vals);
+#else
+    std::copy(init_list.begin(), init_list.end(), p_vals);
+#endif
     return *this;
 }
 
