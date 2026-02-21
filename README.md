@@ -117,6 +117,7 @@ When contributing, please try to match the existing coding style. The project us
 *   **file suffixes:** Use `.hpp` for header files and `.cpp` for implementation files.
 *   **variable prefixes:** Member variables should be prefixed with `p_` (e.g., `p_rows`).
 *   **class and struct:** Use `struct` only for plain old data (POD) types with all public members.
+*   **nullpointer:** Always use `nullptr` instead of `0`.
 
 ## Documentation
 
