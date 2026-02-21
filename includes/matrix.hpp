@@ -63,6 +63,12 @@ private:
     void allocate(size_type m, size_type n);
 
 public:
+    /// public variable members
+
+    /// @brief Dimension of a matrix
+    const static size_type dimension = size_type(2);
+
+public:
     /// @brief Default constructor creates an empty matrix
     explicit matrix() : p_vals(nullptr), p_rows(0), p_cols(0) {}
 
@@ -109,9 +115,6 @@ public:
     /// @brief Get number of columns
     inline size_type cols() const { return p_cols; }
 
-    /// @brief Get the dimension of a matrix (2)
-    inline size_type dimension() const { return 2; }
-
     /// @brief Get element (i,j) for reading
     inline const T &operator()(size_type i, size_type j) const;
 
@@ -120,6 +123,9 @@ public:
 
     /// @brief Evaluate matrix at (i,j), i.e., read element (i,j)
     inline const T &evaluate(size_type i, size_type j) const { return (*this)(i, j); }
+
+    /// @brief Evaluate matrix at (i) raises an error
+    inline const T &evaluate(size_type i) const;
 
     /// @brief Iterator to begin
     inline iterator begin() { return p_vals; }
@@ -314,6 +320,12 @@ inline T &matrix<T, StorageT>::operator()(size_type i, size_type j)
 {
     BOUNDARY_ASSERT(i < p_rows && j < p_cols, "Index out of bound: matrix write element");
     return StorageT == ROW_WISE ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
+}
+
+template <typename T, storage_type StorageT>
+inline const T &matrix<T, StorageT>::evaluate(size_type) const
+{
+    throw error("Evaluate matrix at i is not implemented");
 }
 
 // ITERATORS
@@ -549,14 +561,8 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const matrix<T, StorageT> &
 {
     SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
                  "Invalid shape for matrix *= matrix");
-    auto range = std::views::iota(size_type(0), rows() * cols());
-#ifdef PARALLEL
-    std::for_each(execution::par_unseq, range.begin(), range.end(),
-                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs.p_vals[i]; });
-#else
-    std::for_each(range.begin(), range.end(),
-                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs.p_vals[i]; });
-#endif
+    matrix<T, StorageT> tmp(*this * rhs);
+    *this = std::move(tmp);
     return *this;
 }
 
@@ -567,20 +573,8 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const matrix<T, OtherStorag
     SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
                  "Invalid shape for matrix *= matrix with different storage_type");
     LOG_WARNING("Unoptimized StorageT access due to StorageT layout");
-    auto range = std::views::iota(size_type(0), p_rows);
-#ifdef PARALLEL
-    std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &rhs](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j) {
-            (*this)(i, j) *= rhs(i, j);
-        }
-    });
-#else
-    std::for_each(range.begin(), range.end(), [this, &rhs](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j) {
-            (*this)(i, j) *= rhs(i, j);
-        }
-    });
-#endif
+    matrix<T, StorageT> tmp(*this * rhs);
+    *this = std::move(tmp);
     return *this;
 }
 
@@ -588,22 +582,12 @@ template <typename T, storage_type StorageT>
 template <typename ExpressionT>
 matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const internal::operant<ExpressionT> &exp)
 {
+    std::cerr << "*= Assigning matrix" << std::endl;
     SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(),
                  "Invalid shape for matrix *= operant");
-    auto range = std::views::iota(size_type(0), p_rows);
-#ifdef PARALLEL
-    std::for_each(execution::par_unseq, range.begin(), range.end(), [this, &exp](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j) {
-            (*this)(i, j) *= exp.evaluate(i, j);
-        }
-    });
-#else
-    std::for_each(range.begin(), range.end(), [this, &exp](size_type i) {
-        for (size_type j = 0; j < this->p_cols; ++j) {
-            (*this)(i, j) *= exp.evaluate(i, j);
-        }
-    });
-#endif
+    LOG_WARNING("Copying matrix for assignment with an expression");
+    matrix<T, StorageT> tmp(*this * exp);
+    *this = std::move(tmp);
     return *this;
 }
 
