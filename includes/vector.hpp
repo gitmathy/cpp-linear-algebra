@@ -49,6 +49,12 @@ private:
     size_type p_size;
 
 public:
+    /// public variable members
+
+    /// @brief Dimension of a matrix
+    const static size_type dimension = size_type(1);
+
+public:
     /// @brief Construct a vector of zero size
     explicit vector() : p_vals(nullptr), p_size(0) {}
 
@@ -89,9 +95,6 @@ public:
 
     /// @brief Vectors only have one column
     inline size_type cols() const { return 1; }
-
-    /// @brief A vector is one dimensional
-    inline size_type dimension() const { return 1; }
 
     /// @brief Get i'th element for reading
     inline const T &operator()(const size_type i) const;

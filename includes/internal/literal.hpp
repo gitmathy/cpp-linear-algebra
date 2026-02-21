@@ -58,7 +58,7 @@ public:
     inline size_type cols() const { return 1; }
 
     /// @brief A literal is zero dimensional
-    inline size_type dimension() const { return 0; }
+    const static size_type dimension = size_type(0);
 };
 
 } // namespace internal
