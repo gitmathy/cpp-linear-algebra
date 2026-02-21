@@ -1,3 +1,24 @@
+# [1.1.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.0.0...v1.1.0) (2026-02-21)
+
+
+### Bug Fixes
+
+* copy unary operation and include dimension as static const ([2556522](https://github.com/gitmathy/cpp-linear-algebra/commit/25565222e611803ad7e75555986f5a0168284feb))
+
+
+### Features
+
+* Add assignment to vector from initializer list ([36fb957](https://github.com/gitmathy/cpp-linear-algebra/commit/36fb9572950103559f2eb5178b9a04a26c470066))
+* Assign by initializer list ([d243c09](https://github.com/gitmathy/cpp-linear-algebra/commit/d243c09ccbfa031ef06c158cfb15bdf1942e8400))
+* Assignment *= with a scalar ([b8fbc9a](https://github.com/gitmathy/cpp-linear-algebra/commit/b8fbc9a87cae4c4b9f87b33cf0073756d6c788ed))
+* dimension as static const class member ([34792d8](https://github.com/gitmathy/cpp-linear-algebra/commit/34792d85c69e04ed30daa281e182d26cb699cb76))
+* Implement *= operator ([131bb18](https://github.com/gitmathy/cpp-linear-algebra/commit/131bb18456f5df61cc4ca02820202d4ce4c818d6))
+* Implement multiplication operation ([d56b9ac](https://github.com/gitmathy/cpp-linear-algebra/commit/d56b9ace33f0a9c6e7e3944e39542c9ee585cce5))
+* Include *= assignment for matrices ([99b2f3c](https://github.com/gitmathy/cpp-linear-algebra/commit/99b2f3c83528a916135434487cf6d55ecca61ded))
+* Include *= assignment for vectors ([ebb9743](https://github.com/gitmathy/cpp-linear-algebra/commit/ebb974379fccacca1a3b714cdde43f1e4f84b1f1))
+* Include multiplication ([de0b0fb](https://github.com/gitmathy/cpp-linear-algebra/commit/de0b0fb4c44dbefe94e972cb29b8a733e17dedd2))
+* Include operant * vector and vector * operant ([0dc5e99](https://github.com/gitmathy/cpp-linear-algebra/commit/0dc5e991d7b387bc0dfad6765800ca6966092c02))
+
 # 1.0.0 (2026-02-20)
 
 
