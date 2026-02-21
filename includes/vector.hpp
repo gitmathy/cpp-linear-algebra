@@ -138,6 +138,9 @@ public:
     template <typename ExpressionT>
     vector<T> &operator+=(const internal::operant<ExpressionT> &exp);
 
+    /// @brief Multiply with a scalar
+    vector<T> &operator*=(const T &rhs);
+
     /// @brief Multiply (element wise) another vector
     vector<T> &operator*=(const vector<T> &rhs);
 
@@ -338,6 +341,20 @@ vector<T> &vector<T>::operator+=(const internal::operant<ExpressionT> &exp)
 #else
     std::for_each(range.begin(), range.end(),
                   [this, &exp](size_type i) { this->p_vals[i] += exp.evaluate(i); });
+#endif
+    return *this;
+}
+
+template <typename T>
+vector<T> &vector<T>::operator*=(const T &rhs)
+{
+    auto range = std::views::iota(size_type(0), p_size);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs; });
+#else
+    std::for_each(range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs; });
 #endif
     return *this;
 }

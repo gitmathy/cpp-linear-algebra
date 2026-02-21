@@ -193,6 +193,9 @@ public:
     /// @brief Multiply another matrix
     matrix<T, StorageT> &operator*=(const matrix<T, StorageT> &rhs);
 
+    /// @brief Multiply with a scalar
+    matrix<T, StorageT> &operator*=(const T &rhs);
+
     /// @brief Multiply another matrix with another StorageT type
     ///
     /// Note this should be avoided as memory access is not optimized!
@@ -563,6 +566,20 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const matrix<T, StorageT> &
                  "Invalid shape for matrix *= matrix");
     matrix<T, StorageT> tmp(*this * rhs);
     *this = std::move(tmp);
+    return *this;
+}
+
+template <typename T, storage_type StorageT>
+matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const T &rhs)
+{
+    auto range = std::views::iota(size_type(0), rows() * cols());
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs; });
+#else
+    std::for_each(range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] *= rhs; });
+#endif
     return *this;
 }
 
