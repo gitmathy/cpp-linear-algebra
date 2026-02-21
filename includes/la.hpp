@@ -180,6 +180,14 @@ auto operator*(const T &left, const internal::operant<ExpT> &right);
 template <typename T, typename ExpT>
 auto operator*(const internal::operant<ExpT> &left, const T &right);
 
+/// @brief operant * vector
+template <typename T, typename ExpT>
+auto operator*(const internal::operant<ExpT> &left, const vector<T> &right);
+
+/// @brief vector * operant
+template <typename T, typename ExpT>
+auto operator*(const vector<T> &left, const internal::operant<ExpT> &right);
+
 /// @brief matrix * matrix
 template <typename T, storage_type StorageLeft, storage_type StorageRight>
 auto operator*(const matrix<T, StorageLeft> &left, const matrix<T, StorageRight> &right);
@@ -609,6 +617,30 @@ auto operator*(const internal::operant<ExpT> &left, const T &right)
         internal::mult_operation<internal::operant<ExpT>, internal::literal<T>>>
         new_bin_exp_type;
     return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief operant * vector
+template <typename T, typename ExpT>
+auto operator*(const internal::operant<ExpT> &left, const vector<T> &right)
+{
+    typedef internal::binary_expression<
+        internal::operant<ExpT>, vector<T>,
+        internal::mult_operation<internal::operant<ExpT>, vector<T>>>
+        new_bin_exp_type;
+    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief vector * operant
+template <typename T, typename ExpT>
+auto operator*(const vector<T> &left, const internal::operant<ExpT> &right)
+{
+    {
+        typedef internal::binary_expression<
+            vector<T>, internal::operant<ExpT>,
+            internal::mult_operation<vector<T>, internal::operant<ExpT>>>
+            new_bin_exp_type;
+        return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+    }
 }
 
 /// @brief matrix * matrix
