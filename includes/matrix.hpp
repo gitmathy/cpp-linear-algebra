@@ -73,7 +73,7 @@ public:
     explicit matrix(size_type m, size_type n, const T &val = T(0));
 
     /// @brief Construct a matrix with a list of values
-    explicit matrix(const std::initializer_list<std::initializer_list<T>> &init_list);
+    matrix(const std::initializer_list<std::initializer_list<T>> &init_list);
 
     /// @brief Move a matrix
     explicit matrix(matrix<T, StorageT> &&rhs) noexcept;
@@ -167,6 +167,10 @@ public:
     template <typename ExpressionT>
     matrix<T, StorageT> &operator=(const internal::operant<ExpressionT> &exp);
 
+    /// @brief Assign from initializer list
+    matrix<T, StorageT> &
+    operator=(const std::initializer_list<std::initializer_list<T>> &init_list);
+
     /// @brief Add another matrix
     matrix<T, StorageT> &operator+=(const matrix<T, StorageT> &rhs);
 
@@ -239,30 +243,7 @@ template <typename T, storage_type StorageT>
 matrix<T, StorageT>::matrix(const std::initializer_list<std::initializer_list<T>> &init_list)
     : p_vals(nullptr), p_rows(0), p_cols(0)
 {
-    if (init_list.begin()->size() == 0) {
-        LOG_WARNING("Empty matrix, due to empty first list of row values");
-        allocate(0, 0);
-        return;
-    }
-    const size_type m = (StorageT == ROW_WISE) ? init_list.size() : init_list.begin()->size();
-    const size_type n = (StorageT == ROW_WISE) ? init_list.begin()->size() : init_list.size();
-    allocate(m, n);
-    if constexpr (StorageT == ROW_WISE) {
-        size_type i = 0;
-        for (std::initializer_list<T> row_vals : init_list) {
-            SHAPE_ASSERT(row_vals.size() == n, "Invalid number of row elements in matrix init");
-            std::copy(row_vals.begin(), row_vals.end(), row_begin(i));
-            ++i;
-        }
-    } else {
-        // Column-wise matrix
-        size_type j = 0;
-        for (std::initializer_list<T> col_vals : init_list) {
-            SHAPE_ASSERT(col_vals.size() == m, "Invalid number of column elements in matrix init");
-            std::copy(col_vals.begin(), col_vals.end(), col_begin(j));
-            ++j;
-        }
-    }
+    *this = init_list;
 }
 
 // take ownership and leave rhs in a valid empty state
@@ -454,6 +435,37 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator=(const internal::operant<Expr
         }
     });
 #endif
+    return *this;
+}
+
+template <typename T, storage_type StorageT>
+matrix<T, StorageT> &
+matrix<T, StorageT>::operator=(const std::initializer_list<std::initializer_list<T>> &init_list)
+{
+    if (init_list.begin()->size() == 0) {
+        LOG_WARNING("Empty matrix, due to empty first list of row values");
+        allocate(0, 0);
+        return *this;
+    }
+    const size_type m = (StorageT == ROW_WISE) ? init_list.size() : init_list.begin()->size();
+    const size_type n = (StorageT == ROW_WISE) ? init_list.begin()->size() : init_list.size();
+    allocate(m, n);
+    if constexpr (StorageT == ROW_WISE) {
+        size_type i = 0;
+        for (std::initializer_list<T> row_vals : init_list) {
+            SHAPE_ASSERT(row_vals.size() == n, "Invalid number of row elements in matrix init");
+            std::copy(row_vals.begin(), row_vals.end(), row_begin(i));
+            ++i;
+        }
+    } else {
+        // Column-wise matrix
+        size_type j = 0;
+        for (std::initializer_list<T> col_vals : init_list) {
+            SHAPE_ASSERT(col_vals.size() == m, "Invalid number of column elements in matrix init");
+            std::copy(col_vals.begin(), col_vals.end(), col_begin(j));
+            ++j;
+        }
+    }
     return *this;
 }
 
