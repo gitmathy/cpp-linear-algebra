@@ -95,6 +95,13 @@ int matrix_add_sub_ops_test::execute()
         report_error("matrix sub operant (matrix - operant) produced wrong values");
     }
 
+    matrix<int, ROW_WISE> A(2, 3, 1);
+    matrix<int, COLUMN_WISE> B(2, 3, 2);
+    matrix<int, ROW_WISE> C = A + B;
+    if (!check_values(C, 3)) {
+        report_error("matrix add different storage produced wrong value");
+    }
+
     return (int)errors().size();
 }
 
