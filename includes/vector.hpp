@@ -56,10 +56,7 @@ public:
     explicit vector(size_type n, const T &val = T(0));
 
     /// @brief Construct a vector with a list of values
-    vector(const std::initializer_list<T> &init_list) : p_vals(nullptr), p_size(0)
-    {
-        *this = init_list;
-    }
+    vector(const std::initializer_list<T> &init_list);
 
     /// @brief Move a vector
     explicit vector(vector<T> &&rhs) noexcept;
@@ -183,6 +180,12 @@ template <typename T>
 vector<T>::vector(size_type n, const T &val) : p_vals(nullptr), p_size(0)
 {
     resize(n, val);
+}
+
+template <typename T>
+vector<T>::vector(const std::initializer_list<T> &init_list) : p_vals(nullptr), p_size(0)
+{
+    *this = init_list;
 }
 
 // take ownership and leave rhs in a valid empty state
