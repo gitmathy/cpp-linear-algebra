@@ -44,7 +44,7 @@ public:
     unary_expression(const expression_type &right) : p_expression(right) {}
 
     /// @brief Copying an unary expression
-    unary_expression(const unary_expression &unary) : p_expression(unary.expression) {}
+    unary_expression(const unary_expression &unary) : p_expression(unary.p_expression) {}
 
     /// @brief Moving an unary_expression
     unary_expression(unary_expression &&unary) noexcept
@@ -67,7 +67,7 @@ public:
     inline size_type cols() const { return p_expression.cols(); }
 
     /// @brief Get dimension of result
-    inline size_type dimension() const { return p_expression.dimension(); }
+    const static size_type dimension = ExpT::dimension;
 };
 
 } // namespace internal
