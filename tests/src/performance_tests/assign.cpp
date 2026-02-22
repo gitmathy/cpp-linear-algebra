@@ -4,14 +4,14 @@
 namespace la {
 namespace test {
 
-void matrix_assign_storage_missmatch::setup()
+void matrix_assign_storage_mismatch::setup()
 {
     p_a.resize(p_rows, p_cols);
     p_x.resize(p_rows, p_cols);
     init(p_x);
 }
 
-void matrix_assign_storage_missmatch::tear_down()
+void matrix_assign_storage_mismatch::tear_down()
 {
     p_a.resize(0, 0);
     p_x.resize(0, 0);

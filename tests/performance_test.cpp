@@ -32,7 +32,7 @@ int main()
     tests.transfer("matrix", std::make_unique<matrix_resize>(RUNS, MATRIX_M, MATRIX_N));
     tests.transfer("matrix", std::make_unique<matrix_assign>(RUNS, MATRIX_M, MATRIX_N));
     tests.transfer("matrix",
-                   std::make_unique<matrix_assign_storage_missmatch>(RUNS, MATRIX_M, MATRIX_N));
+                   std::make_unique<matrix_assign_storage_mismatch>(RUNS, MATRIX_M, MATRIX_N));
     tests.transfer("matrix", std::make_unique<matrix_assign_add>(RUNS, MATRIX_M, MATRIX_N));
     tests.transfer("matrix", std::make_unique<matrix_assign_add_sum>(RUNS, MATRIX_M, MATRIX_N));
     tests.transfer("matrix", std::make_unique<matrix_add>(RUNS, MATRIX_M, MATRIX_N));

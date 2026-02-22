@@ -65,7 +65,7 @@ public:
 };
 
 /// @brief Test a=b for matrices of different StorageT layout
-class matrix_assign_storage_missmatch : public matrix_performance_test
+class matrix_assign_storage_mismatch : public matrix_performance_test
 {
 private:
     /// @brief Matrix of other StorageT layout
@@ -77,8 +77,8 @@ protected:
 
 public:
     /// @brief Set me up
-    matrix_assign_storage_missmatch(const size_type runs, const size_type m, const size_type n)
-        : matrix_performance_test("matrix_assign_storage_missmatch", runs, m, n), p_x(0, 0)
+    matrix_assign_storage_mismatch(const size_type runs, const size_type m, const size_type n)
+        : matrix_performance_test("matrix_assign_storage_mismatch", runs, m, n), p_x(0, 0)
     {}
     /// @brief Allocate memory
     void setup() override;
