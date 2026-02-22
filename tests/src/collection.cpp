@@ -24,6 +24,9 @@ void test_collection::transfer(const std::string &label, std::unique_ptr<base_te
 {
     if (new_test == nullptr)
         return;
+    std::stringstream strs;
+    strs << "* adding: " << new_test->name();
+    log(strs, INFO);
     auto fit = p_tests.find(label);
     if (fit == p_tests.end()) {
         // the label does not exists so far, so create the label
@@ -102,12 +105,9 @@ void unit_test_collection::report(const std::string &label_filter)
     this->log("----------------------------------------", INFO);
 }
 
-performance_test_collection::performance_test_collection(const size_type runs,
-                                                         const size_type vec_n,
-                                                         const size_type mat_m,
-                                                         const size_type mat_n)
-    : test_collection("performance tests"), p_runs(runs), p_vector_size(vec_n),
-      p_matrix_rows(mat_m), p_matrix_cols(mat_n)
+performance_test_collection::performance_test_collection(
+    const size_type runs, std::shared_ptr<sample_la_structures<double>> samples)
+    : test_collection("performance tests"), p_samples(std::move(samples)), p_runs(runs)
 {}
 
 void performance_test_collection::report(const std::string &label_filter)
@@ -116,9 +116,9 @@ void performance_test_collection::report(const std::string &label_filter)
     strs << "\n----------------------------------------\n";
     strs << "    REPORT: " << p_name << "\n\n";
     strs << "# runs:      " << p_runs << '\n'
-         << "vector size: " << p_vector_size << '\n'
-         << "matrix rows: " << p_matrix_rows << '\n'
-         << "matrix cols: " << p_matrix_cols << '\n';
+         << "default vector size: " << p_samples->vec_rows() << '\n'
+         << "default matrix rows: " << p_samples->mat_rows() << '\n'
+         << "default matrix cols: " << p_samples->vec_rows() << '\n';
     strs << "----------------------------------------";
     this->log(strs, INFO);
     for (auto &labeled : p_tests) {

@@ -4,6 +4,7 @@
 #include "includes/types.hpp"
 #include "tests/includes/base_test.hpp"
 #include "tests/includes/log.hpp"
+#include "tests/includes/samples.hpp"
 #include <list>
 #include <memory>
 #include <string>
@@ -71,25 +72,20 @@ public:
 class performance_test_collection : public test_collection
 {
 private:
+    /// @brief Sample matrices and vectors for the test
+    std::shared_ptr<sample_la_structures<double>> p_samples;
+
     /// @brief Number of runs
     size_type p_runs;
-
-    /// @brief Size of vectors
-    size_type p_vector_size;
-
-    /// @brief Rows of matrices
-    size_type p_matrix_rows;
-
-    /// @brief Columns of matrices
-    size_type p_matrix_cols;
 
     /// @brief Report all timings
     void report(const std::string &label_filter) override;
 
 public:
-    /// @brief Constructor
-    performance_test_collection(const size_type runs, const size_type vec_n, const size_type mat_m,
-                                const size_type mat_n);
+    /// @brief Constructor using dependency injection for the samples
+    performance_test_collection(
+        const size_type runs,
+        std::shared_ptr<sample_la_structures<double>> samples = get_default_samples());
 
     /// @brief Default destructor
     ~performance_test_collection() = default;
