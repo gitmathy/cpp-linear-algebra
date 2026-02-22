@@ -57,7 +57,7 @@ protected:
 
 public:
     /// @brief Construct a performance test
-    performance_test(const std::string &name, const size_type runs,
+    performance_test(const std::string &name, const std::string &description, const size_type runs,
                      std::shared_ptr<sample_la_structures<double>> samples = get_default_samples());
 
     /// @brief Destruct a performance test

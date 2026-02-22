@@ -93,16 +93,16 @@ int test_collection::run(const std::set<std::string> &label_filter)
                 strs << "--------- Test " << test->name() << " (" << labeled.first
                      << ")  ---------";
                 log(strs, INFO);
-                strs << "Setup test: " << test->name();
+                strs << "Test description: " << test->description() << "\nSetup test...";
                 log(strs, DEBUG);
                 test->setup();
-                strs << "Execute test: " << test->name();
+                strs << "Execute test...";
                 log(strs, DEBUG);
                 test_result = test->execute();
                 ++performed_tests;
                 failed_tests += test_result > 0 ? 1 : 0;
                 result += test_result;
-                strs << "Tear down test: " << test->name();
+                strs << "Tear down test...";
                 log(strs, DEBUG);
                 test->tear_down();
             }

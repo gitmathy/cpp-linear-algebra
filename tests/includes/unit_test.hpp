@@ -20,7 +20,9 @@ protected:
 
 public:
     /// @brief Construct a unit test
-    unit_test(const std::string &name) : base_test(name), p_errors() {}
+    unit_test(const std::string &name, const std::string &description)
+        : base_test(name, description), p_errors()
+    {}
 
     /// @brief Destruct a unit test
     virtual ~unit_test() {};

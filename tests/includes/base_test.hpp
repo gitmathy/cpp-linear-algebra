@@ -2,7 +2,6 @@
 #define LA_TEST_BASE_TEST_H
 
 #include "tests/includes/log.hpp"
-#include <list>
 
 namespace la {
 namespace test {
@@ -12,7 +11,10 @@ class base_test
 {
 protected:
     /// @brief Name of the test
-    std::string p_name;
+    const std::string p_name;
+
+    /// @brief Name of the test
+    const std::string p_description;
 
     /// @brief A reference to the logger
     logger &p_logger;
@@ -24,14 +26,19 @@ protected:
     void log(std::stringstream &what, const TestLogLevel &level) { p_logger.log(what, level); }
 
 public:
-    /// @brief Setup a test with a given name
-    base_test(const std::string &name) : p_name(name), p_logger(logger::get()) {}
+    /// @brief Setup a test with a given name and an optional description
+    base_test(const std::string &name, const std::string &description = "")
+        : p_name(name), p_description(description), p_logger(logger::get())
+    {}
 
     /// @brief Destruct a unit test
     virtual ~base_test() = default;
 
     /// @brief Get the name of the test
     inline const std::string &name() const { return p_name; }
+
+    /// @brief Get the description of the test
+    inline const std::string &description() const { return p_description; }
 
     /// @brief Setup the test
     virtual void setup() = 0;
