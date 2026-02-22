@@ -59,9 +59,6 @@ private:
     /// @brief Number of columns
     size_type p_cols;
 
-    /// @brief Allocate memory and set shape
-    void allocate(size_type m, size_type n);
-
 public:
     /// public variable members
 
@@ -102,6 +99,9 @@ public:
 
     /// @brief Destruct a matrix
     ~matrix() { delete[] p_vals; }
+
+    /// @brief Allocate memory and set shape
+    void allocate(size_type m, size_type n);
 
     /// @brief Resize a matrix. And set all values to val
     /// @param m number of rows
