@@ -5,7 +5,7 @@
 CXX ?= g++-12
 
 # Compiler flags (exactly as requested)
-PERF_CXXFLAGS := -Wall -Wextra -pedantic -std=c++20 -O3 -Ofast -I. -MMD -MP -DPARALLEL
+PERF_CXXFLAGS := -Wall -Wextra -pedantic -std=c++20 -O3 -Ofast -ffast-math -march=native -mtune=native -flto -mavx2 -fopt-info-vec-optimized -finline-limit=20000 -fstrict-aliasing -funroll-loops -floop-interchange -I. -MMD -MP -DPARALLEL
 UNIT_CXXFLAGS := -Wall -Wextra -pedantic -std=c++20 -g -I. -MMD -MP
 
 SRC_DIR := tests/src
@@ -47,7 +47,7 @@ unit: $(UNIT_TARGET)
 # Link rules - each executable links the objects compiled with the matching flags
 $(PERF_TARGET): $(PERF_OBJS)
 	@mkdir -p $(dir $@)
-	$(CXX) $(PERF_CXXFLAGS) -o $@ $^ -ltbb
+	$(CXX) $(PERF_CXXFLAGS) -o $@ $^ -ltbb -flto
 
 $(UNIT_TARGET): $(UNIT_OBJS)
 	@mkdir -p $(dir $@)
