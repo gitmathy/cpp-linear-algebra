@@ -66,7 +66,7 @@ int main()
                                          RUNS, MATRIX_SOLVE));
 
     std::cout << "Executing tests ..." << std::endl;
-    int result = tests.run(std::set<std::string>({"row_matrix", "vector", "row_algorithms"}));
+    int result = tests.run(std::set<std::string>());
 
     return result > 0 ? 1 : 0;
 }
