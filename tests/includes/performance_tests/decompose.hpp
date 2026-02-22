@@ -36,7 +36,7 @@ public:
         : performance_test(std::string("decompose_solve_lu_") +
                                (DecompositionStorageT == ROW_WISE ? "row: " : "col: ") +
                                (MatStorageT == ROW_WISE ? "row" : "col"),
-                           runs),
+                           "Testing A^1*b", runs),
           p_size(n)
     {}
 

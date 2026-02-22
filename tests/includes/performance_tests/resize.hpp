@@ -17,7 +17,9 @@ protected:
 
 public:
     /// @brief Set me up
-    vector_resize(const size_type runs) : performance_test("vector_resize", runs) {}
+    vector_resize(const size_type runs)
+        : performance_test("vector_resize", "Testing a.resize()", runs)
+    {}
 };
 
 /// @brief Test resize a matrix (free memory, allocate memory, and assign default value)
@@ -41,7 +43,7 @@ public:
     /// @brief Set me up
     matrix_resize(const size_type runs)
         : performance_test(std::string("matrix_resize ") + (StorageT == ROW_WISE ? "row" : "col"),
-                           runs)
+                           "Testing A.resize()", runs)
     {}
 };
 

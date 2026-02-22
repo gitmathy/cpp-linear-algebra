@@ -11,7 +11,7 @@ class vector_copy_ctor_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_copy_ctor_test() : unit_test("vector copy ctor") {}
+    vector_copy_ctor_test() : unit_test("vector_copy_ctor", "Testing copy constructor") {}
 
     /// @brief Run the test
     int execute() override;
@@ -22,7 +22,7 @@ class matrix_copy_ctor_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    matrix_copy_ctor_test() : unit_test("matrix copy ctor") {}
+    matrix_copy_ctor_test() : unit_test("matrix_copy_ctor", "Testing copy constructor") {}
 
     /// @brief Run the test
     int execute() override;

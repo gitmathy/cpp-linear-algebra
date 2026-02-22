@@ -11,7 +11,7 @@ class vector_apply_func_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_apply_func_test() : unit_test("vector apply_func") {}
+    vector_apply_func_test() : unit_test("vector_apply_func", "Testing apply member") {}
 
     /// @brief Run the test
     int execute() override;
@@ -22,7 +22,7 @@ class matrix_apply_func_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    matrix_apply_func_test() : unit_test("matrix apply_func") {}
+    matrix_apply_func_test() : unit_test("matrix apply_func", "Testing apply member") {}
 
     /// @brief Run the test
     int execute() override;

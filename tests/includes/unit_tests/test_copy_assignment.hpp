@@ -11,7 +11,7 @@ class vector_copy_assignment_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_copy_assignment_test() : unit_test("vector copy assignment") {}
+    vector_copy_assignment_test() : unit_test("vector_copy_assignment", "Testing a=b") {}
 
     /// @brief Run the test
     int execute() override;
@@ -22,7 +22,7 @@ class matrix_copy_assignment_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    matrix_copy_assignment_test() : unit_test("matrix copy assignment") {}
+    matrix_copy_assignment_test() : unit_test("matrix_copy_assignment", "Testing A=B") {}
 
     /// @brief Run the test
     int execute() override;

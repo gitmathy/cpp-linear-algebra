@@ -1,5 +1,6 @@
 #include "tests/includes/collection.hpp"
 #include <memory>
+#include <set>
 
 // Include the tests
 #include "tests/includes/performance_tests/add.hpp"
@@ -55,17 +56,17 @@ int main()
                    std::make_unique<vector_assign_matrix_vector_mult<COLUMN_WISE>>(RUNS));
     tests.transfer("mixed_matrix", std::make_unique<matrix_assign_storage_mismatch>(RUNS));
 
-    tests.transfer("algorithms",
+    tests.transfer("row_algorithms",
                    std::make_unique<decompose_solve_lu<ROW_WISE, ROW_WISE>>(RUNS, MATRIX_SOLVE));
-    tests.transfer("algorithms",
+    tests.transfer("col_algorithms",
                    std::make_unique<decompose_solve_lu<ROW_WISE, COLUMN_WISE>>(RUNS, MATRIX_SOLVE));
-    tests.transfer("algorithms",
+    tests.transfer("row_algorithms",
                    std::make_unique<decompose_solve_lu<COLUMN_WISE, ROW_WISE>>(RUNS, MATRIX_SOLVE));
-    tests.transfer("algorithms", std::make_unique<decompose_solve_lu<COLUMN_WISE, COLUMN_WISE>>(
-                                     RUNS, MATRIX_SOLVE));
+    tests.transfer("col_algorithms", std::make_unique<decompose_solve_lu<COLUMN_WISE, COLUMN_WISE>>(
+                                         RUNS, MATRIX_SOLVE));
 
     std::cout << "Executing tests ..." << std::endl;
-    int result = tests.run();
+    int result = tests.run(std::set<std::string>());
 
     return result > 0 ? 1 : 0;
 }

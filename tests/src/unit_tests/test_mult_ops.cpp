@@ -20,8 +20,8 @@ int vec_vec_mult_test::execute()
         report_error("Wrong elements for vector * vector");
     }
 
-    if (!(z.rows() == 2)) {
-        report_error("Wrong size of vector*vector");
+    if (!(z_scalar.rows() == 2)) {
+        report_error("Wrong size of (vector+vector) * scalar");
     }
     if (!check_values(z, 24)) {
         report_error("Wrong elements for (vector+vector) * scalar");

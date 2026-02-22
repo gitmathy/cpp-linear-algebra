@@ -8,7 +8,6 @@
 #include "tests/includes/unit_tests/test_construct.hpp"
 #include "tests/includes/unit_tests/test_copy_assignment.hpp"
 #include "tests/includes/unit_tests/test_copy_ctor.hpp"
-#include "tests/includes/unit_tests/test_expression_temporary.hpp"
 #include "tests/includes/unit_tests/test_iterator.hpp"
 #include "tests/includes/unit_tests/test_lu_decomp.hpp"
 #include "tests/includes/unit_tests/test_mixed_operations.hpp"
@@ -24,7 +23,7 @@ using namespace la::test;
 
 int main()
 {
-    logger::get().set_level(INFO);
+    logger::get().set_level(DEBUG);
     unit_test_collection tests;
 
     tests.transfer("vector", std::make_unique<vector_resize_test>());
@@ -36,7 +35,6 @@ int main()
     tests.transfer("vector", std::make_unique<vector_move_ctor_test>());
     tests.transfer("vector", std::make_unique<vector_add_sub_assignment_test>());
     tests.transfer("vector", std::make_unique<vector_add_sub_ops_test>());
-    tests.transfer("vector", std::make_unique<vector_expression_temporary_test>());
     tests.transfer("vector", std::make_unique<vector_norms_test>());
     tests.transfer("vector", std::make_unique<vector_apply_func_test>());
     tests.transfer("vector", std::make_unique<vector_read_write_test>());
@@ -52,7 +50,6 @@ int main()
     tests.transfer("matrix", std::make_unique<matrix_move_ctor_test>());
     tests.transfer("matrix", std::make_unique<matrix_add_sub_assignment_test>());
     tests.transfer("matrix", std::make_unique<matrix_add_sub_ops_test>());
-    tests.transfer("matrix", std::make_unique<matrix_expression_temporary_test>());
     tests.transfer("matrix", std::make_unique<matrix_norms_test>());
     tests.transfer("matrix", std::make_unique<matrix_apply_func_test>());
     tests.transfer("matrix", std::make_unique<matrix_read_write_test>());

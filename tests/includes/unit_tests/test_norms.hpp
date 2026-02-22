@@ -11,7 +11,7 @@ class vector_norms_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_norms_test() : unit_test("vector norms") {}
+    vector_norms_test() : unit_test("vector_norms", "Testing 1, 2, 3, and max-norm") {}
 
     /// @brief Run the test
     int execute() override;
@@ -22,7 +22,7 @@ class matrix_norms_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    matrix_norms_test() : unit_test("matrix norms") {}
+    matrix_norms_test() : unit_test("matrix_norms", "Testing 1, 2, 3, and max-norm") {}
 
     /// @brief Run the test
     int execute() override;

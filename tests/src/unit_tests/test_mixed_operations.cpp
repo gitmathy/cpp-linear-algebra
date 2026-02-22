@@ -22,8 +22,6 @@ int mixed_operations::execute()
         report_error("Wrong element for multiplying vector with a scalar");
     }
 
-    std::cout << "Mixed operations result: " << x << std::endl;
-
     return (int)errors().size();
 }
 

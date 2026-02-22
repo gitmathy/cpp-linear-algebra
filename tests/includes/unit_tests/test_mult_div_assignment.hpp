@@ -11,7 +11,7 @@ class vector_mult_div_assignment_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_mult_div_assignment_test() : unit_test("vector mult/div assignment") {}
+    vector_mult_div_assignment_test() : unit_test("vector_mult_div_assignment", "Testing y*=x") {}
 
     /// @brief Run the test
     int execute() override;
@@ -22,7 +22,7 @@ class matrix_mult_div_assignment_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    matrix_mult_div_assignment_test() : unit_test("matrix mult/div assignment") {}
+    matrix_mult_div_assignment_test() : unit_test("matrix_mult_div_assignment", "Testing y*=x") {}
 
     /// @brief Run the test
     int execute() override;

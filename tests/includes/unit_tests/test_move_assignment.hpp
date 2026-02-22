@@ -11,7 +11,8 @@ class vector_move_assignment_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_move_assignment_test() : unit_test("vector move assignment") {}
+    vector_move_assignment_test() : unit_test("vector_move_assignment", "Test moving during assign")
+    {}
 
     /// @brief Run the test
     int execute() override;
@@ -22,7 +23,8 @@ class matrix_move_assignment_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    matrix_move_assignment_test() : unit_test("matrix move assignment") {}
+    matrix_move_assignment_test() : unit_test("matrix_move_assignment", "Test moving during assign")
+    {}
 
     /// @brief Run the test
     int execute() override;

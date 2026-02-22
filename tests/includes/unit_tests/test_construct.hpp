@@ -11,7 +11,7 @@ class vector_construct_test : public unit_test
 {
 public:
     /// @brief Construct the test
-    vector_construct_test() : unit_test("vector construct test") {}
+    vector_construct_test() : unit_test("vector_construct", "Testing constructor") {}
 
     /// @brief Run the test
     int execute() override;
@@ -22,7 +22,7 @@ class matrix_construct_test : public unit_test
 {
 public:
     /// @brief Construct the test
-    matrix_construct_test() : unit_test("matrix construct test") {}
+    matrix_construct_test() : unit_test("matrix_construct", "Testing constructor") {}
 
     /// @brief Run the test
     int execute() override;

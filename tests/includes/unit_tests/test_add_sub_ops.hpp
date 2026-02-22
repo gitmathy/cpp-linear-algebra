@@ -11,7 +11,7 @@ class vector_add_sub_ops_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_add_sub_ops_test() : unit_test("vector add/sub ops") {}
+    vector_add_sub_ops_test() : unit_test("vector_add_sub_ops", "Testing - and +") {}
 
     /// @brief Run the test
     int execute() override;
@@ -22,7 +22,7 @@ class matrix_add_sub_ops_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    matrix_add_sub_ops_test() : unit_test("matrix add/sub ops") {}
+    matrix_add_sub_ops_test() : unit_test("matrix_add_sub_ops", "Testing - and +") {}
 
     /// @brief Run the test
     int execute() override;

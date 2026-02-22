@@ -11,7 +11,8 @@ class vector_read_write_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_read_write_test() : unit_test("read and write vector") {}
+    vector_read_write_test() : unit_test("vector_read_write", "Test reading and writing to files")
+    {}
 
     /// @brief Run the test
     int execute() override;
@@ -22,7 +23,8 @@ class matrix_read_write_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    matrix_read_write_test() : unit_test("read and write matrix") {}
+    matrix_read_write_test() : unit_test("matrix_read_write", "Test reading and writing to files")
+    {}
 
     /// @brief Run the test
     int execute() override;

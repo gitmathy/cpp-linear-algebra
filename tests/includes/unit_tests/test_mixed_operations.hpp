@@ -11,7 +11,7 @@ class mixed_operations : public unit_test
 {
 public:
     /// @brief Constructing the test
-    mixed_operations() : unit_test("mixed operations") {}
+    mixed_operations() : unit_test("mixed_operations", "Testing x = -a+b+2*b+(A+B)*a+(2*B)*b") {}
 
     /// @brief Run the test
     int execute() override;
