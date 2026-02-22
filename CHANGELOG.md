@@ -1,3 +1,23 @@
+# [1.3.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.2.0...v1.3.0) (2026-02-22)
+
+
+### Bug Fixes
+
+* As default run all tests ([f0f24b7](https://github.com/gitmathy/cpp-linear-algebra/commit/f0f24b7cec7ab741260a1cc7d6aaa5dfc7d5545c))
+* Remove debug output ([e8dea25](https://github.com/gitmathy/cpp-linear-algebra/commit/e8dea25df81b61a8f651f4ea6d8fd95461bbb616))
+* Remove unused test and set log level to debug ([a9c81b4](https://github.com/gitmathy/cpp-linear-algebra/commit/a9c81b45898e69fd8edb34616086ab434ce159fb))
+* Size check ([4bfda07](https://github.com/gitmathy/cpp-linear-algebra/commit/4bfda07a037efddec0269d49a8ae986c1cb18a2d))
+* This test does not test anything new ([1e4831b](https://github.com/gitmathy/cpp-linear-algebra/commit/1e4831bef90eec488b91dcddd799da417f8e74b8))
+
+
+### Features
+
+* Add some compiler optimization flags ([a14a34f](https://github.com/gitmathy/cpp-linear-algebra/commit/a14a34f816d5ee7bf27ee5c12d34a2329bc3fcdf))
+* Include descriptions for tests ([bf40d83](https://github.com/gitmathy/cpp-linear-algebra/commit/bf40d83e37922b28eeb6c30e438e511a6a3a69b6))
+* Multiple labels for filtering ([09da9c6](https://github.com/gitmathy/cpp-linear-algebra/commit/09da9c6ca0962797a962dc3d84073fdc0e0102aa))
+* New label for row or column based algorithms ([0265132](https://github.com/gitmathy/cpp-linear-algebra/commit/02651322c161a8344ec7005df298b871114fad28))
+* Provide descriptions for all tests ([f99f004](https://github.com/gitmathy/cpp-linear-algebra/commit/f99f004e2ce1166670634568b6806f2efc8f56ae))
+
 # [1.2.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.1.0...v1.2.0) (2026-02-22)
 
 
