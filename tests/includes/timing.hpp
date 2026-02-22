@@ -15,7 +15,8 @@ typedef std::chrono::duration<double> duration_type;
 /// ===============================================
 
 /// @brief A single entry in time report, total duration and number of calls
-struct timing_entry {
+struct timing_entry
+{
     /// @brief Total duration
     duration_type duration;
     /// @brief Total number of calls
@@ -38,7 +39,6 @@ private:
 
 public:
     /// @brief Constructor starts timing
-    /// @param name Name of the function
     inline timer() : p_end(nullptr) { restart(); }
 
     /// @brief Default destructor

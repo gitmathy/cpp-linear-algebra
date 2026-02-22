@@ -5,8 +5,10 @@
 #include "includes/types.hpp"
 #include "includes/vector.hpp"
 #include "tests/includes/base_test.hpp"
+#include "tests/includes/samples.hpp"
 #include "tests/includes/timing.hpp"
 #include <list>
+#include <memory>
 #include <numeric>
 
 namespace la {
@@ -15,10 +17,7 @@ namespace test {
 /// @brief Single performance test used as a base class
 class performance_test : public base_test
 {
-protected:
-    /// @brief Number of runs
-    size_type p_runs;
-
+private:
     /// @brief Timekeeping
     timer p_timer;
 
@@ -31,31 +30,50 @@ protected:
     /// @brief Stop time and record the runtime
     inline void stop_single_test() { p_timings.push_back(p_timer.get()); }
 
+protected:
+    /// @brief Number of runs
+    size_type p_runs;
+
+    /// @brief Sample matrices and vectors for the test
+    std::shared_ptr<sample_la_structures<double>> p_samples;
+
+    // As a simplification in the implementation, we to store references to matrices and vectors
+    // from the samples while assuming that the size of samples is >=3.
+    //
+    // I know, that this breaks a nice dependency management but it helps to not always follow the
+    // pointers.
+
+    /// @brief Reference to default vectors taking from samples
+    vector<double> &p_a_vec, &p_b_vec, &p_c_vec;
+
+    /// @brief Reference to row-wise matrices
+    matrix<double, ROW_WISE> &p_A_row, &p_B_row, &p_C_row;
+
+    /// @brief References to column-wise matrices
+    matrix<double, COLUMN_WISE> &p_A_col, &p_B_col, &p_C_col;
+
     /// @brief Run a single test
     virtual void run_single_test() = 0;
 
 public:
     /// @brief Construct a performance test
-    performance_test(const std::string &name, const size_type runs)
-        : base_test(name), p_runs(runs), p_timings()
-    {}
+    performance_test(const std::string &name, const size_type runs,
+                     std::shared_ptr<sample_la_structures<double>> samples = get_default_samples());
 
     /// @brief Destruct a performance test
     virtual ~performance_test() = default;
 
-    /// @brief Setup the test
-    virtual void setup(){};
+    /// @brief Setup the test to make sure, matrices and vectors are of default size
+    virtual void setup() override;
 
-    /// @brief Tear down the test
-    virtual void tear_down(){};
+    /// @brief Run the test num-runs times
+    int execute() override;
 
-    int execute();
+    /// @brief Tear down the test (reset samples)
+    virtual void tear_down() override;
 
     /// @brief Get total execution time
-    duration_type total_time() const
-    {
-        return std::accumulate(p_timings.begin(), p_timings.end(), duration_type());
-    }
+    duration_type total_time() const;
 
     /// @brief Get average execution time
     duration_type average_time() const { return total_time() / executions(); }
@@ -64,83 +82,13 @@ public:
     inline size_type executions() const { return p_timings.size(); }
 
     /// @brief Get number of rows used for testing
-    virtual size_type rows() const = 0;
+    size_type mat_rows() const { return p_samples->mat_rows(); }
 
     /// @brief Get number of columns used for testing
-    virtual size_type cols() const = 0;
-};
+    size_type mat_cols() const { return p_samples->mat_rows(); }
 
-template <typename T>
-inline double get_random()
-{
-    return T((std::rand() / (T)RAND_MAX) * 2 - 1);
-}
-
-/// @brief Initialize x with random values
-template <typename la_struct>
-inline void init(la_struct &x)
-{
-    for (auto it = x.begin(); it != x.end(); ++it) {
-        *it = get_random<typename la_struct::value_type>();
-    }
-}
-
-/// @brief Base class for all vector performance tests
-class vector_performance_test : public performance_test
-{
-protected:
-    /// @brief Number of rows for the vector, i.e., size
-    size_type p_rows;
-
-    /// @brief Vectors used for performance tests
-    la::vector<double> p_a, p_b, p_c;
-
-public:
-    /// @brief Setup the test
-    vector_performance_test(const std::string &name, const size_type runs, const size_type rows);
-
-    /// @brief Allocate memory
-    void setup() override;
-
-    /// @brief Free memory
-    void tear_down() override;
-
-    /// @brief Get number of rows used for testing
-    inline size_type rows() const override { return p_a.rows(); }
-
-    /// @brief Get number of columns used for testing
-    inline size_type cols() const override { return p_a.cols(); }
-};
-
-/// @brief Base class for all matrix performance tests
-class matrix_performance_test : public performance_test
-{
-protected:
-    /// @brief matrix rows for testing
-    size_type p_rows;
-
-    /// @brief matrix columns for testing
-    size_type p_cols;
-
-    /// @brief Vectors used for performance tests
-    la::matrix<double> p_a, p_b, p_c;
-
-public:
-    /// @brief Initialize p_a and p_b
-    matrix_performance_test(const std::string &name, const size_type runs, const size_type m,
-                            const size_type n);
-
-    /// @brief Allocate memory
-    virtual void setup() override;
-
-    /// @brief Free memory
-    virtual void tear_down() override;
-
-    /// @brief Get number of rows used for testing
-    inline size_type rows() const override { return p_a.rows(); }
-
-    /// @brief Get number of columns used for testing
-    inline size_type cols() const override { return p_a.cols(); }
+    /// @brief Get number of vector size
+    size_type vec_rows() const { return p_samples->vec_rows(); };
 };
 
 } // namespace test

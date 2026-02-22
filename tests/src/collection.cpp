@@ -2,6 +2,7 @@
 #include "tests/includes/performance_test.hpp"
 #include "tests/includes/unit_test.hpp"
 #include <iomanip>
+#include <numeric>
 #include <sstream>
 
 namespace la {
@@ -20,10 +21,39 @@ size_type test_collection::numer_of_tests(const std::string &label) const
     return fit == p_tests.end() ? 0 : fit->second.size();
 }
 
+size_type test_collection::max_name_length(const std::string &label_filter) const
+{
+    size_type max_name_length = 0;
+    for (auto &labeled : p_tests) {
+        if (label_filter == "all" || labeled.first == label_filter) {
+            size_type labeled_max_name = 0;
+            for (auto &test : labeled.second) {
+                labeled_max_name = std::max(labeled_max_name, test->name().size());
+            }
+            max_name_length = std::max(max_name_length, labeled_max_name);
+        }
+    }
+    return max_name_length;
+}
+
+size_type test_collection::max_label_length(const std::string &label_filter) const
+{
+    size_type max_label_length = 0;
+    for (auto &labeled : p_tests) {
+        if (label_filter == "all" || labeled.first == label_filter) {
+            max_label_length = std::max(max_label_length, labeled.first.size());
+        }
+    }
+    return max_label_length;
+}
+
 void test_collection::transfer(const std::string &label, std::unique_ptr<base_test> new_test)
 {
     if (new_test == nullptr)
         return;
+    std::stringstream strs;
+    strs << "* adding: " << new_test->name();
+    log(strs, INFO);
     auto fit = p_tests.find(label);
     if (fit == p_tests.end()) {
         // the label does not exists so far, so create the label
@@ -35,6 +65,7 @@ void test_collection::transfer(const std::string &label, std::unique_ptr<base_te
 
 int test_collection::run(const std::string &label_filter)
 {
+    timer execution_timer;
     std::stringstream strs;
     strs << "================================================================================\n";
     strs << "    TESTING: " << p_name << '\n';
@@ -66,13 +97,16 @@ int test_collection::run(const std::string &label_filter)
         }
     }
 
+    execution_timer.stop();
     report(label_filter);
 
     strs << "\n================================================================================\n";
     strs << "    SUMMARY: " << p_name << '\n';
-    strs << "Performed tests  : " << performed_tests << '\n';
-    strs << "Total test result: " << result << '\n';
-    strs << "Failed tests     : " << failed_tests << '\n';
+    strs << "Performed tests     : " << performed_tests << '\n';
+    strs << "Total test result   : " << result << '\n';
+    strs << "Failed tests        : " << failed_tests << '\n';
+    strs << "Total execution time: " << std::setprecision(4) << execution_timer.get().count()
+         << "s\n";
     strs << "================================================================================\n";
     log(strs, INFO);
     return result;
@@ -102,41 +136,56 @@ void unit_test_collection::report(const std::string &label_filter)
     this->log("----------------------------------------", INFO);
 }
 
-performance_test_collection::performance_test_collection(const size_type runs,
-                                                         const size_type vec_n,
-                                                         const size_type mat_m,
-                                                         const size_type mat_n)
-    : test_collection("performance tests"), p_runs(runs), p_vector_size(vec_n),
-      p_matrix_rows(mat_m), p_matrix_cols(mat_n)
+performance_test_collection::performance_test_collection(
+    const size_type runs, std::shared_ptr<sample_la_structures<double>> samples)
+    : test_collection("performance tests"), p_samples(std::move(samples)), p_runs(runs)
 {}
 
 void performance_test_collection::report(const std::string &label_filter)
 {
     std::stringstream strs;
-    strs << "\n----------------------------------------\n";
-    strs << "    REPORT: " << p_name << "\n\n";
-    strs << "# runs:      " << p_runs << '\n'
-         << "vector size: " << p_vector_size << '\n'
-         << "matrix rows: " << p_matrix_rows << '\n'
-         << "matrix cols: " << p_matrix_cols << '\n';
-    strs << "----------------------------------------";
+    strs << '\n' << std::string(80, '=') << '\n';
+    strs << "       REPORT: " << p_name << "\n\n";
+    strs << "   # runs:              " << p_runs << '\n'
+         << "   default vector size: " << p_samples->vec_rows() << '\n'
+         << "   default matrix rows: " << p_samples->mat_rows() << '\n'
+         << "   default matrix cols: " << p_samples->vec_rows() << '\n';
+    strs << std::string(80, '=') << '\n';
     this->log(strs, INFO);
+
+    const size_type name_length = max_name_length(label_filter),
+                    label_length = max_label_length(label_filter), run_length = 4, time_length = 10;
+
+    std::stringstream table_row_break;
+    table_row_break << '+' << std::string(name_length + 2, '-') << '+'
+                    << std::string(label_length + 2, '-') << '+' << "------+" << "------------+"
+                    << "------------+";
+    log(table_row_break.str(), INFO);
+    strs << "| " << std::setw(name_length) << std::left << "test name" << " | ";
+    strs << std::setw(label_length) << std::left << "label" << " | ";
+    strs << std::setw(run_length) << std::left << "runs" << " | ";
+    strs << std::setw(time_length) << std::left << "total[s]" << " | ";
+    strs << std::setw(time_length) << std::left << "avg[s]" << " |";
+    log(strs, INFO);
+    log(table_row_break.str(), INFO);
     for (auto &labeled : p_tests) {
         if (label_filter == "all" || labeled.first == label_filter) {
             for (auto &test : labeled.second) {
-                std::stringstream test_name;
-                test_name << '[' << test->name() << ']';
                 const performance_test *const perf_test_p =
                     dynamic_cast<performance_test *>(test.get());
-                strs << "* " << std::left << std::setw(30) << test_name.str() << ": # "
-                     << perf_test_p->executions() << ": total " << std::setprecision(4)
-                     << perf_test_p->total_time().count() << "s, average "
-                     << perf_test_p->average_time().count() << 's';
-                this->log(strs, INFO);
+                strs << "| " << std::setw(name_length) << std::left << test->name() << " | ";
+                strs << std::setw(label_length) << std::left << labeled.first << " | ";
+                strs << std::setw(run_length) << std::setprecision(4) << std::right
+                     << perf_test_p->executions() << " | ";
+                strs << std::setw(time_length) << std::setprecision(4) << std::right
+                     << perf_test_p->total_time().count() << " | ";
+                strs << std::setw(time_length) << std::setprecision(4) << std::right
+                     << perf_test_p->average_time().count() << " |";
+                log(strs, INFO);
             }
         }
     }
-    this->log("----------------------------------------", INFO);
+    log(table_row_break.str(), INFO);
 }
 
 } // namespace test

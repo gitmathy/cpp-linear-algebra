@@ -9,91 +9,135 @@
 namespace la {
 namespace test {
 
+// ===============================================
+// V E C T O R
+// ===============================================
+
 /// @brief Test c=a+b for vectors
-class vector_add : public vector_performance_test
+class vector_add : public performance_test
 {
 protected:
     /// @brief Execute a single test
-    inline void run_single_test() override { p_c = p_a + p_b; }
+    inline void run_single_test() override { p_c_vec = p_a_vec + p_b_vec; }
 
 public:
     /// @brief Set me up
-    vector_add(const size_type runs, const size_type dim)
-        : vector_performance_test("vector_add", runs, dim)
-    {}
+    vector_add(const size_type runs) : performance_test("vector_add", runs) {}
 };
 
 /// @brief Test c=a+b+a+b
-class vector_multiple_add : public vector_performance_test
+class vector_multiple_add : public performance_test
 {
 protected:
     /// @brief Execute a single test
-    inline void run_single_test() override { p_c = p_a + p_b + p_a + p_b; }
+    inline void run_single_test() override { p_c_vec = p_a_vec + p_b_vec + p_a_vec + p_b_vec; }
 
 public:
     /// @brief Set me up
-    vector_multiple_add(const size_type runs, const size_type dim)
-        : vector_performance_test("vector_multiple_add", runs, dim)
-    {}
+    vector_multiple_add(const size_type runs) : performance_test("vector_multiple_add", runs) {}
 };
 
-/// @brief Test c = a - b - 2 + a - b + 2 for vector
-class vector_mixed_add_sub : public vector_performance_test
+/// @brief Test c = -a - b - 2 + a - b + 2 for vector
+class vector_mixed_add_sub : public performance_test
 {
 protected:
     /// @brief Execute a single test
-    inline void run_single_test() override { p_c = p_a - p_b - 2 + p_a - p_b + 2; }
+    inline void run_single_test() override
+    {
+        p_c_vec = -p_a_vec - p_b_vec - 2 + p_a_vec - p_b_vec + 2;
+    }
 
 public:
     /// @brief Set me up
-    vector_mixed_add_sub(const size_type runs, const size_type dim)
-        : vector_performance_test("vector_mixed_add_sub", runs, dim)
-    {}
+    vector_mixed_add_sub(const size_type runs) : performance_test("vector_mixed_add_sub", runs) {}
 };
+
+// ===============================================
+// M A T R I C E S
+// ===============================================
 
 /// @brief Test c=a+b for matrices
-class matrix_add : public matrix_performance_test
+template <storage_type StorageT>
+class matrix_add : public performance_test
 {
 protected:
     /// @brief Execute a single test
-    inline void run_single_test() override { p_c = p_a + p_b; }
+    inline void run_single_test() override
+    {
+        if constexpr (StorageT == ROW_WISE) {
+            p_C_row = p_A_row + p_B_row;
+        } else {
+            p_C_col = p_A_col + p_B_col;
+        }
+    }
 
 public:
     /// @brief Set me up
-    matrix_add(const size_type runs, const size_type m, const size_t n)
-        : matrix_performance_test("matrix_add", runs, m, n)
+    matrix_add(const size_type runs)
+        : performance_test(std::string("matrix_add ") + (StorageT == ROW_WISE ? "row" : "col"),
+                           runs)
     {}
 };
 
-/// @brief Test c=a+b+a+b
-class matrix_multiple_add : public matrix_performance_test
+/// @brief Test c=a+b+a+b for matrices
+template <storage_type StorageT>
+class matrix_multiple_add : public performance_test
 {
 protected:
     /// @brief Execute a single test
-    inline void run_single_test() override { p_c = p_a + p_b + p_a + p_b; }
+    inline void run_single_test() override
+    {
+        if constexpr (StorageT == ROW_WISE) {
+            p_C_row = p_A_row + p_B_row + p_A_row + p_B_row;
+        } else {
+            p_C_col = p_A_col + p_B_col + p_A_col + p_B_col;
+        }
+    }
 
 public:
     /// @brief Set me up
-    matrix_multiple_add(const size_type runs, const size_type m, const size_t n)
-        : matrix_performance_test("matrix_multiple_add", runs, m, n)
+    matrix_multiple_add(const size_type runs)
+        : performance_test(
+              std::string("matrix_multiple_add ") + (StorageT == ROW_WISE ? "row" : "col"), runs)
     {}
 };
 
 /// @brief Test c = a - b - 2 + a - b + 2 for matrices
-class matrix_mixed_add_sub : public matrix_performance_test
+template <storage_type StorageT>
+class matrix_mixed_add_sub : public performance_test
 {
 protected:
     /// @brief Execute a single test
-    inline void run_single_test() override { p_c = p_a + p_b + p_a + p_b; }
+    inline void run_single_test() override
+    {
+        if constexpr (StorageT == ROW_WISE) {
+            p_C_row = p_A_row + p_B_row + p_A_row + p_B_row;
+        } else {
+            p_C_col = p_A_col + p_B_col + p_A_col + p_B_col;
+        }
+    }
 
 public:
     /// @brief Set me up
-    matrix_mixed_add_sub(const size_type runs, const size_type m, const size_t n)
-        : matrix_performance_test("matrix_mixed_add_sub", runs, m, n)
+    matrix_mixed_add_sub(const size_type runs)
+        : performance_test(
+              std::string("matrix_mixed_add_sub ") + (StorageT == ROW_WISE ? "row" : "col"), runs)
     {}
 };
 
-/// @brief Test c = a - b - 2 + a - b + 2 for vector
+/// @brief Testing c = a + b where a is row-wise, b is column-wise and c is row-wise
+class matrix_add_sub_mixed_storage : public performance_test
+{
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override { p_C_row = p_A_row + p_B_col; }
+
+public:
+    /// @brief Set me up
+    matrix_add_sub_mixed_storage(const size_type runs)
+        : performance_test("matrix_add_sub_mixed_storage", runs)
+    {}
+};
 
 } // namespace test
 } // namespace la

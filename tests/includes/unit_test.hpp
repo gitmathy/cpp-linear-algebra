@@ -23,13 +23,13 @@ public:
     unit_test(const std::string &name) : base_test(name), p_errors() {}
 
     /// @brief Destruct a unit test
-    virtual ~unit_test(){};
+    virtual ~unit_test() {};
 
     /// @brief Setup the test
-    virtual void setup(){};
+    virtual void setup() {};
 
     /// @brief Tear down the test
-    virtual void tear_down(){};
+    virtual void tear_down() {};
 
     /// @brief Get the errors
     const std::list<std::string> &errors() const { return p_errors; }
@@ -37,6 +37,10 @@ public:
     /// @brief True if test has been executed and an error was recorded
     inline bool failed() const { return !p_errors.empty(); }
 };
+
+// ===============================================
+// H E L P E R   F U N C T I O N S
+// ===============================================
 
 /// @brief Check if all values in a vector or matrix have the same given value
 template <typename la_struct>

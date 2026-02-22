@@ -8,134 +8,160 @@
 namespace la {
 namespace test {
 
+// ===============================================
+// V E C T O R
+// ===============================================
+
 /// @brief Test a=b for vectors
-class vector_assign : public vector_performance_test
+class vector_assign : public performance_test
 {
 protected:
     /// @brief Execute a single test
-    inline void run_single_test() override { p_a = p_b; }
+    inline void run_single_test() override { p_a_vec = p_b_vec; }
 
 public:
     /// @brief Set me up
-    vector_assign(const size_type runs, const size_type dim)
-        : vector_performance_test("vector_assign", runs, dim)
-    {}
+    vector_assign(const size_type runs) : performance_test("vector_assign", runs) {}
 };
 
 /// @brief Test a+=b for vectors
-class vector_assign_add : public vector_performance_test
+class vector_add_assign : public performance_test
 {
 protected:
     /// @brief Execute a single test
-    inline void run_single_test() override { p_a += p_b; }
+    inline void run_single_test() override { p_a_vec += p_b_vec; }
 
 public:
     /// @brief Set me up
-    vector_assign_add(const size_type runs, const size_type dim)
-        : vector_performance_test("vector_assign_add", runs, dim)
-    {}
+    vector_add_assign(const size_type runs) : performance_test("vector_add_assign", runs) {}
 };
 
-/// @brief Test c=(a+b) for vectors
-class vector_assign_add_sum : public vector_performance_test
+/// @brief Test c += (a+b) for vectors
+class vector_sum_add_assign : public performance_test
 {
 protected:
     /// @brief Execute a single test
-    inline void run_single_test() override { p_c += (p_a + p_b); }
+    inline void run_single_test() override { p_c_vec += (p_a_vec + p_b_vec); }
 
 public:
     /// @brief Set me up
-    vector_assign_add_sum(const size_type runs, const size_type dim)
-        : vector_performance_test("vector_assign_add_sum", runs, dim)
-    {}
+    vector_sum_add_assign(const size_type runs) : performance_test("vector_sum_add_assign", runs) {}
 };
+
+// ===============================================
+// M A T R I C E S
+// ===============================================
 
 /// @brief Test a=b for matrices
-class matrix_assign : public matrix_performance_test
+template <storage_type StorageT>
+class matrix_assign : public performance_test
 {
 protected:
     /// @brief Execute a single test
-    inline void run_single_test() override { p_a = p_b; }
+    inline void run_single_test() override
+    {
+        if constexpr (StorageT == ROW_WISE) {
+            p_A_row = p_B_row;
+        } else {
+            p_A_col = p_B_col;
+        }
+    }
 
 public:
     /// @brief Set me up
-    matrix_assign(const size_type runs, const size_type m, const size_type n)
-        : matrix_performance_test("matrix_assign", runs, m, n)
+    matrix_assign(const size_type runs)
+        : performance_test(std::string("matrix_assign ") + (StorageT == ROW_WISE ? "row" : "col"),
+                           runs)
     {}
+};
+
+/// @brief Test a += b for matrices
+template <storage_type StorageT>
+class matrix_assign_add : public performance_test
+{
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override
+    {
+        if constexpr (StorageT == ROW_WISE) {
+            p_A_row += p_B_row;
+        } else {
+            p_A_col += p_B_col;
+        }
+    }
+
+public:
+    /// @brief Set me up
+    matrix_assign_add(const size_type runs)
+        : performance_test(
+              std::string("matrix_assign_add ") + (StorageT == ROW_WISE ? "row" : "col"), runs)
+    {}
+};
+
+/// @brief Test c += (a+b) for matrices
+template <storage_type StorageT>
+class matrix_assign_add_sum : public performance_test
+{
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override
+    {
+        if constexpr (StorageT == ROW_WISE) {
+            p_A_row += p_B_row;
+        } else {
+            p_A_col += p_B_col;
+        }
+    }
+
+public:
+    /// @brief Set me up
+    matrix_assign_add_sum(const size_type runs)
+        : performance_test(
+              std::string("matrix_assign_add_sum ") + (StorageT == ROW_WISE ? "row" : "col"), runs)
+    {}
+};
+
+/// @brief Test y = A*x for matrix*vector
+template <storage_type StorageT>
+class vector_assign_matrix_vector_mult : public performance_test
+{
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override
+    {
+        if constexpr (StorageT == ROW_WISE) {
+            p_a_vec = p_A_row * p_b_vec;
+        } else {
+            p_a_vec = p_A_col * p_b_vec;
+        }
+    }
+
+public:
+    /// @brief Set me up
+    vector_assign_matrix_vector_mult(const size_type runs)
+        : performance_test(std::string("vector_assign_matrix_vector_mult ") +
+                               (StorageT == ROW_WISE ? "row" : "col"),
+                           runs)
+    {}
+    /// @brief Allocate memory
+    void setup() override
+    {
+        p_samples->adjust(p_samples->mat_cols(), p_samples->mat_rows(), p_samples->mat_cols());
+    }
 };
 
 /// @brief Test a=b for matrices of different StorageT layout
-class matrix_assign_storage_missmatch : public matrix_performance_test
-{
-private:
-    /// @brief Matrix of other StorageT layout
-    la::matrix<double, COLUMN_WISE> p_x;
-
-protected:
-    /// @brief Execute a single test
-    inline void run_single_test() override { p_a = p_x; }
-
-public:
-    /// @brief Set me up
-    matrix_assign_storage_missmatch(const size_type runs, const size_type m, const size_type n)
-        : matrix_performance_test("matrix_assign_storage_missmatch", runs, m, n), p_x(0, 0)
-    {}
-    /// @brief Allocate memory
-    void setup() override;
-
-    /// @brief Free memory
-    void tear_down() override;
-};
-
-/// @brief Test a+=b for matrices
-class matrix_assign_add : public matrix_performance_test
+class matrix_assign_storage_mismatch : public performance_test
 {
 protected:
     /// @brief Execute a single test
-    inline void run_single_test() override { p_a += p_b; }
+    inline void run_single_test() override { p_A_row = p_A_col; }
 
 public:
     /// @brief Set me up
-    matrix_assign_add(const size_type runs, const size_type m, const size_type n)
-        : matrix_performance_test("matrix_assign_add", runs, m, n)
+    matrix_assign_storage_mismatch(const size_type runs)
+        : performance_test("matrix_assign_storage_mismatch", runs)
     {}
-};
-
-/// @brief Test c+=(a+b) for matrices
-class matrix_assign_add_sum : public matrix_performance_test
-{
-protected:
-    /// @brief Execute a single test
-    inline void run_single_test() override { p_a += p_b; }
-
-public:
-    /// @brief Set me up
-    matrix_assign_add_sum(const size_type runs, const size_type m, const size_type n)
-        : matrix_performance_test("matrix_assign_add_sum", runs, m, n)
-    {}
-};
-
-/// @brief Test y=A*x for matrix*vector
-class vector_assign_matrix_vector_mult : public matrix_performance_test
-{
-private:
-    /// @brief Used vectors
-    vector<double> p_x, p_y;
-
-protected:
-    /// @brief Execute a single test
-    inline void run_single_test() override { p_y = p_a * p_x; }
-
-public:
-    /// @brief Set me up
-    vector_assign_matrix_vector_mult(const size_type runs, const size_type m, const size_type n)
-        : matrix_performance_test("vector_assign_matrix_vector_mult", runs, m, n)
-    {}
-    /// @brief Allocate memory
-    void setup() override;
-
-    /// @brief Free memory
-    void tear_down() override;
 };
 
 } // namespace test
