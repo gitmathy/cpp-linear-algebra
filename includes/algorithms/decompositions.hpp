@@ -113,7 +113,7 @@ void lu_decomposition<T, StorageT>::solve(vector<T> &x, const vector<T> &rhs)
 {
     const size_type n = p_a.rows();
     if (n != rhs.rows()) {
-        throw error("rhs of wring size", "algorithm:lup");
+        throw error("rhs of wrong size", "algorithm:lup");
     }
     if (x.rows() != n) {
         x.allocate(n);
