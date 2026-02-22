@@ -36,6 +36,17 @@ size_type test_collection::max_name_length(const std::string &label_filter) cons
     return max_name_length;
 }
 
+size_type test_collection::max_label_length(const std::string &label_filter) const
+{
+    size_type max_label_length = 0;
+    for (auto &labeled : p_tests) {
+        if (label_filter == "all" || labeled.first == label_filter) {
+            max_label_length = std::max(max_label_length, labeled.first.size());
+        }
+    }
+    return max_label_length;
+}
+
 void test_collection::transfer(const std::string &label, std::unique_ptr<base_test> new_test)
 {
     if (new_test == nullptr)
@@ -138,38 +149,39 @@ void performance_test_collection::report(const std::string &label_filter)
     strs << std::string(80, '=') << '\n';
     this->log(strs, INFO);
 
-    const size_type name_length = max_name_length(label_filter), run_length = 4, time_length = 10;
+    const size_type name_length = max_name_length(label_filter),
+                    label_length = max_label_length(label_filter), run_length = 4, time_length = 10;
 
-    strs << "+" << std::string(name_length + 2, '-') << "+" << "------+" << "------------+"
-         << "------------+\n";
+    std::stringstream table_row_break;
+    table_row_break << '+' << std::string(name_length + 2, '-') << '+'
+                    << std::string(label_length + 2, '-') << '+' << "------+" << "------------+"
+                    << "------------+";
+    log(table_row_break.str(), INFO);
     strs << "| " << std::setw(name_length) << std::left << "test name" << " | ";
+    strs << std::setw(label_length) << std::left << "label" << " | ";
     strs << std::setw(run_length) << std::left << "runs" << " | ";
     strs << std::setw(time_length) << std::left << "total[s]" << " | ";
-    strs << std::setw(time_length) << std::left << "avg[s]" << " |\n";
-    strs << "+" << std::string(name_length + 2, '-') << "+" << "------+" << "------------+"
-         << "------------+";
+    strs << std::setw(time_length) << std::left << "avg[s]" << " |";
     log(strs, INFO);
-
+    log(table_row_break.str(), INFO);
     for (auto &labeled : p_tests) {
         if (label_filter == "all" || labeled.first == label_filter) {
             for (auto &test : labeled.second) {
                 const performance_test *const perf_test_p =
                     dynamic_cast<performance_test *>(test.get());
-
                 strs << "| " << std::setw(name_length) << std::left << test->name() << " | ";
+                strs << std::setw(label_length) << std::left << labeled.first << " | ";
                 strs << std::setw(run_length) << std::setprecision(4) << std::right
                      << perf_test_p->executions() << " | ";
                 strs << std::setw(time_length) << std::setprecision(4) << std::right
                      << perf_test_p->total_time().count() << " | ";
                 strs << std::setw(time_length) << std::setprecision(4) << std::right
                      << perf_test_p->average_time().count() << " |";
-                this->log(strs, INFO);
+                log(strs, INFO);
             }
         }
     }
-    strs << "+" << std::string(name_length + 2, '-') << "+" << "------+" << "------------+"
-         << "------------+\n";
-    log(strs, INFO);
+    log(table_row_break.str(), INFO);
 }
 
 } // namespace test
