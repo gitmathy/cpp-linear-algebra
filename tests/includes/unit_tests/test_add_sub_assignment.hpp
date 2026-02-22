@@ -11,7 +11,8 @@ class vector_add_sub_assignment_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_add_sub_assignment_test() : unit_test("vector add/sub assignment") {}
+    vector_add_sub_assignment_test() : unit_test("vector_add_sub_assignment", "Testing +0 and -=")
+    {}
 
     /// @brief Run the test
     int execute() override;
@@ -22,7 +23,8 @@ class matrix_add_sub_assignment_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    matrix_add_sub_assignment_test() : unit_test("matrix add/sub assignment") {}
+    matrix_add_sub_assignment_test() : unit_test("matrix_add_sub_assignment", "Testing +0 and -=")
+    {}
 
     /// @brief Run the test
     int execute() override;

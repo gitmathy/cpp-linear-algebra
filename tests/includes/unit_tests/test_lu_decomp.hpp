@@ -11,7 +11,7 @@ class lu_decomposition_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    lu_decomposition_test() : unit_test("lu decomposition") {}
+    lu_decomposition_test() : unit_test("lu_decomposition", "Testing LU decomposition") {}
 
     /// @brief Run the test
     int execute() override;

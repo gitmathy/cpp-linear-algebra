@@ -13,7 +13,7 @@ class vector_iterator_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_iterator_test() : unit_test("iterate vectors") {}
+    vector_iterator_test() : unit_test("vector_iterator", "Testing iterators") {}
 
     /// @brief Run the test
     int execute();
@@ -24,7 +24,7 @@ class matrix_iterator_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    matrix_iterator_test() : unit_test("iterator matrices") {}
+    matrix_iterator_test() : unit_test("matrix_iterator", "Testing iterators") {}
 
     /// @brief Run the test
     int execute();

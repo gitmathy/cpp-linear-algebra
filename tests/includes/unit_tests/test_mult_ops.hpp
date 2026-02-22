@@ -11,7 +11,7 @@ class vec_vec_mult_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vec_vec_mult_test() : unit_test("vector mult vector") {}
+    vec_vec_mult_test() : unit_test("vec_vec_mult", "Testing x*y and (x*y)*alpha") {}
 
     /// @brief Run the test
     int execute() override;
@@ -22,7 +22,7 @@ class mat_mat_mult_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    mat_mat_mult_test() : unit_test("multiplying matrix with matrix") {}
+    mat_mat_mult_test() : unit_test("mat_mat_mult", "Testing A*B and A*alpha") {}
 
     /// @brief Run the test
     int execute() override;
@@ -33,7 +33,7 @@ class mat_vec_mult_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    mat_vec_mult_test() : unit_test("multiplying matrix with vector") {}
+    mat_vec_mult_test() : unit_test("mat_vec_mult", "Testing A*b") {}
 
     /// @brief Run the test
     int execute() override;

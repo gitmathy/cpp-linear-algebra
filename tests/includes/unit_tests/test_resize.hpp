@@ -13,7 +13,7 @@ class vector_resize_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_resize_test() : unit_test("resize vectors") {}
+    vector_resize_test() : unit_test("vector_resize", "Test resizing") {}
 
     /// @brief Run the test
     int execute();
@@ -24,7 +24,7 @@ class matrix_resize_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    matrix_resize_test() : unit_test("resize matrices") {}
+    matrix_resize_test() : unit_test("matrix_resize", "Test resizing") {}
 
     /// @brief Run the test
     int execute();

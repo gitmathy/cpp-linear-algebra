@@ -21,7 +21,7 @@ protected:
 
 public:
     /// @brief Set me up
-    vector_assign(const size_type runs) : performance_test("vector_assign", runs) {}
+    vector_assign(const size_type runs) : performance_test("vector_assign", "Testing a=b", runs) {}
 };
 
 /// @brief Test a+=b for vectors
@@ -33,7 +33,9 @@ protected:
 
 public:
     /// @brief Set me up
-    vector_add_assign(const size_type runs) : performance_test("vector_add_assign", runs) {}
+    vector_add_assign(const size_type runs)
+        : performance_test("vector_add_assign", "Testing a += b", runs)
+    {}
 };
 
 /// @brief Test c += (a+b) for vectors
@@ -45,7 +47,9 @@ protected:
 
 public:
     /// @brief Set me up
-    vector_sum_add_assign(const size_type runs) : performance_test("vector_sum_add_assign", runs) {}
+    vector_sum_add_assign(const size_type runs)
+        : performance_test("vector_sum_add_assign", "Testing c += (a+b)", runs)
+    {}
 };
 
 // ===============================================
@@ -71,7 +75,7 @@ public:
     /// @brief Set me up
     matrix_assign(const size_type runs)
         : performance_test(std::string("matrix_assign ") + (StorageT == ROW_WISE ? "row" : "col"),
-                           runs)
+                           "Testing a=b", runs)
     {}
 };
 
@@ -93,8 +97,9 @@ protected:
 public:
     /// @brief Set me up
     matrix_assign_add(const size_type runs)
-        : performance_test(
-              std::string("matrix_assign_add ") + (StorageT == ROW_WISE ? "row" : "col"), runs)
+        : performance_test(std::string("matrix_assign_add ") +
+                               (StorageT == ROW_WISE ? "row" : "col"),
+                           "Testing a += b", runs)
     {}
 };
 
@@ -116,8 +121,9 @@ protected:
 public:
     /// @brief Set me up
     matrix_assign_add_sum(const size_type runs)
-        : performance_test(
-              std::string("matrix_assign_add_sum ") + (StorageT == ROW_WISE ? "row" : "col"), runs)
+        : performance_test(std::string("matrix_assign_add_sum ") +
+                               (StorageT == ROW_WISE ? "row" : "col"),
+                           "Testing c += (a+b)", runs)
     {}
 };
 
@@ -141,7 +147,7 @@ public:
     vector_assign_matrix_vector_mult(const size_type runs)
         : performance_test(std::string("vector_assign_matrix_vector_mult ") +
                                (StorageT == ROW_WISE ? "row" : "col"),
-                           runs)
+                           "Testing a = A*b", runs)
     {}
     /// @brief Allocate memory
     void setup() override
@@ -160,7 +166,7 @@ protected:
 public:
     /// @brief Set me up
     matrix_assign_storage_mismatch(const size_type runs)
-        : performance_test("matrix_assign_storage_mismatch", runs)
+        : performance_test("matrix_assign_storage_mismatch", "Testing a = A*b", runs)
     {}
 };
 

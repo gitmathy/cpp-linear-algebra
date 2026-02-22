@@ -11,7 +11,7 @@ class vector_move_ctor_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_move_ctor_test() : unit_test("vector move ctor") {}
+    vector_move_ctor_test() : unit_test("vector_move_ctor", "Test move in constructor") {}
 
     /// @brief Run the test
     int execute() override;
@@ -22,7 +22,7 @@ class matrix_move_ctor_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    matrix_move_ctor_test() : unit_test("matrix move ctor") {}
+    matrix_move_ctor_test() : unit_test("matrix_move_ctor", "Test move in constructor") {}
 
     /// @brief Run the test
     int execute() override;

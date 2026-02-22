@@ -22,7 +22,7 @@ protected:
 
 public:
     /// @brief Set me up
-    vector_add(const size_type runs) : performance_test("vector_add", runs) {}
+    vector_add(const size_type runs) : performance_test("vector_add", "Testing c = a+b", runs) {}
 };
 
 /// @brief Test c=a+b+a+b
@@ -34,7 +34,9 @@ protected:
 
 public:
     /// @brief Set me up
-    vector_multiple_add(const size_type runs) : performance_test("vector_multiple_add", runs) {}
+    vector_multiple_add(const size_type runs)
+        : performance_test("vector_multiple_add", "Testing c = a+b+a+b", runs)
+    {}
 };
 
 /// @brief Test c = -a - b - 2 + a - b + 2 for vector
@@ -49,7 +51,9 @@ protected:
 
 public:
     /// @brief Set me up
-    vector_mixed_add_sub(const size_type runs) : performance_test("vector_mixed_add_sub", runs) {}
+    vector_mixed_add_sub(const size_type runs)
+        : performance_test("vector_mixed_add_sub", "Testing  c = -a- b-2+a-b+2", runs)
+    {}
 };
 
 // ===============================================
@@ -75,7 +79,7 @@ public:
     /// @brief Set me up
     matrix_add(const size_type runs)
         : performance_test(std::string("matrix_add ") + (StorageT == ROW_WISE ? "row" : "col"),
-                           runs)
+                           "Testing c = a+b", runs)
     {}
 };
 
@@ -97,8 +101,9 @@ protected:
 public:
     /// @brief Set me up
     matrix_multiple_add(const size_type runs)
-        : performance_test(
-              std::string("matrix_multiple_add ") + (StorageT == ROW_WISE ? "row" : "col"), runs)
+        : performance_test(std::string("matrix_multiple_add ") +
+                               (StorageT == ROW_WISE ? "row" : "col"),
+                           "Testing c = a+b+a+b", runs)
     {}
 };
 
@@ -120,8 +125,9 @@ protected:
 public:
     /// @brief Set me up
     matrix_mixed_add_sub(const size_type runs)
-        : performance_test(
-              std::string("matrix_mixed_add_sub ") + (StorageT == ROW_WISE ? "row" : "col"), runs)
+        : performance_test(std::string("matrix_mixed_add_sub ") +
+                               (StorageT == ROW_WISE ? "row" : "col"),
+                           "Testing  c = -a- b-2+a-b+2", runs)
     {}
 };
 
@@ -135,7 +141,7 @@ protected:
 public:
     /// @brief Set me up
     matrix_add_sub_mixed_storage(const size_type runs)
-        : performance_test("matrix_add_sub_mixed_storage", runs)
+        : performance_test("matrix_add_sub_mixed_storage", "Testing c = a + b", runs)
     {}
 };
 
