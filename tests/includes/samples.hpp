@@ -3,8 +3,10 @@
 
 #include "includes/matrix.hpp"
 #include "includes/vector.hpp"
+#include "tests/includes/log.hpp"
 #include <deque>
 #include <memory>
+#include <sstream>
 
 namespace la {
 namespace test {
@@ -130,25 +132,29 @@ template <typename T>
 void sample_la_structures<T>::adjust(const size_type vec_n, const size_type mat_m,
                                      const size_type mat_n)
 {
+    std::stringstream strs;
     for (auto &vec : p_vectors) {
         if (vec.rows() != vec_n) {
-            std::cout << "  * Resizing vectors from " << vec.rows() << " to " << vec_n << std::endl;
+            strs << "  * Resizing vectors from " << vec.rows() << " to " << vec_n;
+            logger::get().log(strs, DEBUG);
             vec.allocate(vec_n);
             init(vec);
         }
     }
     for (auto &mat : p_row_matrices) {
         if (mat.rows() != mat_m || mat.cols() != mat_n) {
-            std::cout << "  * Resizing row matrices from (" << mat.rows() << " x " << mat.cols()
-                      << ") to (" << mat_m << " x " << mat_n << ")" << std::endl;
+            strs << "  * Resizing row matrices from (" << mat.rows() << " x " << mat.cols()
+                 << ") to (" << mat_m << " x " << mat_n << ")";
+            logger::get().log(strs, DEBUG);
             mat.allocate(mat_m, mat_n);
             init(mat);
         }
     }
     for (auto &mat : p_col_matrices) {
         if (mat.rows() != mat_m || mat.cols() != mat_n) {
-            std::cout << "  * Resizing row matrices from (" << mat.rows() << " x " << mat.cols()
-                      << ") to (" << mat_m << " x " << mat_n << ")" << std::endl;
+            strs << "  * Resizing row matrices from (" << mat.rows() << " x " << mat.cols()
+                 << ") to (" << mat_m << " x " << mat_n << ")";
+            logger::get().log(strs, DEBUG);
             mat.allocate(mat_m, mat_n);
             init(mat);
         }

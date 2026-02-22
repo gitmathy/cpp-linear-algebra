@@ -38,6 +38,9 @@ protected:
     /// @brief Specialized reportings
     virtual void report(const std::string &label_filter) = 0;
 
+    /// @brief Get the number of characters of the longest name of a test
+    size_type max_name_length(const std::string &label_filter) const;
+
 public:
     /// @brief Setup a test collection with a given name
     test_collection(const std::string &name) : p_name(name), p_tests(), p_logger(logger::get()) {}

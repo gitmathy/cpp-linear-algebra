@@ -2,6 +2,7 @@
 #include "tests/includes/performance_test.hpp"
 #include "tests/includes/unit_test.hpp"
 #include <iomanip>
+#include <numeric>
 #include <sstream>
 
 namespace la {
@@ -18,6 +19,21 @@ size_type test_collection::numer_of_tests(const std::string &label) const
     }
     auto fit = p_tests.find(label);
     return fit == p_tests.end() ? 0 : fit->second.size();
+}
+
+size_type test_collection::max_name_length(const std::string &label_filter) const
+{
+    size_type max_name_length = 0;
+    for (auto &labeled : p_tests) {
+        if (label_filter == "all" || labeled.first == label_filter) {
+            size_type labeled_max_name = 0;
+            for (auto &test : labeled.second) {
+                labeled_max_name = std::max(labeled_max_name, test->name().size());
+            }
+            max_name_length = std::max(max_name_length, labeled_max_name);
+        }
+    }
+    return max_name_length;
 }
 
 void test_collection::transfer(const std::string &label, std::unique_ptr<base_test> new_test)
@@ -113,30 +129,47 @@ performance_test_collection::performance_test_collection(
 void performance_test_collection::report(const std::string &label_filter)
 {
     std::stringstream strs;
-    strs << "\n----------------------------------------\n";
-    strs << "    REPORT: " << p_name << "\n\n";
-    strs << "# runs:      " << p_runs << '\n'
-         << "default vector size: " << p_samples->vec_rows() << '\n'
-         << "default matrix rows: " << p_samples->mat_rows() << '\n'
-         << "default matrix cols: " << p_samples->vec_rows() << '\n';
-    strs << "----------------------------------------";
+    strs << '\n' << std::string(80, '=') << '\n';
+    strs << "       REPORT: " << p_name << "\n\n";
+    strs << "   # runs:              " << p_runs << '\n'
+         << "   default vector size: " << p_samples->vec_rows() << '\n'
+         << "   default matrix rows: " << p_samples->mat_rows() << '\n'
+         << "   default matrix cols: " << p_samples->vec_rows() << '\n';
+    strs << std::string(80, '=') << '\n';
     this->log(strs, INFO);
+
+    const size_type name_length = max_name_length(label_filter), run_length = 4, time_length = 10;
+
+    strs << "+" << std::string(name_length + 2, '-') << "+" << "------+" << "------------+"
+         << "------------+\n";
+    strs << "| " << std::setw(name_length) << std::left << "test name" << " | ";
+    strs << std::setw(run_length) << std::left << "runs" << " | ";
+    strs << std::setw(time_length) << std::left << "total[s]" << " | ";
+    strs << std::setw(time_length) << std::left << "avg[s]" << " |\n";
+    strs << "+" << std::string(name_length + 2, '-') << "+" << "------+" << "------------+"
+         << "------------+";
+    log(strs, INFO);
+
     for (auto &labeled : p_tests) {
         if (label_filter == "all" || labeled.first == label_filter) {
             for (auto &test : labeled.second) {
-                std::stringstream test_name;
-                test_name << '[' << test->name() << ']';
                 const performance_test *const perf_test_p =
                     dynamic_cast<performance_test *>(test.get());
-                strs << "* " << std::left << std::setw(30) << test_name.str() << ": # "
-                     << perf_test_p->executions() << ": total " << std::setprecision(4)
-                     << perf_test_p->total_time().count() << "s, average "
-                     << perf_test_p->average_time().count() << 's';
+
+                strs << "| " << std::setw(name_length) << std::left << test->name() << " | ";
+                strs << std::setw(run_length) << std::setprecision(4) << std::right
+                     << perf_test_p->executions() << " | ";
+                strs << std::setw(time_length) << std::setprecision(4) << std::right
+                     << perf_test_p->total_time().count() << " | ";
+                strs << std::setw(time_length) << std::setprecision(4) << std::right
+                     << perf_test_p->average_time().count() << " |";
                 this->log(strs, INFO);
             }
         }
     }
-    this->log("----------------------------------------", INFO);
+    strs << "+" << std::string(name_length + 2, '-') << "+" << "------+" << "------------+"
+         << "------------+\n";
+    log(strs, INFO);
 }
 
 } // namespace test
