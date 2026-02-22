@@ -8,24 +8,30 @@
 namespace la {
 namespace test {
 
-size_type test_collection::numer_of_tests(const std::string &label) const
+bool label_in_filter(const std::string &label, const std::set<std::string> &label_filter)
 {
-    size_type number = 0;
-    if (label == "all") {
-        for (auto &n : p_tests) {
-            number += n.second.size();
-        }
-        return number;
+    if (label_filter.empty()) {
+        return true;
     }
-    auto fit = p_tests.find(label);
-    return fit == p_tests.end() ? 0 : fit->second.size();
+    return (label_filter.find(label) != label_filter.end());
 }
 
-size_type test_collection::max_name_length(const std::string &label_filter) const
+size_type test_collection::numer_of_tests(const std::set<std::string> &label_filter) const
+{
+    size_type number = 0;
+    for (auto &n : p_tests) {
+        if (label_in_filter(n.first, label_filter)) {
+            number += n.second.size();
+        }
+    }
+    return number;
+}
+
+size_type test_collection::max_name_length(const std::set<std::string> &label_filter) const
 {
     size_type max_name_length = 0;
     for (auto &labeled : p_tests) {
-        if (label_filter == "all" || labeled.first == label_filter) {
+        if (label_in_filter(labeled.first, label_filter)) {
             size_type labeled_max_name = 0;
             for (auto &test : labeled.second) {
                 labeled_max_name = std::max(labeled_max_name, test->name().size());
@@ -36,11 +42,11 @@ size_type test_collection::max_name_length(const std::string &label_filter) cons
     return max_name_length;
 }
 
-size_type test_collection::max_label_length(const std::string &label_filter) const
+size_type test_collection::max_label_length(const std::set<std::string> &label_filter) const
 {
     size_type max_label_length = 0;
     for (auto &labeled : p_tests) {
-        if (label_filter == "all" || labeled.first == label_filter) {
+        if (label_in_filter(labeled.first, label_filter)) {
             max_label_length = std::max(max_label_length, labeled.first.size());
         }
     }
@@ -59,24 +65,30 @@ void test_collection::transfer(const std::string &label, std::unique_ptr<base_te
         // the label does not exists so far, so create the label
         p_tests.emplace(std::make_pair(label, std::list<std::unique_ptr<base_test>>()));
     }
-
     p_tests[label].push_back(std::move(new_test));
 }
 
-int test_collection::run(const std::string &label_filter)
+int test_collection::run(const std::set<std::string> &label_filter)
 {
     timer execution_timer;
     std::stringstream strs;
+    std::stringstream labels_strs;
+    for (auto &labeled : p_tests) {
+        if (label_in_filter(labeled.first, label_filter)) {
+            labels_strs << labeled.first << " ";
+        }
+    }
+
     strs << "================================================================================\n";
     strs << "    TESTING: " << p_name << '\n';
-    strs << "Label          : " << label_filter << '\n';
+    strs << "Label          : " << labels_strs.str() << '\n';
     strs << "Number of tests: " << numer_of_tests(label_filter) << '\n';
     strs << "================================================================================\n";
     log(strs, INFO);
 
     int result = 0, failed_tests = 0, test_result, performed_tests = 0;
     for (auto &labeled : p_tests) {
-        if (label_filter == "all" || labeled.first == label_filter) {
+        if (label_in_filter(labeled.first, label_filter)) {
             for (auto &test : labeled.second) {
                 strs << "--------- Test " << test->name() << " (" << labeled.first
                      << ")  ---------";
@@ -112,7 +124,7 @@ int test_collection::run(const std::string &label_filter)
     return result;
 }
 
-void unit_test_collection::report(const std::string &label_filter)
+void unit_test_collection::report(const std::set<std::string> &label_filter)
 {
     std::stringstream strs;
     strs << "\n----------------------------------------\n";
@@ -121,7 +133,7 @@ void unit_test_collection::report(const std::string &label_filter)
     this->log(strs, INFO);
 
     for (auto &labeled : p_tests) {
-        if (label_filter == "all" || labeled.first == label_filter) {
+        if (label_in_filter(labeled.first, label_filter)) {
             for (auto &test : labeled.second) {
                 const unit_test *const unit_test_p = dynamic_cast<unit_test *>(test.get());
                 if (unit_test_p->failed()) {
@@ -141,7 +153,7 @@ performance_test_collection::performance_test_collection(
     : test_collection("performance tests"), p_samples(std::move(samples)), p_runs(runs)
 {}
 
-void performance_test_collection::report(const std::string &label_filter)
+void performance_test_collection::report(const std::set<std::string> &label_filter)
 {
     std::stringstream strs;
     strs << '\n' << std::string(80, '=') << '\n';
@@ -168,8 +180,11 @@ void performance_test_collection::report(const std::string &label_filter)
     strs << std::setw(time_length) << std::left << "avg[s]" << " |";
     log(strs, INFO);
     log(table_row_break.str(), INFO);
+
+    duration_type test_time;
+
     for (auto &labeled : p_tests) {
-        if (label_filter == "all" || labeled.first == label_filter) {
+        if (label_in_filter(labeled.first, label_filter)) {
             for (auto &test : labeled.second) {
                 const performance_test *const perf_test_p =
                     dynamic_cast<performance_test *>(test.get());
@@ -182,9 +197,18 @@ void performance_test_collection::report(const std::string &label_filter)
                 strs << std::setw(time_length) << std::setprecision(4) << std::right
                      << perf_test_p->average_time().count() << " |";
                 log(strs, INFO);
+                test_time += perf_test_p->total_time();
             }
         }
     }
+    log(table_row_break.str(), INFO);
+    strs << "| " << std::setw(name_length) << std::left << "total" << " | ";
+    strs << std::setw(label_length) << std::left << ' ' << " | ";
+    strs << std::setw(run_length) << std::left << " " << " | ";
+    strs << std::setw(time_length) << std::setprecision(4) << std::right << test_time.count()
+         << " | ";
+    strs << std::setw(time_length) << std::left << ' ' << " |";
+    log(strs, INFO);
     log(table_row_break.str(), INFO);
 }
 

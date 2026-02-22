@@ -7,6 +7,7 @@
 #include "tests/includes/samples.hpp"
 #include <list>
 #include <memory>
+#include <set>
 #include <string>
 #include <unordered_map>
 
@@ -27,7 +28,7 @@ protected:
     logger &p_logger;
 
     /// @brief Get the total number of tests
-    size_type numer_of_tests(const std::string &label) const;
+    size_type numer_of_tests(const std::set<std::string> &label_filter) const;
 
     /// @brief Wrapping calls to the logger
     void log(const std::string &what, const TestLogLevel &level) { p_logger.log(what, level); }
@@ -36,13 +37,13 @@ protected:
     void log(std::stringstream &what, const TestLogLevel &level) { p_logger.log(what, level); }
 
     /// @brief Specialized reportings
-    virtual void report(const std::string &label_filter) = 0;
+    virtual void report(const std::set<std::string> &label_filter) = 0;
 
     /// @brief Get the number of characters of the longest name of a test
-    size_type max_name_length(const std::string &label_filter) const;
+    size_type max_name_length(const std::set<std::string> &label_filter) const;
 
     /// @brief Get the number of characters of the longest label
-    size_type max_label_length(const std::string &label_filter) const;
+    size_type max_label_length(const std::set<std::string> &label_filter) const;
 
 public:
     /// @brief Setup a test collection with a given name
@@ -56,7 +57,7 @@ public:
 
     /// @brief Execute all tests
     /// @return Sum of all single executions
-    int run(const std::string &label_filter = "all");
+    int run(const std::set<std::string> &label_filter = std::set<std::string>());
 };
 
 /// @brief Dedicated class for collection of unit tests
@@ -64,7 +65,7 @@ class unit_test_collection : public test_collection
 {
 private:
     /// @brief Report all errors
-    void report(const std::string &label_filter) override;
+    void report(const std::set<std::string> &label_filter) override;
 
 public:
     /// @brief Constructor
@@ -85,7 +86,7 @@ private:
     size_type p_runs;
 
     /// @brief Report all timings
-    void report(const std::string &label_filter) override;
+    void report(const std::set<std::string> &label_filter) override;
 
 public:
     /// @brief Constructor using dependency injection for the samples

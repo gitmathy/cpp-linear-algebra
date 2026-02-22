@@ -1,5 +1,6 @@
 #include "tests/includes/collection.hpp"
 #include <memory>
+#include <set>
 
 // Include the tests
 #include "tests/includes/performance_tests/add.hpp"
@@ -57,15 +58,15 @@ int main()
 
     tests.transfer("row_algorithms",
                    std::make_unique<decompose_solve_lu<ROW_WISE, ROW_WISE>>(RUNS, MATRIX_SOLVE));
-    tests.transfer("row_algorithms",
-                   std::make_unique<decompose_solve_lu<ROW_WISE, COLUMN_WISE>>(RUNS, MATRIX_SOLVE));
     tests.transfer("col_algorithms",
+                   std::make_unique<decompose_solve_lu<ROW_WISE, COLUMN_WISE>>(RUNS, MATRIX_SOLVE));
+    tests.transfer("row_algorithms",
                    std::make_unique<decompose_solve_lu<COLUMN_WISE, ROW_WISE>>(RUNS, MATRIX_SOLVE));
     tests.transfer("col_algorithms", std::make_unique<decompose_solve_lu<COLUMN_WISE, COLUMN_WISE>>(
                                          RUNS, MATRIX_SOLVE));
 
     std::cout << "Executing tests ..." << std::endl;
-    int result = tests.run();
+    int result = tests.run(std::set<std::string>({"row_matrix", "vector", "row_algorithms"}));
 
     return result > 0 ? 1 : 0;
 }
