@@ -65,6 +65,7 @@ void test_collection::transfer(const std::string &label, std::unique_ptr<base_te
 
 int test_collection::run(const std::string &label_filter)
 {
+    timer execution_timer;
     std::stringstream strs;
     strs << "================================================================================\n";
     strs << "    TESTING: " << p_name << '\n';
@@ -96,13 +97,16 @@ int test_collection::run(const std::string &label_filter)
         }
     }
 
+    execution_timer.stop();
     report(label_filter);
 
     strs << "\n================================================================================\n";
     strs << "    SUMMARY: " << p_name << '\n';
-    strs << "Performed tests  : " << performed_tests << '\n';
-    strs << "Total test result: " << result << '\n';
-    strs << "Failed tests     : " << failed_tests << '\n';
+    strs << "Performed tests     : " << performed_tests << '\n';
+    strs << "Total test result   : " << result << '\n';
+    strs << "Failed tests        : " << failed_tests << '\n';
+    strs << "Total execution time: " << std::setprecision(4) << execution_timer.get().count()
+         << "s\n";
     strs << "================================================================================\n";
     log(strs, INFO);
     return result;
