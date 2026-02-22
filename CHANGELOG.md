@@ -1,3 +1,14 @@
+# [1.2.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.1.0...v1.2.0) (2026-02-22)
+
+
+### Features
+
+* Adding a samples class to store some vector and matrix samples ([dd426fd](https://github.com/gitmathy/cpp-linear-algebra/commit/dd426fdc91f22b73c1cff4edf45a014d910890e2))
+* Improve report of performance results ([55ecd34](https://github.com/gitmathy/cpp-linear-algebra/commit/55ecd34586f8d9c91a12f68912648e68d43cf95d))
+* Include label in performance reporting ([5472e96](https://github.com/gitmathy/cpp-linear-algebra/commit/5472e96bc58ba370ba867a324647930a5736f144))
+* Include reporting of execution time ([57d4753](https://github.com/gitmathy/cpp-linear-algebra/commit/57d4753fea649ab32dac13e3ab09a1acc83ceba6))
+* New layout of performance tests ([d2ad7f4](https://github.com/gitmathy/cpp-linear-algebra/commit/d2ad7f4c6b7828aae148c30d4af3895479b07a8d))
+
 # [1.1.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.0.0...v1.1.0) (2026-02-21)
 
 
