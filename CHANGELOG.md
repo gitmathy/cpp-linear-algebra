@@ -1,3 +1,11 @@
+# [1.5.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.4.0...v1.5.0) (2026-02-25)
+
+
+### Features
+
+* Include functions to allocate and deallocate aligned memory (for primitive types) ([d845f5d](https://github.com/gitmathy/cpp-linear-algebra/commit/d845f5d6c6bbd95ac5b2cd5ca0077a50c4d31673))
+* Use allocated memory for matrices and vectors ([0457da4](https://github.com/gitmathy/cpp-linear-algebra/commit/0457da4135c2d7b77e7d1a7f47279a800c8d8830))
+
 # [1.4.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.3.0...v1.4.0) (2026-02-25)
 
 
