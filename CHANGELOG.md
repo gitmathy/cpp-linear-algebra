@@ -1,3 +1,16 @@
+# [1.4.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.3.0...v1.4.0) (2026-02-25)
+
+
+### Bug Fixes
+
+* Initialization of determining performance execution time ([24b051b](https://github.com/gitmathy/cpp-linear-algebra/commit/24b051bb19ba3947a862bf0da2ccdcb4b84d832c))
+
+
+### Features
+
+* adding matrix multiply to tests ([bbf2ef9](https://github.com/gitmathy/cpp-linear-algebra/commit/bbf2ef914bafcf1531c371f70f4e4a236c614ef7))
+* Include basic Eigen setup ([e29b046](https://github.com/gitmathy/cpp-linear-algebra/commit/e29b0462522d4d96e0357fd778d89a34c4a9504a))
+
 # [1.3.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.2.0...v1.3.0) (2026-02-22)
 
 
