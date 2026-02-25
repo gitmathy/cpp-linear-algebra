@@ -12,5 +12,9 @@
         "CMAKE_EXPORT_COMPILE_COMMANDS": "YES"
     },
     "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/",
+        "/usr/include/eigen3"
+    ],
     "makefile.configureOnOpen": true
  }
