@@ -3,8 +3,8 @@
 #include <set>
 
 // Include the tests
-#include "tests/includes/performance_tests/add.hpp"
 #include "tests/includes/performance_tests/assign.hpp"
+#include "tests/includes/performance_tests/basic_operations.hpp"
 #include "tests/includes/performance_tests/decompose.hpp"
 #include "tests/includes/performance_tests/resize.hpp"
 
@@ -12,6 +12,7 @@ using namespace la;
 using namespace la::test;
 
 const size_type MATRIX_SOLVE = 1000;
+const size_type MATRIX_MULTIPLY = 100;
 const size_type RUNS = 10;
 
 int main()
@@ -64,6 +65,16 @@ int main()
                    std::make_unique<decompose_solve_lu<COLUMN_WISE, ROW_WISE>>(RUNS, MATRIX_SOLVE));
     tests.transfer("col_algorithms", std::make_unique<decompose_solve_lu<COLUMN_WISE, COLUMN_WISE>>(
                                          RUNS, MATRIX_SOLVE));
+
+    tests.transfer("matrix_mult",
+                   std::make_unique<matrix_multiply<ROW_WISE, ROW_WISE>>(RUNS, MATRIX_MULTIPLY));
+    tests.transfer("matrix_mult",
+                   std::make_unique<matrix_multiply<ROW_WISE, COLUMN_WISE>>(RUNS, MATRIX_MULTIPLY));
+    // tests.transfer("matrix_mult", std::make_unique<matrix_multiply<COLUMN_WISE, COLUMN_WISE>>(
+    //                                   RUNS, MATRIX_MULTIPLY));
+    // tests.transfer("matrix_mult",
+    //                std::make_unique<matrix_multiply<COLUMN_WISE, ROW_WISE>>(RUNS,
+    //                MATRIX_MULTIPLY));
 
     std::cout << "Executing tests ..." << std::endl;
     int result = tests.run(std::set<std::string>());

@@ -181,7 +181,7 @@ void performance_test_collection::report(const std::set<std::string> &label_filt
     log(strs, INFO);
     log(table_row_break.str(), INFO);
 
-    duration_type test_time;
+    duration_type test_time = duration_type();
 
     for (auto &labeled : p_tests) {
         if (label_in_filter(labeled.first, label_filter)) {
