@@ -11,6 +11,7 @@
 #define LA_MATRIX_H
 
 #include "includes/assert.hpp"
+#include "includes/internal/memory.hpp"
 #include "includes/log.hpp"
 #include "includes/settings.hpp"
 #include "includes/types.hpp"
@@ -98,7 +99,7 @@ public:
     matrix(const internal::operant<ExpressionT> &exp);
 
     /// @brief Destruct a matrix
-    ~matrix() { delete[] p_vals; }
+    ~matrix() { internal::deallocate_aligned(p_vals); }
 
     /// @brief Allocate memory and set shape
     void allocate(size_type m, size_type n);
@@ -246,10 +247,8 @@ std::ostream &operator<<(std::ostream &os, const matrix<T, StorageT> &mat);
 template <typename T, storage_type StorageT>
 void matrix<T, StorageT>::allocate(size_type m, size_type n)
 {
-    if (p_vals != nullptr) {
-        delete[] p_vals;
-    }
-    p_vals = new T[m * n];
+    internal::deallocate_aligned(p_vals);
+    p_vals = internal::allocate_aligned<T>(m * n);
     p_rows = m;
     p_cols = n;
 }
@@ -433,7 +432,7 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator=(matrix<T, StorageT> &&rhs) n
     if (this == &rhs) {
         return *this;
     }
-    delete[] p_vals;
+    internal::deallocate_aligned(p_vals);
     p_vals = nullptr;
     p_rows = 0;
     p_cols = 0;
