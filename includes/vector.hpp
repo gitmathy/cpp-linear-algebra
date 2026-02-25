@@ -11,6 +11,7 @@
 #define LA_VECTOR_H
 
 #include "includes/assert.hpp"
+#include "includes/internal/memory.hpp"
 #include "includes/settings.hpp"
 #include "includes/types.hpp"
 #include <algorithm>
@@ -78,7 +79,7 @@ public:
     vector(const internal::operant<ExpressionT> &exp);
 
     /// @brief Destructing a vector
-    ~vector() { delete[] p_vals; }
+    ~vector() { internal::deallocate_aligned(p_vals); }
 
     /// @brief Allocate memory and set size
     /// WARNING: elements are not assigned!
@@ -182,10 +183,8 @@ std::ostream &operator<<(std::ostream &os, const vector<T> &vec);
 template <typename T>
 void vector<T>::allocate(size_type n)
 {
-    if (p_vals != nullptr) {
-        delete[] p_vals;
-    }
-    p_vals = new T[n];
+    internal::deallocate_aligned(p_vals); // Includes a check on nullptr
+    p_vals = internal::allocate_aligned<T>(n);
     p_size = n;
 }
 
@@ -268,7 +267,7 @@ vector<T> &vector<T>::operator=(vector<T> &&rhs) noexcept
     if (this == &rhs) {
         return *this;
     }
-    delete[] p_vals;
+    internal::deallocate_aligned(p_vals);
     p_vals = nullptr;
     p_size = 0;
     std::swap(p_vals, rhs.p_vals);
