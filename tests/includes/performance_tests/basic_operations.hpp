@@ -116,9 +116,9 @@ protected:
     inline void run_single_test() override
     {
         if constexpr (StorageT == ROW_WISE) {
-            p_C_row = p_A_row + p_B_row + p_A_row + p_B_row;
+            p_C_row = p_A_row - p_B_row - 2. + p_A_row - p_B_row + 2.;
         } else {
-            p_C_col = p_A_col + p_B_col + p_A_col + p_B_col;
+            p_C_col = p_A_col - p_B_col - 2. + p_A_col - p_B_col + 2.;
         }
     }
 
@@ -129,6 +129,44 @@ public:
                                (StorageT == ROW_WISE ? "row" : "col"),
                            "Testing  c = -a- b-2+a-b+2", runs)
     {}
+};
+
+/// @brief Test c= a*b
+template <storage_type StorageLeftT, storage_type StorageRightT>
+class matrix_multiply : public performance_test
+{
+private:
+    /// @brief Size of the system
+    size_type p_size;
+
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override
+    {
+        if constexpr (StorageLeftT == ROW_WISE && StorageRightT == COLUMN_WISE) {
+            p_C_row = p_A_row * p_B_col;
+        } else if constexpr (StorageLeftT == ROW_WISE && StorageRightT == ROW_WISE) {
+            p_C_row = p_A_row * p_B_row;
+
+        } else if constexpr (StorageLeftT == COLUMN_WISE && StorageRightT == ROW_WISE) {
+            p_C_col = p_A_col * p_B_row;
+        } else {
+            // All column
+            p_C_col = p_A_col * p_B_col;
+        }
+    }
+
+public:
+    /// @brief Set me up
+    matrix_multiply(const size_type runs, size_type size)
+        : performance_test(std::string("matrix_multiply ") +
+                               std::string(StorageLeftT == ROW_WISE ? "row" : "col") +
+                               std::string(StorageRightT == ROW_WISE ? "row" : "col"),
+                           "Testing  c = -a- b-2+a-b+2", runs),
+          p_size(size)
+    {}
+
+    void setup() override { p_samples->adjust(p_size, p_size, p_size); }
 };
 
 /// @brief Testing c = a + b where a is row-wise, b is column-wise and c is row-wise
