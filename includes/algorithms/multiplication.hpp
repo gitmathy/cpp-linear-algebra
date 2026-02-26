@@ -245,50 +245,52 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_col_big(const matrix<
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
 
-    // Die Blockgröße sollte so gewählt sein, dass der a_buffer sicher in den L1-Cache passt.
-    // 64 * sizeof(double) = 512 Byte -> passt locker in 32KB L1.
-    const size_type block_size = BLOCK_SIZE;
+    const size_type block_size = BLOCK_SIZE; // z.B. 64
+    static_assert(BLOCK_SIZE <= 256, "BLOCK_SIZE too large for stack buffer");
 
     auto i_blocks = create_block_indices(M, block_size);
 
-    std::for_each(
-        std::execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
-            // Lokaler Buffer auf dem Stack des jeweiligen Threads
-            T a_buffer[BLOCK_SIZE];
+    std::for_each(std::execution::par_unseq, i_blocks.begin(), i_blocks.end(),
+                  [&](size_type i_block) {
+                      T a_buffer[BLOCK_SIZE]; // Stack-Buffer für k-Ausschnitt von A
 
-            for (size_type k_block = 0; k_block < K; k_block += block_size) {
-                const size_type k_limit = std::min(k_block + block_size, K);
-                const size_type i_limit = std::min(i_block + block_size, M);
+                      // Wir teilen nun auch die Spalten von B (j) in Blöcke auf
+                      for (size_type j_block = 0; j_block < N; j_block += block_size) {
+                          for (size_type k_block = 0; k_block < K; k_block += block_size) {
 
-                for (size_type i = i_block; i < i_limit; ++i) {
+                              const size_type i_limit = std::min(i_block + block_size, M);
+                              const size_type j_limit = std::min(j_block + block_size, N);
+                              const size_type k_limit = std::min(k_block + block_size, K);
+                              const size_type k_len = k_limit - k_block;
 
-                    // SCHRITT 1: "On-the-fly" Teil-Transposition
-                    // Wir kopieren den gestreuten Zeilen-Ausschnitt von A in den linearen Buffer.
-                    // A ist Col-Major -> Zugriff: k * M + i
-                    for (size_type k = k_block; k < k_limit; ++k) {
-                        a_buffer[k - k_block] = a_ptr[k * M + i];
-                    }
+                              for (size_type i = i_block; i < i_limit; ++i) {
 
-                    T *__restrict c_row = &c_ptr[i * N];
+                                  // 1. A-Ausschnitt in den Buffer laden (On-the-fly Transposition)
+                                  for (size_type k = 0; k < k_len; ++k) {
+                                      a_buffer[k] = a_ptr[(k_block + k) * M + i];
+                                  }
 
-                    // SCHRITT 2: Berechne die Spalten von B gegen den Buffer
-                    for (size_type j = 0; j < N; ++j) { // Hier kann man auch j-Tiling nutzen
-                        const T *__restrict b_col_j = &b_ptr[j * K + k_block];
-                        T sum = 0;
+                                  T *__restrict c_row = &c_ptr[i * N];
 
-                        // Dieser Loop ist jetzt PERFEKT linear (beide Quellen + SIMD-fähig)
-                        for (size_type k_sub = 0; k_sub < (k_limit - k_block); ++k_sub) {
-                            sum += a_buffer[k_sub] * b_col_j[k_sub];
-                        }
+                                  // 2. Innerster Loop: Nur über den aktuellen j-Block von B
+                                  for (size_type j = j_block; j < j_limit; ++j) {
+                                      const T *__restrict b_col_j = &b_ptr[j * K + k_block];
+                                      T sum = 0;
 
-                        if (k_block == 0)
-                            c_row[j] = sum;
-                        else
-                            c_row[j] += sum;
-                    }
-                }
-            }
-        });
+                                      // SIMD-Hot-Loop
+                                      for (size_type k_sub = 0; k_sub < k_len; ++k_sub) {
+                                          sum += a_buffer[k_sub] * b_col_j[k_sub];
+                                      }
+
+                                      if (k_block == 0)
+                                          c_row[j] = sum;
+                                      else
+                                          c_row[j] += sum;
+                                  }
+                              }
+                          }
+                      }
+                  });
 
     return C;
 }
