@@ -244,27 +244,43 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_col_big(const matrix<
     const T *__restrict a_ptr = A.vals();
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
+
+    // Die Blockgröße sollte so gewählt sein, dass der a_buffer sicher in den L1-Cache passt.
+    // 64 * sizeof(double) = 512 Byte -> passt locker in 32KB L1.
     const size_type block_size = BLOCK_SIZE;
 
     auto i_blocks = create_block_indices(M, block_size);
 
-    std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
-        for (size_type j_block = 0; j_block < N; j_block += block_size) {
-            for (size_type k_block = 0; k_block < K; k_block += block_size) {
+    std::for_each(
+        std::execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
+            // Lokaler Buffer auf dem Stack des jeweiligen Threads
+            T a_buffer[BLOCK_SIZE];
 
-                const size_type i_limit = std::min(i_block + block_size, M);
-                const size_type j_limit = std::min(j_block + block_size, N);
+            for (size_type k_block = 0; k_block < K; k_block += block_size) {
                 const size_type k_limit = std::min(k_block + block_size, K);
+                const size_type i_limit = std::min(i_block + block_size, M);
 
                 for (size_type i = i_block; i < i_limit; ++i) {
+
+                    // SCHRITT 1: "On-the-fly" Teil-Transposition
+                    // Wir kopieren den gestreuten Zeilen-Ausschnitt von A in den linearen Buffer.
+                    // A ist Col-Major -> Zugriff: k * M + i
+                    for (size_type k = k_block; k < k_limit; ++k) {
+                        a_buffer[k - k_block] = a_ptr[k * M + i];
+                    }
+
                     T *__restrict c_row = &c_ptr[i * N];
-                    for (size_type j = j_block; j < j_limit; ++j) {
-                        const T *__restrict b_col_j = &b_ptr[j * K];
+
+                    // SCHRITT 2: Berechne die Spalten von B gegen den Buffer
+                    for (size_type j = 0; j < N; ++j) { // Hier kann man auch j-Tiling nutzen
+                        const T *__restrict b_col_j = &b_ptr[j * K + k_block];
                         T sum = 0;
-                        for (size_type k = k_block; k < k_limit; ++k) {
-                            // A ist Col-Major: k*M + i ist der Spalten-Zugriff
-                            sum += a_ptr[k * M + i] * b_col_j[k];
+
+                        // Dieser Loop ist jetzt PERFEKT linear (beide Quellen + SIMD-fähig)
+                        for (size_type k_sub = 0; k_sub < (k_limit - k_block); ++k_sub) {
+                            sum += a_buffer[k_sub] * b_col_j[k_sub];
                         }
+
                         if (k_block == 0)
                             c_row[j] = sum;
                         else
@@ -272,8 +288,8 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_col_big(const matrix<
                     }
                 }
             }
-        }
-    });
+        });
+
     return C;
 }
 
