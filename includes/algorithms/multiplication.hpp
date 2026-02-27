@@ -18,17 +18,23 @@
 namespace la {
 namespace algorithm {
 
-const size_type BLOCK_SIZE = size_type(64);
+inline constexpr size_type BLOCK_SIZE = size_type(64);
 
+/// @brief Multiplying matrices resulting in row wise storage
+/// @tparam T
 template <typename T>
 class matrix_multiplication_row
 {
 private:
+    /// @brief Multiply matrices row*col
     static matrix<T, ROW_WISE> mult_row_col(const matrix<T, ROW_WISE> &A,
                                             const matrix<T, COLUMN_WISE> &B);
 
+    /// @brief Multiply matrices row*row
     static matrix<T, ROW_WISE> mult_row_row(const matrix<T, ROW_WISE> &A,
                                             const matrix<T, ROW_WISE> &B);
+
+    /// @brief Multiply matrices col*row
 
     static matrix<T, ROW_WISE> mult_col_row(const matrix<T, COLUMN_WISE> &A,
                                             const matrix<T, ROW_WISE> &B);
@@ -41,6 +47,7 @@ private:
     static matrix<T, ROW_WISE> mult_col_col_big(const matrix<T, COLUMN_WISE> &A,
                                                 const matrix<T, COLUMN_WISE> &B);
 
+    /// @brief Helper function to create an index vector used for the execution policy
     static std::vector<size_type> create_block_indices(size_type total, size_type block_size)
     {
         size_type num_blocks = (total + block_size - 1) / block_size;
@@ -52,6 +59,12 @@ private:
     }
 
 public:
+    /// @brief Multiplying two matrices A and B of different storage types
+    /// @tparam StorageLeftT
+    /// @tparam StorageRightT
+    /// @param A left matrix
+    /// @param B right matrix
+    /// @return A*B in row wise storage format
     template <storage_type StorageLeftT, storage_type StorageRightT>
     static matrix<T, ROW_WISE> multiply(const matrix<T, StorageLeftT> &A,
                                         const matrix<T, StorageRightT> &B);
@@ -93,9 +106,8 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_col(const matrix<T, R
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
     const size_type block_size = BLOCK_SIZE;
-
+    static_assert(BLOCK_SIZE <= 256, "BLOCK_SIZE too large for stack buffer");
     auto i_blocks = create_block_indices(M, block_size);
-
     std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
         for (size_type k_block = 0; k_block < K; k_block += block_size) {
             for (size_type j_block = 0; j_block < N; j_block += block_size) {
@@ -131,9 +143,8 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_row(const matrix<T, R
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
     const size_type block_size = BLOCK_SIZE;
-
+    static_assert(BLOCK_SIZE <= 256, "BLOCK_SIZE too large for stack buffer");
     auto i_blocks = create_block_indices(M, block_size);
-
     std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
         for (size_type k_block = 0; k_block < K; k_block += block_size) {
             for (size_type j_block = 0; j_block < N; j_block += block_size) {
@@ -169,21 +180,17 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_row(const matrix<T, C
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
     const size_type block_size = BLOCK_SIZE;
-
+    static_assert(BLOCK_SIZE <= 256, "BLOCK_SIZE too large for stack buffer");
     auto i_blocks = create_block_indices(M, block_size);
-
     std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
         for (size_type k_block = 0; k_block < K; k_block += block_size) {
             for (size_type j_block = 0; j_block < N; j_block += block_size) {
-
                 const size_type k_limit = std::min(k_block + block_size, K);
                 const size_type i_limit = std::min(i_block + block_size, M);
                 const size_type j_limit = std::min(j_block + block_size, N);
-
                 for (size_type k = k_block; k < k_limit; ++k) {
                     const T *__restrict a_col_k = &a_ptr[k * M];
                     const T *__restrict b_row_k = &b_ptr[k * N];
-
                     for (size_type i = i_block; i < i_limit; ++i) {
                         const T val_a = a_col_k[i];
                         T *__restrict c_row_i = &c_ptr[i * N];
@@ -211,6 +218,7 @@ matrix_multiplication_row<T>::mult_col_col_small(const matrix<T, COLUMN_WISE> &A
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
     const size_type block_size = BLOCK_SIZE;
+    static_assert(BLOCK_SIZE <= 256, "BLOCK_SIZE too large for stack buffer");
     for (size_type i_block = 0; i_block < M; i_block += block_size) {
         for (size_type j_block = 0; j_block < N; j_block += block_size) {
             for (size_type k_block = 0; k_block < K; k_block += block_size) {
@@ -244,44 +252,29 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_col_big(const matrix<
     const T *__restrict a_ptr = A.vals();
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
-
     const size_type block_size = BLOCK_SIZE; // z.B. 64
     static_assert(BLOCK_SIZE <= 256, "BLOCK_SIZE too large for stack buffer");
-
     auto i_blocks = create_block_indices(M, block_size);
-
     std::for_each(std::execution::par_unseq, i_blocks.begin(), i_blocks.end(),
                   [&](size_type i_block) {
-                      T a_buffer[BLOCK_SIZE]; // Stack-Buffer für k-Ausschnitt von A
-
-                      // Wir teilen nun auch die Spalten von B (j) in Blöcke auf
+                      T a_buffer[BLOCK_SIZE];
                       for (size_type j_block = 0; j_block < N; j_block += block_size) {
                           for (size_type k_block = 0; k_block < K; k_block += block_size) {
-
                               const size_type i_limit = std::min(i_block + block_size, M);
                               const size_type j_limit = std::min(j_block + block_size, N);
                               const size_type k_limit = std::min(k_block + block_size, K);
                               const size_type k_len = k_limit - k_block;
-
                               for (size_type i = i_block; i < i_limit; ++i) {
-
-                                  // 1. A-Ausschnitt in den Buffer laden (On-the-fly Transposition)
                                   for (size_type k = 0; k < k_len; ++k) {
                                       a_buffer[k] = a_ptr[(k_block + k) * M + i];
                                   }
-
                                   T *__restrict c_row = &c_ptr[i * N];
-
-                                  // 2. Innerster Loop: Nur über den aktuellen j-Block von B
                                   for (size_type j = j_block; j < j_limit; ++j) {
                                       const T *__restrict b_col_j = &b_ptr[j * K + k_block];
                                       T sum = 0;
-
-                                      // SIMD-Hot-Loop
                                       for (size_type k_sub = 0; k_sub < k_len; ++k_sub) {
                                           sum += a_buffer[k_sub] * b_col_j[k_sub];
                                       }
-
                                       if (k_block == 0)
                                           c_row[j] = sum;
                                       else
@@ -291,7 +284,6 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_col_big(const matrix<
                           }
                       }
                   });
-
     return C;
 }
 
