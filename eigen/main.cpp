@@ -2,8 +2,8 @@
 #include <Eigen/Dense>
 #include <iostream>
 
-const long int M = 100;
-const long int N = 100;
+const long int M = 3000;
+const long int N = 3000;
 
 /// @brief Get a random value
 template <typename T>
@@ -34,7 +34,7 @@ void run_performance()
         c = a * b;
     }
     auto duration = timer.get();
-    std::cout << "Computing 10 times sum/add operation of matrices of size (" << c.rows() << " x "
+    std::cout << "Computing 10 times multiply operation of matrices of size (" << c.rows() << " x "
               << c.cols() << ") took: " << duration.count() << "s, avg: " << (duration.count() / 10)
               << std::endl;
 }
