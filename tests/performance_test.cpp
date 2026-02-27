@@ -12,7 +12,7 @@ using namespace la;
 using namespace la::test;
 
 const size_type MATRIX_SOLVE = 1000;
-const size_type MATRIX_MULTIPLY = 100;
+const size_type MATRIX_MULTIPLY = 3000;
 const size_type RUNS = 10;
 
 int main()
@@ -66,15 +66,31 @@ int main()
     tests.transfer("col_algorithms", std::make_unique<decompose_solve_lu<COLUMN_WISE, COLUMN_WISE>>(
                                          RUNS, MATRIX_SOLVE));
 
-    tests.transfer("matrix_mult",
-                   std::make_unique<matrix_multiply<ROW_WISE, ROW_WISE>>(RUNS, MATRIX_MULTIPLY));
-    tests.transfer("matrix_mult",
-                   std::make_unique<matrix_multiply<ROW_WISE, COLUMN_WISE>>(RUNS, MATRIX_MULTIPLY));
-    // tests.transfer("matrix_mult", std::make_unique<matrix_multiply<COLUMN_WISE, COLUMN_WISE>>(
-    //                                   RUNS, MATRIX_MULTIPLY));
-    // tests.transfer("matrix_mult",
-    //                std::make_unique<matrix_multiply<COLUMN_WISE, ROW_WISE>>(RUNS,
-    //                MATRIX_MULTIPLY));
+    tests.transfer(
+        "matrix_mult_blocked",
+        std::make_unique<matrix_multiply_blocked_row<ROW_WISE, ROW_WISE>>(RUNS, MATRIX_MULTIPLY));
+    tests.transfer("matrix_mult_blocked",
+                   std::make_unique<matrix_multiply_blocked_row<ROW_WISE, COLUMN_WISE>>(
+                       RUNS, MATRIX_MULTIPLY));
+    tests.transfer("matrix_mult_blocked",
+                   std::make_unique<matrix_multiply_blocked_row<COLUMN_WISE, ROW_WISE>>(
+                       RUNS, MATRIX_MULTIPLY));
+    tests.transfer("matrix_mult_blocked",
+                   std::make_unique<matrix_multiply_blocked_row<COLUMN_WISE, COLUMN_WISE>>(
+                       RUNS, MATRIX_MULTIPLY));
+
+    tests.transfer(
+        "matrix_mult_blocked",
+        std::make_unique<matrix_multiply_blocked_col<ROW_WISE, ROW_WISE>>(RUNS, MATRIX_MULTIPLY));
+    tests.transfer("matrix_mult_blocked",
+                   std::make_unique<matrix_multiply_blocked_col<ROW_WISE, COLUMN_WISE>>(
+                       RUNS, MATRIX_MULTIPLY));
+    tests.transfer("matrix_mult_blocked",
+                   std::make_unique<matrix_multiply_blocked_col<COLUMN_WISE, ROW_WISE>>(
+                       RUNS, MATRIX_MULTIPLY));
+    tests.transfer("matrix_mult_blocked",
+                   std::make_unique<matrix_multiply_blocked_col<COLUMN_WISE, COLUMN_WISE>>(
+                       RUNS, MATRIX_MULTIPLY));
 
     std::cout << "Executing tests ..." << std::endl;
     int result = tests.run(std::set<std::string>());

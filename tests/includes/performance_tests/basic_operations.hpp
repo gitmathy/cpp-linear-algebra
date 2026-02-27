@@ -132,45 +132,9 @@ public:
     {}
 };
 
-/// @brief Test c= a*b
+/// @brief Test c= a*b (blocked) for row based matrices
 template <storage_type StorageLeftT, storage_type StorageRightT>
-class matrix_multiply : public performance_test
-{
-private:
-    /// @brief Size of the system
-    size_type p_size;
-
-protected:
-    /// @brief Execute a single test
-    inline void run_single_test() override
-    {
-        if constexpr (StorageLeftT == ROW_WISE && StorageRightT == COLUMN_WISE) {
-            p_C_row = p_A_row * p_B_col;
-        } else if constexpr (StorageLeftT == ROW_WISE && StorageRightT == ROW_WISE) {
-            p_C_row = p_A_row * p_B_row;
-        } else if constexpr (StorageLeftT == COLUMN_WISE && StorageRightT == ROW_WISE) {
-            p_C_row = p_A_col * p_B_row;
-        } else {
-            p_C_row = p_A_col * p_B_col;
-        }
-    }
-
-public:
-    /// @brief Set me up
-    matrix_multiply(const size_type runs, size_type size)
-        : performance_test(std::string("matrix_multiply ") +
-                               std::string(StorageLeftT == ROW_WISE ? "row * " : "col * ") +
-                               std::string(StorageRightT == ROW_WISE ? "row" : "col"),
-                           "Testing  C = A*B", runs),
-          p_size(size)
-    {}
-
-    void setup() override { p_samples->adjust(p_size, p_size, p_size); }
-};
-
-/// @brief Test c= a*b (blocked)
-template <storage_type StorageLeftT, storage_type StorageRightT>
-class matrix_multiply_blocked : public performance_test
+class matrix_multiply_blocked_row : public performance_test
 {
 private:
     /// @brief Size of the system
@@ -193,8 +157,44 @@ protected:
 
 public:
     /// @brief Set me up
-    matrix_multiply_blocked(const size_type runs, size_type size)
-        : performance_test(std::string("matrix_multiply_blocked ") +
+    matrix_multiply_blocked_row(const size_type runs, size_type size)
+        : performance_test(std::string("matrix_multiply_blocked_row ") +
+                               std::string(StorageLeftT == ROW_WISE ? "row * " : "col * ") +
+                               std::string(StorageRightT == ROW_WISE ? "row" : "col"),
+                           "Testing  C = A*B", runs),
+          p_size(size)
+    {}
+
+    void setup() override { p_samples->adjust(p_size, p_size, p_size); }
+};
+
+/// @brief Test c= a*b (blocked) for column based matrices
+template <storage_type StorageLeftT, storage_type StorageRightT>
+class matrix_multiply_blocked_col : public performance_test
+{
+private:
+    /// @brief Size of the system
+    size_type p_size;
+
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override
+    {
+        if constexpr (StorageLeftT == ROW_WISE && StorageRightT == COLUMN_WISE) {
+            p_C_col = algorithm::matrix_multiplication_col<double>::multiply(p_A_row, p_B_col);
+        } else if constexpr (StorageLeftT == ROW_WISE && StorageRightT == ROW_WISE) {
+            p_C_col = algorithm::matrix_multiplication_col<double>::multiply(p_A_row, p_B_row);
+        } else if constexpr (StorageLeftT == COLUMN_WISE && StorageRightT == ROW_WISE) {
+            p_C_col = algorithm::matrix_multiplication_col<double>::multiply(p_A_col, p_B_row);
+        } else {
+            p_C_col = algorithm::matrix_multiplication_col<double>::multiply(p_A_col, p_B_col);
+        }
+    }
+
+public:
+    /// @brief Set me up
+    matrix_multiply_blocked_col(const size_type runs, size_type size)
+        : performance_test(std::string("matrix_multiply_blocked_col ") +
                                std::string(StorageLeftT == ROW_WISE ? "row * " : "col * ") +
                                std::string(StorageRightT == ROW_WISE ? "row" : "col"),
                            "Testing  C = A*B", runs),
