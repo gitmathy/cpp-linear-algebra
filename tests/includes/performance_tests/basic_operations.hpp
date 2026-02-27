@@ -1,6 +1,7 @@
 #ifndef LA_TEST_ADD_TEST_H
 #define LA_TEST_ADD_TEST_H
 
+#include "includes/algorithms/multiplication.hpp"
 #include "includes/la.hpp"
 #include "includes/matrix.hpp"
 #include "includes/vector.hpp"
@@ -147,12 +148,10 @@ protected:
             p_C_row = p_A_row * p_B_col;
         } else if constexpr (StorageLeftT == ROW_WISE && StorageRightT == ROW_WISE) {
             p_C_row = p_A_row * p_B_row;
-
         } else if constexpr (StorageLeftT == COLUMN_WISE && StorageRightT == ROW_WISE) {
-            p_C_col = p_A_col * p_B_row;
+            p_C_row = p_A_col * p_B_row;
         } else {
-            // All column
-            p_C_col = p_A_col * p_B_col;
+            p_C_row = p_A_col * p_B_col;
         }
     }
 
@@ -160,9 +159,45 @@ public:
     /// @brief Set me up
     matrix_multiply(const size_type runs, size_type size)
         : performance_test(std::string("matrix_multiply ") +
-                               std::string(StorageLeftT == ROW_WISE ? "row" : "col") +
+                               std::string(StorageLeftT == ROW_WISE ? "row * " : "col * ") +
                                std::string(StorageRightT == ROW_WISE ? "row" : "col"),
-                           "Testing  c = -a- b-2+a-b+2", runs),
+                           "Testing  C = A*B", runs),
+          p_size(size)
+    {}
+
+    void setup() override { p_samples->adjust(p_size, p_size, p_size); }
+};
+
+/// @brief Test c= a*b (blocked)
+template <storage_type StorageLeftT, storage_type StorageRightT>
+class matrix_multiply_blocked : public performance_test
+{
+private:
+    /// @brief Size of the system
+    size_type p_size;
+
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override
+    {
+        if constexpr (StorageLeftT == ROW_WISE && StorageRightT == COLUMN_WISE) {
+            p_C_row = algorithm::matrix_multiplication_row<double>::multiply(p_A_row, p_B_col);
+        } else if constexpr (StorageLeftT == ROW_WISE && StorageRightT == ROW_WISE) {
+            p_C_row = algorithm::matrix_multiplication_row<double>::multiply(p_A_row, p_B_row);
+        } else if constexpr (StorageLeftT == COLUMN_WISE && StorageRightT == ROW_WISE) {
+            p_C_row = algorithm::matrix_multiplication_row<double>::multiply(p_A_col, p_B_row);
+        } else {
+            p_C_row = algorithm::matrix_multiplication_row<double>::multiply(p_A_col, p_B_col);
+        }
+    }
+
+public:
+    /// @brief Set me up
+    matrix_multiply_blocked(const size_type runs, size_type size)
+        : performance_test(std::string("matrix_multiply_blocked ") +
+                               std::string(StorageLeftT == ROW_WISE ? "row * " : "col * ") +
+                               std::string(StorageRightT == ROW_WISE ? "row" : "col"),
+                           "Testing  C = A*B", runs),
           p_size(size)
     {}
 
