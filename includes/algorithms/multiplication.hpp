@@ -21,7 +21,11 @@ namespace algorithm {
 inline constexpr size_type BLOCK_SIZE = size_type(64);
 
 /// @brief Multiplying matrices resulting in row wise storage
-/// @tparam T
+///
+/// All of the implementations are making use of std::executions to parallel executions via
+/// for_each. Moreover, the memory access is optimized w.r.t. alignments and also with blocking
+/// strategies.
+/// @tparam T The value type of the matrix elements (must be a primary type)
 template <typename T>
 class matrix_multiplication_row
 {
@@ -43,7 +47,7 @@ private:
     static matrix<T, ROW_WISE> mult_col_col_small(const matrix<T, COLUMN_WISE> &A,
                                                   const matrix<T, COLUMN_WISE> &B);
 
-    /// @brief Column * column yielding a row matrix (transpose blocks for better memory acces)
+    /// @brief Column * column yielding a row matrix (transpose blocks for better memory access)
     static matrix<T, ROW_WISE> mult_col_col_big(const matrix<T, COLUMN_WISE> &A,
                                                 const matrix<T, COLUMN_WISE> &B);
 
@@ -155,7 +159,7 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_row(const matrix<T, R
 
                 for (size_type i = i_block; i < i_limit; ++i) {
                     for (size_type k = k_block; k < k_limit; ++k) {
-                        const T temp_a = a_ptr[i * K + k]; // T statt double
+                        const T temp_a = a_ptr[i * K + k];
                         T *__restrict c_row = &c_ptr[i * N];
                         const T *__restrict b_row = &b_ptr[k * N];
 
