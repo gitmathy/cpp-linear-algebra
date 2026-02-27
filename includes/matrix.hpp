@@ -158,6 +158,12 @@ public:
     /// @brief Constant iterator to column end (only valid for COL_WISE)
     inline citerator col_end(size_type i) const;
 
+    /// @brief Direct access to the memory. Use with caution
+    inline T *vals() { return p_vals; }
+
+    /// @brief Direct access to the memory. Use with caution
+    inline T const *vals() const { return p_vals; }
+
     /// @brief Assign another matrix
     matrix<T, StorageT> &operator=(const matrix<T, StorageT> &rhs);
 
