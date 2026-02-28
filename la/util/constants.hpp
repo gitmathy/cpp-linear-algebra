@@ -1,14 +1,14 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/constants.hpp
-/// @brief Definition of macros to perform asserts and throw errors
+/// @file la/util/constants.hpp
+/// @brief Definition of constants used in this project
 /// @author Gitmathy, https://github.com/gitmathy
 ///
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_UTIL_CONSTANTS_H
-#define LA_UTIL_CONSTANTS_H
+#ifndef LA_UTIL_CONSTANTS_HPP
+#define LA_UTIL_CONSTANTS_HPP
 
 #include "la/util/types.hpp"
 #include <limits>

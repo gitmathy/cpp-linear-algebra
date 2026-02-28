@@ -1,6 +1,6 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/internal/operations.hpp
+/// @file la/data_structure/expressions/operations.hpp
 /// @brief Definition and declaration of operations available to matrices and vectors
 /// @author Gitmathy, https://github.com/gitmathy
 ///

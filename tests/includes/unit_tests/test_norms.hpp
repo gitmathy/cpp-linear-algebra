@@ -1,5 +1,14 @@
-#ifndef LA_TEST_UNIT_TEST_NORMS_H
-#define LA_TEST_UNIT_TEST_NORMS_H
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/includes/unit_tests/test_norms.hpp
+/// @brief Definition of norm tests
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
+#ifndef LA_TEST_INCLUDES_UNIT_TEST_NORMS_HPP
+#define LA_TEST_INCLUDES_UNIT_TEST_NORMS_HPP
 
 #include "tests/includes/unit_test.hpp"
 

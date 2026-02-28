@@ -1,6 +1,6 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/internal/literal.hpp
+/// @file la/data_structure/expressions/literal.hpp
 /// @brief Definition and declaration of literals representing scalars
 /// @author Gitmathy, https://github.com/gitmathy
 ///

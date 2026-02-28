@@ -1,14 +1,14 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/settings.hpp
-/// @brief Definition of settings controlling the project
+/// @file la/util/macros.hpp
+/// @brief Definition of macros the project
 /// @author Gitmathy, https://github.com/gitmathy
 ///
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_UTIL_MACROS_H
-#define LA_UTIL_MACROS_H
+#ifndef LA_UTIL_MACROS_HPP
+#define LA_UTIL_MACROS_HPP
 
 #include "la/util/error.hpp"
 

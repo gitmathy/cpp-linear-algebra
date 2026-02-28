@@ -1,5 +1,14 @@
-#ifndef LA_TEST_UNIT_TEST_ITERATOR_H
-#define LA_TEST_UNIT_TEST_ITERATOR_H
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/includes/unit_tests/test_iterator.hpp
+/// @brief Definition of iterator tests
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
+#ifndef LA_TEST_INCLUDES_UNIT_TEST_ITERATOR_HPP
+#define LA_TEST_INCLUDES_UNIT_TEST_ITERATOR_HPP
 
 #include "tests/includes/unit_test.hpp"
 #include <list>

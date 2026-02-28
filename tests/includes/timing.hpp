@@ -1,5 +1,14 @@
-#ifndef LA_TEST_TIMING_H
-#define LA_TEST_TIMING_H
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/includes/timing.hpp
+/// @brief Definition of time keeping
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
+#ifndef LA_TEST_INCLUDES_TIMING_HPP
+#define LA_TEST_INCLUDES_TIMING_HPP
 
 #include <chrono>
 #include <string>

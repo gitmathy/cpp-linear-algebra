@@ -1,3 +1,12 @@
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/src/unit_tests/test_apply_func.cpp
+/// @brief Implementation of test of apply function
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
 #include "tests/includes/unit_tests/test_apply_func.hpp"
 #include "la/dense"
 

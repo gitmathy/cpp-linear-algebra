@@ -1,5 +1,14 @@
-#ifndef LA_TEST_LOG_H
-#define LA_TEST_LOG_H
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/includes/log.hpp
+/// @brief Definition of logging for tests
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
+#ifndef LA_TEST_INCLUDES_LOG_HPP
+#define LA_TEST_INCLUDES_LOG_HPP
 
 #include <sstream>
 #include <string>

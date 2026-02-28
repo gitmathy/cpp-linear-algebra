@@ -1,14 +1,14 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/matrix.hpp
+/// @file la/data_structure/matrix.hpp
 /// @brief Declaration and definition of a dense matrix class
 /// @author Gitmathy, https://github.com/gitmathy
 ///
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_MATRIX_H
-#define LA_MATRIX_H
+#ifndef LA_MATRIX_HPP
+#define LA_MATRIX_HPP
 
 #include "la/data_structure/expressions/forward.hpp"
 #include "la/util/macros.hpp"

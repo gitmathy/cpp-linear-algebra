@@ -1,14 +1,14 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/internal/memory.hpp
-/// @brief Memory handling
+/// @file la/util/memory.hpp
+/// @brief Allocating and deallocating memory
 /// @author Gitmathy, https://github.com/gitmathy
 ///
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_INTERNAL_MEMORY_H
-#define LA_INTERNAL_MEMORY_H
+#ifndef LA_UTIL_MEMORY_HPP
+#define LA_UTIL_MEMORY_HPP
 
 #include "la/util/types.hpp"
 #include <algorithm>

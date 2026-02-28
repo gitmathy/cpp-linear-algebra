@@ -1,7 +1,7 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/settings.hpp
-/// @brief Definition of settings controlling the project
+/// @file la/operation/prefix.hpp
+/// @brief Definition of prefixes for structures, e.g., -
 /// @author Gitmathy, https://github.com/gitmathy
 ///
 /// @copyright Copyright (c) 2026. All rights reserved.

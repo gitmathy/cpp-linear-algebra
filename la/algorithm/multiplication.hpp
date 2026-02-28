@@ -1,6 +1,6 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/algorithms/multiplication.hpp
+/// @file la/algorithm/multiplication.hpp
 /// @brief Definition and declaration of matrix-matrix multiplication
 /// @author Gitmathy, https://github.com/gitmathy
 ///

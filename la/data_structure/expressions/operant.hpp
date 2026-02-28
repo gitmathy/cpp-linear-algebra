@@ -1,6 +1,6 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/internal/operant.hpp
+/// @file la/data_structure/expressions/operant.hpp
 /// @brief Definition and declaration of operants storing one component in an expression
 /// @author Gitmathy, https://github.com/gitmathy
 ///

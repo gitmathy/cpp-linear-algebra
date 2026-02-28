@@ -1,6 +1,6 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/internal/traits.hpp
+/// @file la/data_structure/expressions/traits.hpp
 /// @brief Definition and declaration of traits
 /// @author Gitmathy, https://github.com/gitmathy
 ///

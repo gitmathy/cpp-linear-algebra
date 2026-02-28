@@ -1,5 +1,14 @@
-#ifndef LA_TEST_TEST_COLLECTION_H
-#define LA_TEST_TEST_COLLECTION_H
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/includes/collection.hpp
+/// @brief Definition of test collection
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
+#ifndef LA_TEST_INCLUDES_COLLECTION_HPP
+#define LA_TEST_INCLUDES_COLLECTION_HPP
 
 #include "la/util/types.hpp"
 #include "tests/includes/base_test.hpp"

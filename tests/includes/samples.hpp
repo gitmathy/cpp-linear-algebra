@@ -1,5 +1,14 @@
-#ifndef LA_TEST_SAMPLES_H
-#define LA_TEST_SAMPLES_H
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/includes/samples.hpp
+/// @brief Definition of samples
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
+#ifndef LA_TEST_INCLUDES_SAMPLES_HPP
+#define LA_TEST_INCLUDES_SAMPLES_HPP
 
 #include "la/dense"
 #include "tests/includes/log.hpp"
