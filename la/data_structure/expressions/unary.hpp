@@ -1,6 +1,6 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/internal/unary.hpp
+/// @file la/data_structure/expressions/unary.hpp
 /// @brief Definition and declaration of unary expressions, e.g. -x
 /// @author Gitmathy, https://github.com/gitmathy
 ///

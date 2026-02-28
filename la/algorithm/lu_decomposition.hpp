@@ -1,6 +1,6 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/algorithms/decompositions.hpp
+/// @file la/algorithm/lu_decomposition.hpp
 /// @brief Definition and declaration decomposition algorithms
 /// @author Gitmathy, https://github.com/gitmathy
 ///

@@ -1,7 +1,7 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/settings.hpp
-/// @brief Definition of settings controlling the project
+/// @file la/operation/norm.hpp
+/// @brief Definition of norm computations in this project
 /// @author Gitmathy, https://github.com/gitmathy
 ///
 /// @copyright Copyright (c) 2026. All rights reserved.

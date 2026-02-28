@@ -1,14 +1,14 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/assert.hpp
-/// @brief Definition of macros to perform asserts and throw errors
+/// @file la/util/error.hpp
+/// @brief Definition error class for this project
 /// @author Gitmathy, https://github.com/gitmathy
 ///
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_UTIL_ERROR_H
-#define LA_UTIL_ERROR_H
+#ifndef LA_UTIL_ERROR_HPP
+#define LA_UTIL_ERROR_HPP
 
 #include <stdexcept>
 #include <string>

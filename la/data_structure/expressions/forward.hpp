@@ -1,7 +1,7 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/matrix.hpp
-/// @brief Declaration and definition of a dense matrix class
+/// @file la/data_structure/expressions/forward.hpp
+/// @brief Forward declaration of expression types
 /// @author Gitmathy, https://github.com/gitmathy
 ///
 /// @copyright Copyright (c) 2026. All rights reserved.

@@ -1,6 +1,6 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file includes/internal/binary.hpp
+/// @file la/data_structure/expressions/binary.hpp
 /// @brief Definition and declaration of binary expressions
 /// @author Gitmathy, https://github.com/gitmathy
 ///
