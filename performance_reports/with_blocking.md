@@ -121,5 +121,3 @@ Computing 10 times multiply operation of matrices (column wise) of size (3000 x 
 ## Eigen (1000 size):
 Computing 10 times multiply operation of matrices of size (1000 x 1000) took: 0.373137s, avg: 0.0373137
 
-
-
