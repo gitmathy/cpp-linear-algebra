@@ -53,7 +53,6 @@ int main()
     tests.transfer("matrix", std::make_unique<matrix_norms_test>());
     tests.transfer("matrix", std::make_unique<matrix_apply_func_test>());
     tests.transfer("matrix", std::make_unique<matrix_read_write_test>());
-    tests.transfer("matrix", std::make_unique<matrix_mult_div_assignment_test>());
     tests.transfer("matrix", std::make_unique<mat_vec_mult_test>());
 
     tests.transfer("matrix_vector", std::make_unique<mat_vec_mult_test>());

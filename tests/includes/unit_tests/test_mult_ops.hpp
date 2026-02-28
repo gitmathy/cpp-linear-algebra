@@ -1,6 +1,7 @@
 #ifndef LA_TEST_UNIT_TEST_MULT_OPS_H
 #define LA_TEST_UNIT_TEST_MULT_OPS_H
 
+#include "includes/algorithms/multiplication.hpp"
 #include "tests/includes/unit_test.hpp"
 
 namespace la {

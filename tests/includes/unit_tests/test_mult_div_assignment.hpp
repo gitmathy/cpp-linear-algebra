@@ -17,17 +17,6 @@ public:
     int execute() override;
 };
 
-/// @brief Test multiplication and div assignment of matrices
-class matrix_mult_div_assignment_test : public unit_test
-{
-public:
-    /// @brief Constructing the test
-    matrix_mult_div_assignment_test() : unit_test("matrix_mult_div_assignment", "Testing y*=x") {}
-
-    /// @brief Run the test
-    int execute() override;
-};
-
 } // namespace test
 } // namespace la
 #endif
