@@ -7,15 +7,11 @@
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_INTERNAL_OPERANT_H
-#define LA_INTERNAL_OPERANT_H
-
-#include "includes/internal/traits.hpp"
-#include "includes/types.hpp"
-#include <memory>
+#ifndef LA_DATA_STRUCTURES_EXPRESSIONS_OPERANT_HPP
+#define LA_DATA_STRUCTURES_EXPRESSIONS_OPERANT_HPP
 
 namespace la {
-namespace internal {
+namespace expressions {
 
 /// @brief An operant stores one operant of an operation, e.g, vector, scalar, other operant
 /// @tparam ExpressionT type of the operant
@@ -72,8 +68,7 @@ public:
     const static size_type dimension = ExpressionT::dimension;
 };
 
-} // namespace internal
-
+} // namespace expressions
 } // namespace la
 
 #endif

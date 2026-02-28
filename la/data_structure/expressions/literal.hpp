@@ -7,14 +7,13 @@
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_INTERNAL_LITERAL_H
-#define LA_INTERNAL_LITERAL_H
+#ifndef LA_DATA_STRUCTURES_EXPRESSIONS_LITERAL_HPP
+#define LA_DATA_STRUCTURES_EXPRESSIONS_LITERAL_HPP
 
-#include "includes/types.hpp"
-#include <memory>
+#include "la/util/types.hpp"
 
 namespace la {
-namespace internal {
+namespace expressions {
 
 /// @brief A Literal stores a literal, i.e., scalar value.
 /// @tparam T type of the scalar value, e.g., int, double, float, etc.
@@ -61,8 +60,7 @@ public:
     const static size_type dimension = size_type(0);
 };
 
-} // namespace internal
-
+} // namespace expressions
 } // namespace la
 
 #endif

@@ -7,16 +7,14 @@
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_INTERNAL_BINARY_H
-#define LA_INTERNAL_BINARY_H
+#ifndef LA_DATA_STRUCTURES_EXPRESSIONS_BINARY_HPP
+#define LA_DATA_STRUCTURES_EXPRESSIONS_BINARY_HPP
 
-#include "includes/internal/traits.hpp"
-#include "includes/types.hpp"
-#include <algorithm>
-#include <memory>
+#include "la/data_structure/expressions/traits.hpp"
+#include "la/util/types.hpp"
 
 namespace la {
-namespace internal {
+namespace expressions {
 
 /// @brief Representing a binary expression consisting of two "operants" and an operation, e.g.,
 /// (vector, scalar, add) or (matrix, matrix, substract)
@@ -111,7 +109,7 @@ size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::cols() const
     return p_right.cols();
 }
 
-} // namespace internal
+} // namespace expressions
 } // namespace la
 
 #endif

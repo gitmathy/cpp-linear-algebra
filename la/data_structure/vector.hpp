@@ -10,10 +10,8 @@
 #ifndef LA_VECTOR_H
 #define LA_VECTOR_H
 
-#include "includes/assert.hpp"
-#include "includes/internal/memory.hpp"
-#include "includes/settings.hpp"
-#include "includes/types.hpp"
+#include "la/util/memory.hpp"
+#include "la/util/types.hpp"
 #include <algorithm>
 #include <initializer_list>
 #include <iostream>
@@ -73,13 +71,13 @@ public:
 
     /// @brief Construct from expression
     ///
-    /// Every element is set to the evaluated element, i.e., x(i) = exp.evaluate(i). This is used
-    /// when writing code like x = y+z;
+    /// Every element is set to the evaluated element, i.e., x(i) = exp.evaluate(i). This is
+    /// used when writing code like x = y+z;
     template <typename ExpressionT>
     vector(const internal::operant<ExpressionT> &exp);
 
     /// @brief Destructing a vector
-    ~vector() { internal::deallocate_aligned(p_vals); }
+    ~vector() { util::deallocate_aligned(p_vals); }
 
     /// @brief Allocate memory and set size
     /// WARNING: elements are not assigned!
@@ -183,8 +181,8 @@ std::ostream &operator<<(std::ostream &os, const vector<T> &vec);
 template <typename T>
 void vector<T>::allocate(size_type n)
 {
-    internal::deallocate_aligned(p_vals); // Includes a check on nullptr
-    p_vals = internal::allocate_aligned<T>(n);
+    util::deallocate_aligned(p_vals); // Includes a check on nullptr
+    p_vals = util::allocate_aligned<T>(n);
     p_size = n;
 }
 
@@ -267,7 +265,7 @@ vector<T> &vector<T>::operator=(vector<T> &&rhs) noexcept
     if (this == &rhs) {
         return *this;
     }
-    internal::deallocate_aligned(p_vals);
+    util::deallocate_aligned(p_vals);
     p_vals = nullptr;
     p_size = 0;
     std::swap(p_vals, rhs.p_vals);
@@ -443,7 +441,7 @@ void vector<T>::to_file(const std::string &filename, const bool binary)
     std::ios_base::openmode mode = binary ? std::ios::out : std::ios::binary | std::ios::out;
     std::ofstream ofs(filename, mode);
     if (!ofs) {
-        throw error("Cannot open file for write.", "file_io");
+        throw util::error("Cannot open file for write.", "file_io");
     }
     if (binary) {
         ofs.write(reinterpret_cast<const char *>(&p_size), sizeof(size_type));
@@ -460,25 +458,25 @@ void vector<T>::from_file(const std::string &filename, const bool binary)
     std::ios_base::openmode mode = binary ? std::ios::in : std::ios::binary | std::ios::in;
     std::ifstream ifs(filename, mode);
     if (!ifs) {
-        throw error("Cannot open file for read.", "file_io");
+        throw util::error("Cannot open file for read.", "file_io");
     }
     // Read size information
     size_type size;
     if (binary) {
         ifs.read(reinterpret_cast<char *>(&size), sizeof(size_type));
         if (!ifs) {
-            throw error("Cannot read header for read.", "file_io");
+            throw util::error("Cannot read header for read.", "file_io");
         }
     } else {
         if (!(ifs >> size)) {
-            throw error("Cannot read header for read.", "file_io");
+            throw util::error("Cannot read header for read.", "file_io");
         }
     }
     allocate(size);
     if (binary) {
         ifs.read(reinterpret_cast<char *>(p_vals), p_size * sizeof(T));
         if (!ifs) {
-            throw error("Cannot read data.", "file_io");
+            throw util::error("Cannot read data.", "file_io");
         }
     } else {
         T value;
@@ -486,7 +484,7 @@ void vector<T>::from_file(const std::string &filename, const bool binary)
             if (ifs >> value) {
                 (*this)(i) = value;
             } else {
-                throw error("Cannot read data.", "file_io");
+                throw util::error("Cannot read data.", "file_io");
             }
         }
     }
