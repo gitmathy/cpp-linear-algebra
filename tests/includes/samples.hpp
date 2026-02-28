@@ -1,8 +1,7 @@
 #ifndef LA_TEST_SAMPLES_H
 #define LA_TEST_SAMPLES_H
 
-#include "includes/matrix.hpp"
-#include "includes/vector.hpp"
+#include "la/dense"
 #include "tests/includes/log.hpp"
 #include <deque>
 #include <memory>

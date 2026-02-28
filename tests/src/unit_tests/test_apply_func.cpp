@@ -1,6 +1,5 @@
 #include "tests/includes/unit_tests/test_apply_func.hpp"
-#include "includes/matrix.hpp"
-#include "includes/vector.hpp"
+#include "la/dense"
 
 namespace la {
 namespace test {

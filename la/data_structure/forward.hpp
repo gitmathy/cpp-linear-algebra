@@ -1,0 +1,28 @@
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file includes/matrix.hpp
+/// @brief Declaration and definition of a dense matrix class
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
+#ifndef LA_DATA_STRUCTURE_FORWARD_HPP
+#define LA_DATA_STRUCTURE_FORWARD_HPP
+
+#include "la/util/types.hpp"
+
+namespace la {
+
+// Forward declaration of dense matrix
+// see la/data_structure/matrix.hpp
+template <typename T, storage_type StorageT>
+class matrix;
+
+// Forward declaration of vector
+// see la/data_structure/vector.hpp
+template <typename T>
+class vector;
+
+} // namespace la
+#endif

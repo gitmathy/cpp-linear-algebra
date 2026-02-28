@@ -10,11 +10,10 @@
 #ifndef LA_MATRIX_H
 #define LA_MATRIX_H
 
-#include "includes/assert.hpp"
-#include "includes/internal/memory.hpp"
-#include "includes/log.hpp"
-#include "includes/settings.hpp"
-#include "includes/types.hpp"
+#include "la/data_structure/expressions/forward.hpp"
+#include "la/util/macros.hpp"
+#include "la/util/memory.hpp"
+#include "la/util/types.hpp"
 #include <algorithm>
 #include <fstream>
 #include <ranges>
@@ -25,17 +24,6 @@
 #endif
 
 namespace la {
-
-namespace internal {
-// Forward declaration to not include internals
-template <typename ExpressionT>
-class operant;
-
-//  Forward declaration
-template <typename MatTypeLeft, typename MatTypeRight>
-struct matrix_multiply_op;
-
-} // namespace internal
 
 /// @brief Class representing a dense matrix, i.e., all values are stored
 ///
@@ -100,17 +88,17 @@ public:
     /// evaluate the expression for every element in the matrix and assigns this value to the matrix
     /// element
     template <typename ExpressionT>
-    matrix(const internal::operant<ExpressionT> &exp);
+    matrix(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Constructor from a matrix-matrix multiplication
     /// @tparam MatTypeLeft type of left matrix of the product
     /// @tparam MatTypeRight type of right matrix of the product
     /// @param mat_mult The proxy to the matrix-matrix multiplication
     template <typename MatTypeLeft, typename MatTypeRight>
-    matrix(const internal::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult);
+    matrix(const expressions::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult);
 
     /// @brief Destruct a matrix
-    ~matrix() { internal::deallocate_aligned(p_vals); }
+    ~matrix() { util::deallocate_aligned(p_vals); }
 
     /// @brief Allocate memory and set shape
     void allocate(size_type m, size_type n);
@@ -189,7 +177,7 @@ public:
 
     /// @brief Assign from expression
     template <typename ExpressionT>
-    matrix<T, StorageT> &operator=(const internal::operant<ExpressionT> &exp);
+    matrix<T, StorageT> &operator=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Assign from initializer list
     matrix<T, StorageT> &
@@ -200,7 +188,7 @@ public:
     /// This function is implemented in includes/algorithms/multiplication.hpp
     template <typename MatTypeLeft, typename MatTypeRight>
     matrix<T, StorageT> &
-    operator=(const internal::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult);
+    operator=(const expressions::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult);
 
     /// @brief Add another matrix
     matrix<T, StorageT> &operator+=(const matrix<T, StorageT> &rhs);
@@ -213,14 +201,14 @@ public:
 
     /// @brief Add from another expression
     template <typename ExpressionT>
-    matrix<T, StorageT> &operator+=(const internal::operant<ExpressionT> &exp);
+    matrix<T, StorageT> &operator+=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Multiply with a scalar
     matrix<T, StorageT> &operator*=(const T &rhs);
 
     /// @brief Multiply from another expression
     template <typename ExpressionT>
-    matrix<T, StorageT> &operator*=(const internal::operant<ExpressionT> &exp);
+    matrix<T, StorageT> &operator*=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Subtract another matrix
     matrix<T, StorageT> &operator-=(const matrix<T, StorageT> &rhs);
@@ -233,7 +221,7 @@ public:
 
     /// @brief subtract from another expression
     template <typename ExpressionT>
-    matrix<T, StorageT> &operator-=(const internal::operant<ExpressionT> &exp);
+    matrix<T, StorageT> &operator-=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Apply a function to every entry, i.e., A(i,j)=func(A(i,j))
     /// @tparam function, supports func(T)
@@ -255,15 +243,15 @@ public:
 template <typename T, storage_type StorageT>
 std::ostream &operator<<(std::ostream &os, const matrix<T, StorageT> &mat);
 
-/// ===============================================
-/// T E M P L A T E   I M P L E M E N T A T I O N S
-/// ===============================================
+// ===============================================
+// T E M P L A T E   I M P L E M E N T A T I O N S
+// ===============================================
 
 template <typename T, storage_type StorageT>
 void matrix<T, StorageT>::allocate(size_type m, size_type n)
 {
-    internal::deallocate_aligned(p_vals);
-    p_vals = internal::allocate_aligned<T>(m * n);
+    util::deallocate_aligned(p_vals);
+    p_vals = util::allocate_aligned<T>(m * n);
     p_rows = m;
     p_cols = n;
 }
@@ -309,14 +297,16 @@ matrix<T, StorageT>::matrix(const matrix<T, OtherStorage> &rhs)
 
 template <typename T, storage_type StorageT>
 template <typename ExpressionT>
-matrix<T, StorageT>::matrix(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), p_rows(0)
+matrix<T, StorageT>::matrix(const expressions::operant<ExpressionT> &exp)
+    : p_vals(nullptr), p_rows(0)
 {
     *this = exp;
 }
 
 template <typename T, storage_type StorageT>
 template <typename MatTypeLeft, typename MatTypeRight>
-matrix<T, StorageT>::matrix(const internal::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult)
+matrix<T, StorageT>::matrix(
+    const expressions::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult)
 {
     *this = mat_mult;
 }
@@ -349,7 +339,7 @@ inline T &matrix<T, StorageT>::operator()(size_type i, size_type j)
 template <typename T, storage_type StorageT>
 inline const T &matrix<T, StorageT>::evaluate(size_type) const
 {
-    throw error("Evaluate matrix at i is not implemented");
+    throw util::error("Evaluate matrix at i is not implemented");
 }
 
 // ITERATORS
@@ -454,7 +444,7 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator=(matrix<T, StorageT> &&rhs) n
     if (this == &rhs) {
         return *this;
     }
-    internal::deallocate_aligned(p_vals);
+    util::deallocate_aligned(p_vals);
     p_vals = nullptr;
     p_rows = 0;
     p_cols = 0;
@@ -466,7 +456,7 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator=(matrix<T, StorageT> &&rhs) n
 
 template <typename T, storage_type StorageT>
 template <typename ExpressionT>
-matrix<T, StorageT> &matrix<T, StorageT>::operator=(const internal::operant<ExpressionT> &exp)
+matrix<T, StorageT> &matrix<T, StorageT>::operator=(const expressions::operant<ExpressionT> &exp)
 {
     if (exp.rows() != p_rows || exp.cols() != p_cols) {
         allocate(exp.rows(), exp.cols());
@@ -560,7 +550,7 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator+=(const matrix<T, OtherStorag
 
 template <typename T, storage_type StorageT>
 template <typename ExpressionT>
-matrix<T, StorageT> &matrix<T, StorageT>::operator+=(const internal::operant<ExpressionT> &exp)
+matrix<T, StorageT> &matrix<T, StorageT>::operator+=(const expressions::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(),
                  "Invalid shape for matrix += operant");
@@ -596,7 +586,7 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const T &rhs)
 
 template <typename T, storage_type StorageT>
 template <typename ExpressionT>
-matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const internal::operant<ExpressionT> &exp)
+matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const expressions::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(),
                  "Invalid shape for matrix *= operant");
@@ -648,7 +638,7 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator-=(const matrix<T, OtherStorag
 
 template <typename T, storage_type StorageT>
 template <typename ExpressionT>
-matrix<T, StorageT> &matrix<T, StorageT>::operator-=(const internal::operant<ExpressionT> &exp)
+matrix<T, StorageT> &matrix<T, StorageT>::operator-=(const expressions::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(p_rows == exp.rows() && p_cols == exp.cols(),
                  "Invalid shape for matrix -= operant");
@@ -690,7 +680,7 @@ void matrix<T, StorageT>::to_file(const std::string &filename, const bool binary
     std::ios_base::openmode mode = binary ? std::ios::out : std::ios::binary | std::ios::out;
     std::ofstream ofs(filename, mode);
     if (!ofs) {
-        throw error("Cannot open file for write.", "file_io");
+        throw util::error("Cannot open file for write.", "file_io");
     }
     if (binary) {
         ofs.write(reinterpret_cast<const char *>(&p_rows), sizeof(size_type));
@@ -708,7 +698,7 @@ void matrix<T, StorageT>::from_file(const std::string &filename, const bool bina
     std::ios_base::openmode mode = binary ? std::ios::in : std::ios::binary | std::ios::in;
     std::ifstream ifs(filename, mode);
     if (!ifs) {
-        throw error("Cannot open file for read.", "file_io");
+        throw util::error("Cannot open file for read.", "file_io");
     }
     // Read size information
     size_type rows = size_type(0), cols = size_type(0);
@@ -716,18 +706,18 @@ void matrix<T, StorageT>::from_file(const std::string &filename, const bool bina
         ifs.read(reinterpret_cast<char *>(&rows), sizeof(size_type));
         ifs.read(reinterpret_cast<char *>(&cols), sizeof(size_type));
         if (!ifs) {
-            throw error("Cannot read header for read.", "file_io");
+            throw util::error("Cannot read header for read.", "file_io");
         }
     } else {
         if (!(ifs >> rows >> cols)) {
-            throw error("Cannot read header for read.", "file_io");
+            throw util::error("Cannot read header for read.", "file_io");
         }
     }
     allocate(rows, cols);
     if (binary) {
         ifs.read(reinterpret_cast<char *>(p_vals), rows * cols * sizeof(T));
         if (!ifs) {
-            throw error("Cannot read binary data.", "file_io");
+            throw util::error("Cannot read binary data.", "file_io");
         }
     } else {
         T value = T(0);
@@ -735,7 +725,7 @@ void matrix<T, StorageT>::from_file(const std::string &filename, const bool bina
             if (ifs >> value) {
                 *first = value;
             } else {
-                throw error("Cannot read text data.", "file_io");
+                throw util::error("Cannot read text data.", "file_io");
             }
         }
     }

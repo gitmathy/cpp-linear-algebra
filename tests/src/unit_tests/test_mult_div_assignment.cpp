@@ -1,7 +1,5 @@
 #include "tests/includes/unit_tests/test_mult_div_assignment.hpp"
-#include "includes/la.hpp"
-#include "includes/matrix.hpp"
-#include "includes/vector.hpp"
+#include "la/dense"
 
 namespace la {
 namespace test {

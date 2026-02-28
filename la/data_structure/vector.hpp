@@ -10,23 +10,15 @@
 #ifndef LA_VECTOR_H
 #define LA_VECTOR_H
 
-#include "includes/assert.hpp"
-#include "includes/internal/memory.hpp"
-#include "includes/settings.hpp"
-#include "includes/types.hpp"
+#include "la/data_structure/expressions/forward.hpp"
+#include "la/util/memory.hpp"
+#include "la/util/types.hpp"
 #include <algorithm>
 #include <initializer_list>
 #include <iostream>
 #include <ranges>
 
 namespace la {
-
-namespace internal {
-/// @brief Forward declaration to not include internals
-/// @tparam ExpressionT
-template <typename ExpressionT>
-class operant;
-} // namespace internal
 
 /// @brief Defining a vector used for numerical computations. All elements are stored in a plain
 /// array
@@ -73,13 +65,13 @@ public:
 
     /// @brief Construct from expression
     ///
-    /// Every element is set to the evaluated element, i.e., x(i) = exp.evaluate(i). This is used
-    /// when writing code like x = y+z;
+    /// Every element is set to the evaluated element, i.e., x(i) = exp.evaluate(i). This is
+    /// used when writing code like x = y+z;
     template <typename ExpressionT>
-    vector(const internal::operant<ExpressionT> &exp);
+    vector(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Destructing a vector
-    ~vector() { internal::deallocate_aligned(p_vals); }
+    ~vector() { util::deallocate_aligned(p_vals); }
 
     /// @brief Allocate memory and set size
     /// WARNING: elements are not assigned!
@@ -127,7 +119,7 @@ public:
 
     /// @brief Assign from expression
     template <typename ExpressionT>
-    vector<T> &operator=(const internal::operant<ExpressionT> &exp);
+    vector<T> &operator=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Assign from initializer list
     vector<T> &operator=(const std::initializer_list<T> &init_list);
@@ -137,7 +129,7 @@ public:
 
     /// @brief Add from another expression
     template <typename ExpressionT>
-    vector<T> &operator+=(const internal::operant<ExpressionT> &exp);
+    vector<T> &operator+=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Multiply with a scalar
     vector<T> &operator*=(const T &rhs);
@@ -147,14 +139,14 @@ public:
 
     /// @brief Multiply (element wise) from another expression
     template <typename ExpressionT>
-    vector<T> &operator*=(const internal::operant<ExpressionT> &exp);
+    vector<T> &operator*=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Substract another vector
     vector<T> &operator-=(const vector<T> &rhs);
 
     /// @brief subtract from another expression
     template <typename ExpressionT>
-    vector<T> &operator-=(const internal::operant<ExpressionT> &exp);
+    vector<T> &operator-=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Apply a function to every entry, i.e., x(i)=func(x(i))
     /// @tparam function, supports func(T)
@@ -183,8 +175,8 @@ std::ostream &operator<<(std::ostream &os, const vector<T> &vec);
 template <typename T>
 void vector<T>::allocate(size_type n)
 {
-    internal::deallocate_aligned(p_vals); // Includes a check on nullptr
-    p_vals = internal::allocate_aligned<T>(n);
+    util::deallocate_aligned(p_vals); // Includes a check on nullptr
+    p_vals = util::allocate_aligned<T>(n);
     p_size = n;
 }
 
@@ -216,7 +208,7 @@ vector<T>::vector(const vector<T> &rhs) : p_vals(nullptr), p_size(0)
 
 template <typename T>
 template <typename ExpressionT>
-vector<T>::vector(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), p_size(0)
+vector<T>::vector(const expressions::operant<ExpressionT> &exp) : p_vals(nullptr), p_size(0)
 {
     *this = exp;
 }
@@ -267,7 +259,7 @@ vector<T> &vector<T>::operator=(vector<T> &&rhs) noexcept
     if (this == &rhs) {
         return *this;
     }
-    internal::deallocate_aligned(p_vals);
+    util::deallocate_aligned(p_vals);
     p_vals = nullptr;
     p_size = 0;
     std::swap(p_vals, rhs.p_vals);
@@ -277,7 +269,7 @@ vector<T> &vector<T>::operator=(vector<T> &&rhs) noexcept
 
 template <typename T>
 template <typename ExpressionT>
-vector<T> &vector<T>::operator=(const internal::operant<ExpressionT> &exp)
+vector<T> &vector<T>::operator=(const expressions::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(exp.cols() == 1, "Invalid shape for vector = operant (2d)");
     const size_type n = exp.rows();
@@ -329,7 +321,7 @@ vector<T> &vector<T>::operator+=(const vector<T> &rhs)
 
 template <typename T>
 template <typename ExpressionT>
-vector<T> &vector<T>::operator+=(const internal::operant<ExpressionT> &exp)
+vector<T> &vector<T>::operator+=(const expressions::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(rows() == exp.rows() && cols() == exp.cols(),
                  "Invalid shape for vector += operant");
@@ -375,7 +367,7 @@ vector<T> &vector<T>::operator*=(const vector<T> &rhs)
 
 template <typename T>
 template <typename ExpressionT>
-vector<T> &vector<T>::operator*=(const internal::operant<ExpressionT> &exp)
+vector<T> &vector<T>::operator*=(const expressions::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(rows() == exp.rows() && cols() == exp.cols(),
                  "Invalid shape for vector *= operant");
@@ -407,7 +399,7 @@ vector<T> &vector<T>::operator-=(const vector<T> &rhs)
 
 template <typename T>
 template <typename ExpressionT>
-vector<T> &vector<T>::operator-=(const internal::operant<ExpressionT> &exp)
+vector<T> &vector<T>::operator-=(const expressions::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(rows() == exp.rows() && cols() == exp.cols(),
                  "Invalid shape for vector -= operant");
@@ -443,7 +435,7 @@ void vector<T>::to_file(const std::string &filename, const bool binary)
     std::ios_base::openmode mode = binary ? std::ios::out : std::ios::binary | std::ios::out;
     std::ofstream ofs(filename, mode);
     if (!ofs) {
-        throw error("Cannot open file for write.", "file_io");
+        throw util::error("Cannot open file for write.", "file_io");
     }
     if (binary) {
         ofs.write(reinterpret_cast<const char *>(&p_size), sizeof(size_type));
@@ -460,25 +452,25 @@ void vector<T>::from_file(const std::string &filename, const bool binary)
     std::ios_base::openmode mode = binary ? std::ios::in : std::ios::binary | std::ios::in;
     std::ifstream ifs(filename, mode);
     if (!ifs) {
-        throw error("Cannot open file for read.", "file_io");
+        throw util::error("Cannot open file for read.", "file_io");
     }
     // Read size information
     size_type size;
     if (binary) {
         ifs.read(reinterpret_cast<char *>(&size), sizeof(size_type));
         if (!ifs) {
-            throw error("Cannot read header for read.", "file_io");
+            throw util::error("Cannot read header for read.", "file_io");
         }
     } else {
         if (!(ifs >> size)) {
-            throw error("Cannot read header for read.", "file_io");
+            throw util::error("Cannot read header for read.", "file_io");
         }
     }
     allocate(size);
     if (binary) {
         ifs.read(reinterpret_cast<char *>(p_vals), p_size * sizeof(T));
         if (!ifs) {
-            throw error("Cannot read data.", "file_io");
+            throw util::error("Cannot read data.", "file_io");
         }
     } else {
         T value;
@@ -486,7 +478,7 @@ void vector<T>::from_file(const std::string &filename, const bool binary)
             if (ifs >> value) {
                 (*this)(i) = value;
             } else {
-                throw error("Cannot read data.", "file_io");
+                throw util::error("Cannot read data.", "file_io");
             }
         }
     }

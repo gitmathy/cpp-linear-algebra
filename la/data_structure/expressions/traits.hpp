@@ -7,25 +7,16 @@
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_INTERNAL_TRAITS_H
-#define LA_INTERNAL_TRAITS_H
+#ifndef LA_DATA_STRUCTURES_EXPRESSIONS_TRAITS_HPP
+#define LA_DATA_STRUCTURES_EXPRESSIONS_TRAITS_HPP
 
-#include "includes/types.hpp"
+#include "la/data_structure/expressions/literal.hpp"
+#include "la/data_structure/matrix.hpp"
+#include "la/data_structure/vector.hpp"
+#include "la/util/types.hpp"
 
 namespace la {
-// forward-declare vector so we can specialize expression_traits for it
-template <typename T>
-class vector;
-
-// forward-declare matrix so we can specialize expression_traits for it
-template <typename T, storage_type StorageT>
-class matrix;
-
-// forward-declare literal so we can specialize expression_traits for it
-template <typename T>
-class literal;
-
-namespace internal {
+namespace expressions {
 
 /// @brief Determining expression type and value type from an expression
 /// @tparam ExpressionT the expression type
@@ -42,40 +33,40 @@ struct expression_traits
     const static size_type dimension = ExpressionT::dimension;
 };
 
-/// @brief Specialization for `la::vector<T>`: store as a reference in expression nodes
+/// @brief Specialization for `vector<T>`: store as a reference in expression nodes
 /// This avoids copying large vector objects into expression trees; operant/binary_expression
 /// will hold references to existing vectors while `operant` itself still owns temporaries.
 template <typename T>
-struct expression_traits<la::vector<T>>
+struct expression_traits<vector<T>>
 {
-    typedef const la::vector<T> &expression_type;
+    typedef const vector<T> &expression_type;
     typedef T value_type;
     const static size_type dimension = size_type(1);
 };
 
-/// @brief Specialization for `la::matrix<T,StorageT>`: store as a reference in expression nodes
+/// @brief Specialization for `matrix<T,StorageT>`: store as a reference in expression nodes
 /// This avoids copying large matrix objects into expression trees; operant/binary_expression
 /// will hold references to existing vectors while `operant` itself still owns temporaries.
 template <typename T, storage_type StorageT>
-struct expression_traits<la::matrix<T, StorageT>>
+struct expression_traits<matrix<T, StorageT>>
 {
-    typedef const la::matrix<T, StorageT> &expression_type;
+    typedef const matrix<T, StorageT> &expression_type;
     typedef T value_type;
     const static size_type dimension = size_type(2);
 };
 
-/// @brief Specialization for `la::internal::literal<T>`: store as a reference in expression nodes
+/// @brief Specialization for `internal::literal<T>`: store as a reference in expression nodes
 /// This avoids copying large matrix objects into expression trees; operant/binary_expression
 /// will hold references to existing vectors while `operant` itself still owns temporaries.
 template <typename T>
-struct expression_traits<la::literal<T>>
+struct expression_traits<literal<T>>
 {
-    typedef la::literal<T> expression_type;
+    typedef literal<T> expression_type;
     typedef T value_type;
     const static size_type dimension = size_type(0);
 };
 
-} // namespace internal
+} // namespace expressions
 
 } // namespace la
 

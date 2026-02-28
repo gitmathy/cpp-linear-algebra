@@ -1,0 +1,13 @@
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file la/dense
+/// @brief Header file containing all includes used to perform operations on dense structures
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
+#include "la/algorithms"
+#include "la/data_structure/matrix.hpp"
+#include "la/data_structure/vector.hpp"
+#include "la/ops"

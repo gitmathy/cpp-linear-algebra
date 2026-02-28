@@ -7,15 +7,13 @@
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_INTERNAL_ADD_H
-#define LA_INTERNAL_ADD_H
+#ifndef LA_DATA_STRUCTURES_EXPRESSIONS_OPERATIONS_HPP
+#define LA_DATA_STRUCTURES_EXPRESSIONS_OPERATIONS_HPP
 
-#include "includes/assert.hpp"
-#include "includes/types.hpp"
-#include <functional>
+#include "la/util/types.hpp"
 
 namespace la {
-namespace internal {
+namespace expressions {
 
 /// ===============================================
 /// M I N U S
@@ -30,14 +28,13 @@ struct minus_operation
     typedef typename ExpressionT::value_type value_type;
 
     /// @brief Invert at element i
-    static inline value_type evaluate(const ExpressionT &x, const la::size_type i)
+    static inline value_type evaluate(const ExpressionT &x, const size_type i)
     {
         return -x.evaluate(i);
     }
 
     /// @brief Add at element i, j
-    static inline value_type evaluate(const ExpressionT &x, const la::size_type i,
-                                      const la::size_type j)
+    static inline value_type evaluate(const ExpressionT &x, const size_type i, const size_type j)
     {
         return -x.evaluate(i, j);
     }
@@ -58,14 +55,14 @@ struct add_operation
 
     /// @brief Add at element i
     static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y,
-                                      const la::size_type i)
+                                      const size_type i)
     {
         return std::plus<value_type>()(x.evaluate(i), y.evaluate(i));
     }
 
     /// @brief Add at element i, j
     static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y,
-                                      const la::size_type i, const la::size_type j)
+                                      const size_type i, const size_type j)
     {
         return std::plus<value_type>()(x.evaluate(i, j), y.evaluate(i, j));
     }
@@ -86,14 +83,14 @@ struct sub_operation
 
     /// @brief Substract at element i
     static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y,
-                                      const la::size_type i)
+                                      const size_type i)
     {
         return std::minus<value_type>()(x.evaluate(i), y.evaluate(i));
     }
 
     /// @brief Substract at element i, j
     static inline value_type evaluate(const ExpressionLeft &x, const ExpressionRight &y,
-                                      const la::size_type i, const la::size_type j)
+                                      const size_type i, const size_type j)
     {
         return std::minus<value_type>()(x.evaluate(i, j), y.evaluate(i, j));
     }
@@ -134,7 +131,7 @@ struct mult_operation
 
     /// @brief Multiply at element (i,j) (result is two-dimensional)
     static inline value_type evaluate(const ExpressionLeft &left, const ExpressionRight &right,
-                                      const la::size_type i, const la::size_type j)
+                                      const size_type i, const size_type j)
     {
         LAYOUT_ASSERT((ExpressionLeft::dimension == 2 && ExpressionRight::dimension == 2) ||
                           (ExpressionLeft::dimension == 2 && ExpressionRight::dimension == 0) ||
@@ -167,7 +164,7 @@ struct matrix_multiply_op
     const MatTypeRight &right;
 };
 
-} // namespace internal
+} // namespace expressions
 } // namespace la
 
 #endif

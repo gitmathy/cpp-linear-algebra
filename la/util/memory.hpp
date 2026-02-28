@@ -10,8 +10,7 @@
 #ifndef LA_INTERNAL_MEMORY_H
 #define LA_INTERNAL_MEMORY_H
 
-#include "includes/assert.hpp"
-#include "includes/types.hpp"
+#include "la/util/types.hpp"
 #include <algorithm>
 #include <cstdlib>
 #include <new>
@@ -21,7 +20,7 @@
 #endif
 
 namespace la {
-namespace internal {
+namespace util {
 
 /// @brief Allocate memory aligned to the memory
 /// @tparam T Value type
@@ -66,7 +65,7 @@ void deallocate_aligned(T *ptr)
 #endif
 }
 
-} // namespace internal
+} // namespace util
 } // namespace la
 
 #endif

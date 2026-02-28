@@ -7,16 +7,14 @@
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_INTERNAL_UNARY_H
-#define LA_INTERNAL_UNARY_H
+#ifndef LA_DATA_STRUCTURES_UNARY_HPP
+#define LA_DATA_STRUCTURES_UNARY_HPP
 
-#include "includes/internal/traits.hpp"
-#include "includes/types.hpp"
-#include <algorithm>
-#include <memory>
+#include "la/data_structure/expressions/traits.hpp"
+#include "la/util/types.hpp"
 
 namespace la {
-namespace internal {
+namespace expressions {
 
 /// @brief Representing an unary expression consisting one "operants" and an operation, e.g.,
 /// (vector, minus)
@@ -70,7 +68,7 @@ public:
     const static size_type dimension = ExpT::dimension;
 };
 
-} // namespace internal
+} // namespace expressions
 
 } // namespace la
 
