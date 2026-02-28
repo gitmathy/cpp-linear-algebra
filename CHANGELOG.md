@@ -1,3 +1,10 @@
+## [1.6.2](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.6.1...v1.6.2) (2026-02-28)
+
+
+### Bug Fixes
+
+* Align all docstrings and include protections ([a703cbb](https://github.com/gitmathy/cpp-linear-algebra/commit/a703cbb24129f2935995ebfc52dd72c1946959ec))
+
 ## [1.6.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.6.0...v1.6.1) (2026-02-28)
 
 
