@@ -1,3 +1,12 @@
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/src/unit_tests/test_mixed_operations.cpp
+/// @brief Implementation of mixed operations via template expressions
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
 #include "tests/includes/unit_tests/test_mixed_operations.hpp"
 #include "la/dense"
 

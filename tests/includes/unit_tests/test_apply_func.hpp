@@ -1,5 +1,14 @@
-#ifndef LA_TEST_UNIT_TEST_APPLY_FUNC_H
-#define LA_TEST_UNIT_TEST_APPLY_FUNC_H
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/includes/unit_tests/test_apply_func.hpp
+/// @brief Definition of apply function tests
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
+#ifndef LA_TEST_INCLUDES_UNIT_TEST_APPLY_FUNC_HPP
+#define LA_TEST_INCLUDES_UNIT_TEST_APPLY_FUNC_HPP
 
 #include "tests/includes/unit_test.hpp"
 

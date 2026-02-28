@@ -1,3 +1,12 @@
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/src/performance_test.cpp
+/// @brief Implementation of basic performance test
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
 #include "tests/includes/performance_test.hpp"
 #include <numeric>
 

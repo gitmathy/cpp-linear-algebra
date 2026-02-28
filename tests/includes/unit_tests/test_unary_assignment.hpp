@@ -1,5 +1,14 @@
-#ifndef LA_TEST_UNIT_TEST_UNARY_ASSIGNMENT_H
-#define LA_TEST_UNIT_TEST_UNARY_ASSIGNMENT_H
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/includes/unit_tests/test_unary_assignment.hpp
+/// @brief Definition of unary assignment test
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
+#ifndef LA_TEST_INCLUDES_UNIT_TEST_UNARY_ASSIGNMENT_HPP
+#define LA_TEST_INCLUDES_UNIT_TEST_UNARY_ASSIGNMENT_HPP
 
 #include "tests/includes/unit_test.hpp"
 

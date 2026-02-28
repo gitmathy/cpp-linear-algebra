@@ -1,3 +1,12 @@
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/src/samples.cpp
+/// @brief Implementation of sample providing
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
 #include "tests/includes/samples.hpp"
 
 namespace la {

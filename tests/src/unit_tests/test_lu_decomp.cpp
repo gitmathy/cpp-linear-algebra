@@ -1,3 +1,12 @@
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/src/unit_tests/test_lu_decomp.cpp
+/// @brief Implementation of test of lu decomposition
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
 #include "tests/includes/unit_tests/test_lu_decomp.hpp"
 #include "la/dense"
 #include "la/util/constants.hpp"

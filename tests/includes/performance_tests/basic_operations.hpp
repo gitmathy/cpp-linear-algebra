@@ -1,5 +1,14 @@
-#ifndef LA_TEST_ADD_TEST_H
-#define LA_TEST_ADD_TEST_H
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/includes/performance_tests/basic_operations.hpp
+/// @brief Definition of basic operations performance tests
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
+#ifndef LA_TEST_INCLUDES_PERFORMANCE_TESTS_BASIC_OPERATIONS_HPP
+#define LA_TEST_INCLUDES_PERFORMANCE_TESTS_BASIC_OPERATIONS_HPP
 
 #include "la/dense"
 #include "tests/includes/performance_test.hpp"

@@ -1,5 +1,14 @@
-#ifndef LA_TEST_UNIT_TEST_CONSTRUCT_H
-#define LA_TEST_UNIT_TEST_CONSTRUCT_H
+/// Part of the project "cpp-linear-algebra"
+///
+/// @file tests/includes/unit_tests/test_construct.hpp
+/// @brief Definition of constructor tests
+/// @author Gitmathy, https://github.com/gitmathy
+///
+/// @copyright Copyright (c) 2026. All rights reserved.
+/// Licensed under the MIT License (see LICENSE file in project root).
+
+#ifndef LA_TEST_INCLUDES_UNIT_TEST_CONSTRUCT_HPP
+#define LA_TEST_INCLUDES_UNIT_TEST_CONSTRUCT_HPP
 
 #include "tests/includes/unit_test.hpp"
 
