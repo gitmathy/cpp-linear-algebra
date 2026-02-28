@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.6.0...v1.6.1) (2026-02-28)
+
+
+### Bug Fixes
+
+* Adjust includes for tests ([12499f1](https://github.com/gitmathy/cpp-linear-algebra/commit/12499f1fa1cb9db9baba6c42f3b16752ba865b5c))
+
 # [1.6.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.5.0...v1.6.0) (2026-02-28)
 
 
