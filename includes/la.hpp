@@ -15,10 +15,8 @@
 #include "includes/internal/operant.hpp"
 #include "includes/internal/operations.hpp"
 #include "includes/internal/unary.hpp"
-#include "includes/matrix.hpp"
 #include "includes/settings.hpp"
 #include "includes/types.hpp"
-#include "includes/vector.hpp"
 #include <algorithm>
 #include <cmath>
 #ifndef PARALLEL
@@ -26,6 +24,13 @@
 #endif
 
 namespace la {
+
+// forward declarations:
+template <typename T, storage_type StorageT>
+class matrix;
+
+template <typename T>
+class vector;
 
 /// ===============================================
 /// N O R M S
@@ -45,8 +50,8 @@ template <typename T>
 auto operator-(const vector<T> &right);
 
 /// @brief -matrix
-template <typename T>
-auto operator-(const matrix<T> &right);
+template <typename T, storage_type StorageT>
+auto operator-(const matrix<T, StorageT> &right);
 
 /// @brief -operant
 template <typename ExpT>
@@ -190,7 +195,8 @@ auto operator*(const vector<T> &left, const internal::operant<ExpT> &right);
 
 /// @brief matrix * matrix
 template <typename T, storage_type StorageLeft, storage_type StorageRight>
-auto operator*(const matrix<T, StorageLeft> &left, const matrix<T, StorageRight> &right);
+internal::matrix_multiply_op<matrix<T, StorageLeft>, matrix<T, StorageRight>>
+operator*(const matrix<T, StorageLeft> &left, const matrix<T, StorageRight> &right);
 
 /// @brief matrix * operant
 template <typename T, storage_type StorageLeft, typename ExpT>
@@ -286,10 +292,11 @@ auto operator-(const vector<T> &right)
 }
 
 /// @brief -matrix
-template <typename T>
-auto operator-(const matrix<T> &right)
+template <typename T, storage_type StorageT>
+auto operator-(const matrix<T, StorageT> &right)
 {
-    typedef internal::unary_expression<matrix<T>, internal::minus_operation<matrix<T>>>
+    typedef internal::unary_expression<matrix<T, StorageT>,
+                                       internal::minus_operation<matrix<T, StorageT>>>
         new_bin_exp_type;
     return internal::operant<new_bin_exp_type>(new_bin_exp_type(right));
 }
@@ -645,13 +652,10 @@ auto operator*(const vector<T> &left, const internal::operant<ExpT> &right)
 
 /// @brief matrix * matrix
 template <typename T, storage_type StorageLeft, storage_type StorageRight>
-auto operator*(const matrix<T, StorageLeft> &left, const matrix<T, StorageRight> &right)
+internal::matrix_multiply_op<matrix<T, StorageLeft>, matrix<T, StorageRight>>
+operator*(const matrix<T, StorageLeft> &left, const matrix<T, StorageRight> &right)
 {
-    typedef internal::binary_expression<
-        matrix<T, StorageLeft>, matrix<T, StorageRight>,
-        internal::mult_operation<matrix<T, StorageLeft>, matrix<T, StorageRight>>>
-        new_bin_exp_type;
-    return internal::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+    return {left, right};
 }
 
 /// @brief matrix * operant
