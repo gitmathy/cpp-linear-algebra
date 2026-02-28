@@ -1,3 +1,17 @@
+# [1.6.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.5.0...v1.6.0) (2026-02-28)
+
+
+### Features
+
+* Comments and asserts for matrix multiplications ([65a3296](https://github.com/gitmathy/cpp-linear-algebra/commit/65a3296ebb1115372b52a0dbbcf7f6443a740a95))
+* Direct access to array containing the values ([754d211](https://github.com/gitmathy/cpp-linear-algebra/commit/754d211b4912dc9e6eed4514d7c823cc56ad55ab))
+* Matrix-matrix multiplication with blocked algorithms ([4d66bb5](https://github.com/gitmathy/cpp-linear-algebra/commit/4d66bb512c22f4ad9d385f372d37e73d5c6894d9))
+* matrix-matrix with blocked matrices ([087b318](https://github.com/gitmathy/cpp-linear-algebra/commit/087b3185d7e4432c4d3cb8e9cdcdf9606ad1bed6))
+* Performance testing matrix-matrix multiplication ([d40fbb6](https://github.com/gitmathy/cpp-linear-algebra/commit/d40fbb63c5463713b18d70a5808b7e85a8a1fd55))
+* Performance testing of optimized matrix-matrix operations ([c7844b3](https://github.com/gitmathy/cpp-linear-algebra/commit/c7844b3bc6bbc2cf8ef6bea90149cf0d48365274))
+* Test eigen with row and column based storage ([9d4577c](https://github.com/gitmathy/cpp-linear-algebra/commit/9d4577c1c0db29e6e147f54d1d0558ecd2611d48))
+* unit testing matrix-matrix multiplication ([8e6eb72](https://github.com/gitmathy/cpp-linear-algebra/commit/8e6eb721fe77dc17ab94616fc45e8f70303a5d95))
+
 # [1.5.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.4.0...v1.5.0) (2026-02-25)
 
 
