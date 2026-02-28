@@ -154,6 +154,19 @@ struct mult_operation
     }
 };
 
+/// @brief Specialized operation for matrix*matrix as the storage type of the result is set by
+/// constructor
+/// @tparam StorageLeft
+/// @tparam StorageRight
+template <typename MatTypeLeft, typename MatTypeRight>
+struct matrix_multiply_op
+{
+    /// @brief left side
+    const MatTypeLeft &left;
+    /// @brief right side
+    const MatTypeRight &right;
+};
+
 } // namespace internal
 } // namespace la
 

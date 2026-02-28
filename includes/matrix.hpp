@@ -27,10 +27,14 @@
 namespace la {
 
 namespace internal {
-/// @brief Forward declaration to not include internals
-/// @tparam ExpressionT
+// Forward declaration to not include internals
 template <typename ExpressionT>
 class operant;
+
+//  Forward declaration
+template <typename MatTypeLeft, typename MatTypeRight>
+struct matrix_multiply_op;
+
 } // namespace internal
 
 /// @brief Class representing a dense matrix, i.e., all values are stored
@@ -98,6 +102,13 @@ public:
     template <typename ExpressionT>
     matrix(const internal::operant<ExpressionT> &exp);
 
+    /// @brief Constructor from a matrix-matrix multiplication
+    /// @tparam MatTypeLeft type of left matrix of the product
+    /// @tparam MatTypeRight type of right matrix of the product
+    /// @param mat_mult The proxy to the matrix-matrix multiplication
+    template <typename MatTypeLeft, typename MatTypeRight>
+    matrix(const internal::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult);
+
     /// @brief Destruct a matrix
     ~matrix() { internal::deallocate_aligned(p_vals); }
 
@@ -158,6 +169,12 @@ public:
     /// @brief Constant iterator to column end (only valid for COL_WISE)
     inline citerator col_end(size_type i) const;
 
+    /// @brief Direct access to the memory. Use with caution
+    inline T *vals() { return p_vals; }
+
+    /// @brief Direct access to the memory. Use with caution
+    inline T const *vals() const { return p_vals; }
+
     /// @brief Assign another matrix
     matrix<T, StorageT> &operator=(const matrix<T, StorageT> &rhs);
 
@@ -178,6 +195,13 @@ public:
     matrix<T, StorageT> &
     operator=(const std::initializer_list<std::initializer_list<T>> &init_list);
 
+    /// @brief Assign the result of a matrix-matrix multiplication
+    ///
+    /// This function is implemented in includes/algorithms/multiplication.hpp
+    template <typename MatTypeLeft, typename MatTypeRight>
+    matrix<T, StorageT> &
+    operator=(const internal::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult);
+
     /// @brief Add another matrix
     matrix<T, StorageT> &operator+=(const matrix<T, StorageT> &rhs);
 
@@ -191,17 +215,8 @@ public:
     template <typename ExpressionT>
     matrix<T, StorageT> &operator+=(const internal::operant<ExpressionT> &exp);
 
-    /// @brief Multiply another matrix
-    matrix<T, StorageT> &operator*=(const matrix<T, StorageT> &rhs);
-
     /// @brief Multiply with a scalar
     matrix<T, StorageT> &operator*=(const T &rhs);
-
-    /// @brief Multiply another matrix with another StorageT type
-    ///
-    /// Note this should be avoided as memory access is not optimized!
-    template <storage_type OtherStorage>
-    matrix<T, StorageT> &operator*=(const matrix<T, OtherStorage> &rhs);
 
     /// @brief Multiply from another expression
     template <typename ExpressionT>
@@ -297,6 +312,13 @@ template <typename ExpressionT>
 matrix<T, StorageT>::matrix(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), p_rows(0)
 {
     *this = exp;
+}
+
+template <typename T, storage_type StorageT>
+template <typename MatTypeLeft, typename MatTypeRight>
+matrix<T, StorageT>::matrix(const internal::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult)
+{
+    *this = mat_mult;
 }
 
 template <typename T, storage_type StorageT>
@@ -559,16 +581,6 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator+=(const internal::operant<Exp
     return *this;
 }
 template <typename T, storage_type StorageT>
-matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const matrix<T, StorageT> &rhs)
-{
-    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
-                 "Invalid shape for matrix *= matrix");
-    matrix<T, StorageT> tmp(*this * rhs);
-    *this = std::move(tmp);
-    return *this;
-}
-
-template <typename T, storage_type StorageT>
 matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const T &rhs)
 {
     auto range = std::views::iota(size_type(0), rows() * cols());
@@ -579,18 +591,6 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const T &rhs)
     std::for_each(range.begin(), range.end(),
                   [this, &rhs](size_type i) { this->p_vals[i] *= rhs; });
 #endif
-    return *this;
-}
-
-template <typename T, storage_type StorageT>
-template <storage_type OtherStorage>
-matrix<T, StorageT> &matrix<T, StorageT>::operator*=(const matrix<T, OtherStorage> &rhs)
-{
-    SHAPE_ASSERT(rows() == rhs.rows() && cols() == rhs.cols(),
-                 "Invalid shape for matrix *= matrix with different storage_type");
-    LOG_WARNING("Unoptimized StorageT access due to StorageT layout");
-    matrix<T, StorageT> tmp(*this * rhs);
-    *this = std::move(tmp);
     return *this;
 }
 

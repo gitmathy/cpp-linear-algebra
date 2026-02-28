@@ -30,60 +30,97 @@ int vec_vec_mult_test::execute()
     return (int)errors().size();
 }
 
+template <storage_type StorageT>
+bool check_values_mult(const matrix<int, StorageT> C)
+{
+    return C(0, 0) == 11 && C(0, 1) == 18 && C(1, 0) == 30 && C(1, 1) == 45;
+}
+
 int mat_mat_mult_test::execute()
 {
-    // Both row storage
-    la::matrix<int> A_row = {{1, 2, 3}, {4, 5, 6}};
-    la::matrix<int> B_row = {{2, 3}, {2, 3}, {2, 3}};
-    la::matrix<int> C_row = (A_row * B_row);
-
-    if (!(C_row.rows() == 2 && C_row.cols() == 2)) {
-        report_error("Wrong size of matrix*matrix");
-    }
-    if (!(C_row(0, 0) == 11 && C_row(0, 1) == 18 && C_row(1, 0) == 30 && C_row(1, 1) == 45)) {
-        report_error("Wrong size of matrix*matrix");
-    }
-
-    // Both column storage
+    la::matrix<int, ROW_WISE> A_row = {{1, 2, 3}, {4, 5, 6}};
+    la::matrix<int, ROW_WISE> B_row = {{2, 3}, {2, 3}, {2, 3}};
     la::matrix<int, COLUMN_WISE> A_col = {{1, 2, 3}, {4, 5, 6}};
     la::matrix<int, COLUMN_WISE> B_col = {{2, 3}, {2, 3}, {2, 3}};
-    la::matrix<int, COLUMN_WISE> C_col = (A_col * B_col);
 
-    if (!(C_col.rows() == 2 && C_col.cols() == 2)) {
+    // row = row * row
+    la::matrix<int, ROW_WISE> C_row_row_row = A_row * B_row;
+    if (!(C_row_row_row.rows() == 2 && C_row_row_row.cols() == 2)) {
         report_error("Wrong size of matrix*matrix");
     }
-    if (!(C_col(0, 0) == 11 && C_col(0, 1) == 18 && C_col(1, 0) == 30 && C_col(1, 1) == 45)) {
-        report_error("Wrong size of matrix*matrix");
-    }
-
-    // Row * Col
-    la::matrix<int> C_row_col = (A_row * B_col);
-
-    if (!(C_row_col.rows() == 2 && C_row_col.cols() == 2)) {
-        report_error("Wrong size of matrix*matrix");
-    }
-    if (!(C_row_col(0, 0) == 11 && C_row_col(0, 1) == 18 && C_row_col(1, 0) == 30 &&
-          C_row_col(1, 1) == 45)) {
+    if (!check_values_mult(C_row_row_row)) {
         report_error("Wrong size of matrix*matrix");
     }
 
-    // Col * Row
-    la::matrix<int> C_col_row = (A_row * B_row);
-
-    if (!(C_col_row.rows() == 2 && C_col_row.cols() == 2)) {
+    // row = row * col
+    la::matrix<int, ROW_WISE> C_row_row_col = (A_row * B_col);
+    if (!(C_row_row_col.rows() == 2 && C_row_row_col.cols() == 2)) {
         report_error("Wrong size of matrix*matrix");
     }
-    if (!(C_col_row(0, 0) == 11 && C_col_row(0, 1) == 18 && C_col_row(1, 0) == 30 &&
-          C_col_row(1, 1) == 45)) {
+    if (!check_values_mult(C_row_row_col)) {
         report_error("Wrong size of matrix*matrix");
     }
 
-    la::matrix<int> C_scalar = (A_row * 2);
-    if (!(C_col_row.rows() == 2 && C_col_row.cols() == 3)) {
+    // row = col * row
+    la::matrix<int, ROW_WISE> C_row_col_row = (A_col * B_row);
+    if (!(C_row_col_row.rows() == 2 && C_row_col_row.cols() == 2)) {
+        report_error("Wrong size of matrix*matrix");
+    }
+    if (!check_values_mult(C_row_col_row)) {
+        report_error("Wrong size of matrix*matrix");
+    }
+
+    // row = col * col
+    la::matrix<int, ROW_WISE> C_row_col_col = (A_col * B_col);
+    if (!(C_row_col_row.rows() == 2 && C_row_col_row.cols() == 2)) {
+        report_error("Wrong size of matrix*matrix");
+    }
+    if (!check_values_mult(C_row_col_col)) {
+        report_error("Wrong size of matrix*matrix");
+    }
+
+    // col = col * col
+    la::matrix<int, COLUMN_WISE> C_col_col_col = (A_col * B_col);
+    if (!(C_col_col_col.rows() == 2 && C_col_col_col.cols() == 2)) {
+        report_error("Wrong size of matrix*matrix");
+    }
+    if (!check_values_mult(C_col_col_col)) {
+        report_error("Wrong size of matrix*matrix");
+    }
+
+    // col = col * row
+    la::matrix<int, COLUMN_WISE> C_col_col_row = (A_col * B_row);
+    if (!(C_col_col_row.rows() == 2 && C_col_col_row.cols() == 2)) {
+        report_error("Wrong size of matrix*matrix");
+    }
+    if (!check_values_mult(C_col_col_row)) {
+        report_error("Wrong size of matrix*matrix");
+    }
+
+    // col = row * col
+    la::matrix<int, COLUMN_WISE> C_col_row_col = (A_row * B_col);
+    if (!(C_col_row_col.rows() == 2 && C_col_row_col.cols() == 2)) {
+        report_error("Wrong size of matrix*matrix");
+    }
+    if (!check_values_mult(C_col_row_col)) {
+        report_error("Wrong size of matrix*matrix");
+    }
+
+    // col = row * row
+    la::matrix<int, COLUMN_WISE> C_col_row_row = (A_row * B_row);
+    if (!(C_col_row_row.rows() == 2 && C_col_row_row.cols() == 2)) {
+        report_error("Wrong size of matrix*matrix");
+    }
+    if (!check_values_mult(C_col_row_row)) {
+        report_error("Wrong size of matrix*matrix");
+    }
+
+    la::matrix<int, ROW_WISE> C_scalar = (A_row * 2);
+    if (!(C_row_col_row.rows() == 2 && C_row_col_row.cols() == 3)) {
         report_error("Wrong size of matrix*scalar");
     }
-    if (!(C_col_row(0, 0) == 2 && C_col_row(0, 1) == 4 && C_col_row(0, 2) == 6 &&
-          C_col_row(1, 0) == 8 && C_col_row(1, 1) == 10 && C_col_row(1, 2) == 12)) {
+    if (!(C_row_col_row(0, 0) == 2 && C_row_col_row(0, 1) == 4 && C_row_col_row(0, 2) == 6 &&
+          C_row_col_row(1, 0) == 8 && C_row_col_row(1, 1) == 10 && C_row_col_row(1, 2) == 12)) {
         report_error("Wrong size of matrix*scalar");
     }
 
