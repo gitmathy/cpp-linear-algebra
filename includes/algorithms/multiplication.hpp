@@ -11,7 +11,6 @@
 #define LA_ALGORITHMS_MULTIPLICATION_H
 
 #include "includes/matrix.hpp"
-#include "includes/settings.hpp"
 #include <algorithm>
 #include <vector>
 
@@ -114,6 +113,29 @@ public:
 };
 
 // ===============================================
+// M A T R I X   M E M B E R
+// ===============================================
+
+} // end of namespace algorithm
+
+template <typename T, storage_type StorageT>
+template <typename MatTypeLeft, typename MatTypeRight>
+matrix<T, StorageT> &matrix<T, StorageT>::operator=(
+    const internal::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult)
+{
+    matrix<T, StorageT> temp;
+    if constexpr (StorageT == ROW_WISE) {
+        temp = algorithm::matrix_multiplication_row<T>::multiply(mat_mult.left, mat_mult.right);
+    } else {
+        temp = algorithm::matrix_multiplication_col<T>::multiply(mat_mult.left, mat_mult.right);
+    }
+    *this = std::move(temp);
+    return *this;
+}
+
+namespace algorithm {
+
+// ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
 // ===============================================
 
@@ -166,12 +188,17 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_col(const matrix<T, R
     // Parallelize over the row blocks of the result matrix C
     // execution::par_unseq allows both multi-threading and SIMD vectorization
     auto i_blocks = create_block_indices(M, block_size);
+#ifdef PARALLEL
     std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
+#else
+    std::for_each(i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
+#endif
         // Block-based tiling to keep data within the L1/L2 CPU caches
         for (size_type k_block = 0; k_block < K; k_block += block_size) {
             for (size_type j_block = 0; j_block < N; j_block += block_size) {
 
-                // Calculate the boundaries for the current tile, handling edge cases
+                // Calculate the boundaries for the current tile, handling edge
+                // cases
                 const size_type i_limit = std::min(i_block + block_size, M);
                 const size_type k_limit = std::min(k_block + block_size, K);
                 const size_type j_limit = std::min(j_block + block_size, N);
@@ -180,21 +207,23 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_col(const matrix<T, R
                 for (size_type i = i_block; i < i_limit; ++i) {
                     for (size_type k = k_block; k < k_limit; ++k) {
 
-                        // Access A(i, k): Scalar is reused for the entire 'j' loop below
+                        // Access A(i, k): Scalar is reused for the entire 'j'
+                        // loop below
                         const T temp_a = a_ptr[i * K + k];
 
-                        // Optimization: Pre-calculate pointers for the contiguous row segments
-                        // C is Row-Major, so C(i, j) starts at i * N
+                        // Optimization: Pre-calculate pointers for the contiguous
+                        // row segments C is Row-Major, so C(i, j) starts at i * N
                         T *__restrict c_row = &c_ptr[i * N];
 
-                        // Note: Even though B is COLUMN_WISE in the type, the logic
-                        // treats the k-dimension as contiguous (b_ptr[k * N]).
-                        // This implies the algorithm assumes B is being read like a Row-Major
-                        // matrix.
+                        // Note: Even though B is COLUMN_WISE in the type, the
+                        // logic treats the k-dimension as contiguous (b_ptr[k *
+                        // N]). This implies the algorithm assumes B is being read
+                        // like a Row-Major matrix.
                         const T *__restrict b_row = &b_ptr[k * N];
 
                         // Innermost loop: Contiguous access for both C and B
-                        // This is the primary target for Auto-Vectorization (SIMD)
+                        // This is the primary target for Auto-Vectorization
+                        // (SIMD)
                         for (size_type j = j_block; j < j_limit; ++j) {
                             c_row[j] += temp_a * b_row[j];
                         }
@@ -231,14 +260,19 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_row(const matrix<T, R
     // Parallelize over the row-blocks (i) of C.
     // execution::par_unseq enables both multi-threading and SIMD/Vectorization.
     auto i_blocks = create_block_indices(M, block_size);
+#ifdef PARALLEL
     std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
+#else
+    std::for_each(i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
+#endif
         // 3. CACHE BLOCKING (TILING)
-        // These loops split the large matrices into 'tiles' that fit into the L1/L2 cache.
+        // These loops split the large matrices into 'tiles' that fit into the
+        // L1/L2 cache.
         for (size_type k_block = 0; k_block < K; k_block += block_size) {
             for (size_type j_block = 0; j_block < N; j_block += block_size) {
 
-                // Determine the current tile boundaries, ensuring we don't exceed matrix
-                // dimensions.
+                // Determine the current tile boundaries, ensuring we don't exceed
+                // matrix dimensions.
                 const size_type i_limit = std::min(i_block + block_size, M);
                 const size_type k_limit = std::min(k_block + block_size, K);
                 const size_type j_limit = std::min(j_block + block_size, N);
@@ -247,22 +281,23 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_row(const matrix<T, R
                 for (size_type i = i_block; i < i_limit; ++i) {
                     for (size_type k = k_block; k < k_limit; ++k) {
 
-                        // Access A(i, k): This value is constant for the duration of the 'j' loop.
-                        // Holding it in a register (temp_a) reduces memory traffic.
+                        // Access A(i, k): This value is constant for the duration
+                        // of the 'j' loop. Holding it in a register (temp_a)
+                        // reduces memory traffic.
                         const T temp_a = a_ptr[i * K + k];
 
-                        // Optimization: Pre-calculate the starting pointers for the current row
-                        // segment. Both C and B are being accessed as Row-Major here (stride-1 in
-                        // j).
+                        // Optimization: Pre-calculate the starting pointers for
+                        // the current row segment. Both C and B are being
+                        // accessed as Row-Major here (stride-1 in j).
                         T *__restrict c_row = &c_ptr[i * N];
                         const T *__restrict b_row = &b_ptr[k * N];
 
                         // 5. INNERMOST LOOP (AXPY Operation)
                         // This is the performance "hot spot".
-                        // It updates a row-segment of C by adding a scaled row-segment of B.
-                        // Memory Access: Contiguous Read (B) and Contiguous Read/Write (C).
-                        // This pattern is ideal for CPU Hardware Prefetching and
-                        // Auto-Vectorization.
+                        // It updates a row-segment of C by adding a scaled
+                        // row-segment of B. Memory Access: Contiguous Read (B)
+                        // and Contiguous Read/Write (C). This pattern is ideal
+                        // for CPU Hardware Prefetching and Auto-Vectorization.
                         for (size_type j = j_block; j < j_limit; ++j) {
                             c_row[j] += temp_a * b_row[j];
                         }
@@ -295,7 +330,11 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_row(const matrix<T, C
     // 2. PARALLELIZATION
     // Parallelize over vertical blocks (rows i) of C.
     auto i_blocks = create_block_indices(M, block_size);
+#ifdef PARALLEL
     std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
+#else
+    std::for_each(i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
+#endif
         // 3. CACHE BLOCKING (TILING)
         for (size_type k_block = 0; k_block < K; k_block += block_size) {
             for (size_type j_block = 0; j_block < N; j_block += block_size) {
@@ -325,9 +364,10 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_row(const matrix<T, C
                         T *__restrict c_row_i = &c_ptr[i * N];
 
                         // 5. INNERMOST LOOP (Vectorized Row Update)
-                        // Memory: both c_row_i and b_row_k are accessed as j-segments.
-                        // Since both C and B are ROW_WISE, this is unit-stride access.
-                        // The compiler can easily transform this into SIMD (AVX) instructions.
+                        // Memory: both c_row_i and b_row_k are accessed as
+                        // j-segments. Since both C and B are ROW_WISE, this is
+                        // unit-stride access. The compiler can easily transform
+                        // this into SIMD (AVX) instructions.
                         for (size_type j = j_block; j < j_limit; ++j) {
                             c_row_i[j] += val_a * b_row_k[j];
                         }
@@ -383,8 +423,8 @@ matrix_multiplication_row<T>::mult_col_col_small(const matrix<T, COLUMN_WISE> &A
                         // 4. INNERMOST LOOP (Dot Product)
                         // This loop calculates a partial sum for C(i, j) across the k-block.
                         // Memory Pattern:
-                        // - A(k, i) is at [k * M + i]. Since i is fixed, this is unit-stride over
-                        // k.
+                        // - A(k, i) is at [k * M + i]. Since i is fixed, this is unit-stride
+                        // over k.
                         // - B(k, j) is at b_col_j[k]. This is also unit-stride over k.
                         for (size_type k = k_block; k < std::min(k_block + block_size, K); ++k) {
                             sum += a_ptr[k * M + i] * b_col_j[k];
@@ -423,62 +463,66 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_col_big(const matrix<
     // 2. PARALLELIZATION
     // Parallelize over the rows (i) of C.
     auto i_blocks = create_block_indices(M, block_size);
-    std::for_each(std::execution::par_unseq, i_blocks.begin(), i_blocks.end(),
-                  [&](size_type i_block) {
-                      // 3. L1 CACHE BUFFERING (The "Secret Sauce")
-                      // This buffer lives on the thread's stack (very fast).
-                      // It is used to store a contiguous segment of Row i from Matrix A.
-                      // Since A is Column-Major, Row i is normally strided.
-                      // Collecting it into a buffer makes the inner dot-product unit-stride.
-                      T a_buffer[BLOCK_SIZE];
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
+#else
+    std::for_each(i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
+#endif
+        // 3. L1 CACHE BUFFERING (The "Secret Sauce")
+        // This buffer lives on the thread's stack (very fast).
+        // It is used to store a contiguous segment of Row i from Matrix A.
+        // Since A is Column-Major, Row i is normally strided.
+        // Collecting it into a buffer makes the inner dot-product unit-stride.
+        T a_buffer[BLOCK_SIZE];
 
-                      for (size_type j_block = 0; j_block < N; j_block += block_size) {
-                          for (size_type k_block = 0; k_block < K; k_block += block_size) {
+        for (size_type j_block = 0; j_block < N; j_block += block_size) {
+            for (size_type k_block = 0; k_block < K; k_block += block_size) {
 
-                              // Determine current tile boundaries
-                              const size_type i_limit = std::min(i_block + block_size, M);
-                              const size_type j_limit = std::min(j_block + block_size, N);
-                              const size_type k_limit = std::min(k_block + block_size, K);
-                              const size_type k_len = k_limit - k_block;
+                // Determine current tile boundaries
+                const size_type i_limit = std::min(i_block + block_size, M);
+                const size_type j_limit = std::min(j_block + block_size, N);
+                const size_type k_limit = std::min(k_block + block_size, K);
+                const size_type k_len = k_limit - k_block;
 
-                              // 4. MICRO-KERNEL START
-                              for (size_type i = i_block; i < i_limit; ++i) {
+                // 4. MICRO-KERNEL START
+                for (size_type i = i_block; i < i_limit; ++i) {
 
-                                  // --- STEP A: PACKING ---
-                                  // Gather elements of A(i, k) for the current k-block.
-                                  // A is Col-Major, so we jump by M to get the next k.
-                                  // After this loop, a_buffer contains a contiguous segment of Row
-                                  // i.
-                                  for (size_type k = 0; k < k_len; ++k) {
-                                      a_buffer[k] = a_ptr[(k_block + k) * M + i];
-                                  }
+                    // --- STEP A: PACKING ---
+                    // Gather elements of A(i, k) for the current k-block.
+                    // A is Col-Major, so we jump by M to get the next k.
+                    // After this loop, a_buffer contains a contiguous segment of
+                    // Row i.
+                    for (size_type k = 0; k < k_len; ++k) {
+                        a_buffer[k] = a_ptr[(k_block + k) * M + i];
+                    }
 
-                                  // Optimization: Locate Row i in Row-Major C
-                                  T *__restrict c_row = &c_ptr[i * N];
+                    // Optimization: Locate Row i in Row-Major C
+                    T *__restrict c_row = &c_ptr[i * N];
 
-                                  for (size_type j = j_block; j < j_limit; ++j) {
-                                      // --- STEP B: CONTIGUOUS DOT PRODUCT ---
-                                      // B is Col-Major, so Column j is already contiguous over k.
-                                      const T *__restrict b_col_j = &b_ptr[j * K + k_block];
-                                      T sum = 0;
+                    for (size_type j = j_block; j < j_limit; ++j) {
+                        // --- STEP B: CONTIGUOUS DOT PRODUCT ---
+                        // B is Col-Major, so Column j is already contiguous over
+                        // k.
+                        const T *__restrict b_col_j = &b_ptr[j * K + k_block];
+                        T sum = 0;
 
-                                      // BOTH a_buffer and b_col_j are now unit-stride (stride-1).
-                                      // This allows the compiler to use FMA (Fused Multiply-Add)
-                                      // and AVX vector instructions perfectly.
-                                      for (size_type k_sub = 0; k_sub < k_len; ++k_sub) {
-                                          sum += a_buffer[k_sub] * b_col_j[k_sub];
-                                      }
+                        // BOTH a_buffer and b_col_j are now unit-stride
+                        // (stride-1). This allows the compiler to use FMA (Fused
+                        // Multiply-Add) and AVX vector instructions perfectly.
+                        for (size_type k_sub = 0; k_sub < k_len; ++k_sub) {
+                            sum += a_buffer[k_sub] * b_col_j[k_sub];
+                        }
 
-                                      // --- STEP C: SELECTIVE ACCUMULATION ---
-                                      if (k_block == 0)
-                                          c_row[j] = sum;
-                                      else
-                                          c_row[j] += sum;
-                                  }
-                              }
-                          }
-                      }
-                  });
+                        // --- STEP C: SELECTIVE ACCUMULATION ---
+                        if (k_block == 0)
+                            c_row[j] = sum;
+                        else
+                            c_row[j] += sum;
+                    }
+                }
+            }
+        }
+    });
     return C;
 }
 
@@ -521,7 +565,11 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_col(const matrix<T
     // Parallelizing over 'j' (columns of C) is ideal for Column-Major storage.
     // Each thread works on a contiguous, independent vertical slice of memory.
     auto j_blocks = create_block_indices(N, BLOCK_SIZE);
+#ifdef PARALLEL
     std::for_each(execution::par_unseq, j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
+#else
+    std::for_each(j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
+#endif
         // 3. CACHE BLOCKING (TILING)
         for (size_type i_block = 0; i_block < M; i_block += BLOCK_SIZE) {
             for (size_type k_block = 0; k_block < K; k_block += BLOCK_SIZE) {
@@ -534,12 +582,14 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_col(const matrix<T
                 for (size_type j = j_block; j < j_limit; ++j) {
 
                     // Optimization: Pre-locate the specific column j in C and B.
-                    // Both C and B are COLUMN_WISE, so column j is a contiguous array.
+                    // Both C and B are COLUMN_WISE, so column j is a contiguous
+                    // array.
                     T *__restrict c_col_j = &c_ptr[j * M];
                     const T *__restrict b_col_j = &b_ptr[j * K];
 
                     for (size_type i = i_block; i < i_limit; ++i) {
-                        // Local accumulation register to minimize memory writes to C
+                        // Local accumulation register to minimize memory writes
+                        // to C
                         T sum = 0;
 
                         // Optimization: Pre-locate row i of A.
@@ -551,13 +601,15 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_col(const matrix<T
                         // Memory:
                         // - a_row_i[k] accesses memory linearly (stride-1).
                         // - b_col_j[k] accesses memory linearly (stride-1).
-                        // This allows the CPU to use the maximum memory bandwidth and SIMD units.
+                        // This allows the CPU to use the maximum memory bandwidth
+                        // and SIMD units.
                         for (size_type k = k_block; k < k_limit; ++k) {
                             sum += a_row_i[k] * b_col_j[k];
                         }
 
                         // Update the Column-Major result.
-                        // Note: i is the inner loop dimension for j, matching C's layout.
+                        // Note: i is the inner loop dimension for j, matching C's
+                        // layout.
                         c_col_j[i] += sum;
                     }
                 }
@@ -586,10 +638,15 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_row(const matrix<T
     // Parallelizing over j (columns of C) ensures each thread works on
     // a separate, contiguous memory block in Column-Major storage.
     auto j_blocks = create_block_indices(N, block_size);
+#ifdef PARALLEL
     std::for_each(execution::par_unseq, j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
+#else
+    std::for_each(j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
+#endif
         // 3. L1 CACHE BUFFER (The "Packing" Buffer)
         // This stack-allocated buffer stores a contiguous segment of B's column.
-        // This turns a strided read (from Row-Major B) into a unit-stride read for the dot-product.
+        // This turns a strided read (from Row-Major B) into a unit-stride read
+        // for the dot-product.
         T b_buffer[BLOCK_SIZE];
 
         for (size_type i_block = 0; i_block < M; i_block += block_size) {
@@ -605,7 +662,8 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_row(const matrix<T
 
                     // --- STEP A: PACKING ---
                     // B is Row-Major, so B(k, j) is at [k * N + j].
-                    // Moving from k to k+1 jumps N elements. We gather these into b_buffer.
+                    // Moving from k to k+1 jumps N elements. We gather these into
+                    // b_buffer.
                     for (size_type k = 0; k < k_len; ++k) {
                         b_buffer[k] = b_ptr[(k_block + k) * N + j];
                     }
@@ -614,16 +672,17 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_row(const matrix<T
                     T *__restrict c_col_j = &c_ptr[j * M];
 
                     for (size_type i = i_block; i < i_limit; ++i) {
-                        // Accumulation register to minimize memory write-back traffic.
+                        // Accumulation register to minimize memory write-back
+                        // traffic.
                         T sum = 0;
 
                         // A is Row-Major, so Row i is contiguous over k.
                         const T *__restrict a_row_i = &a_ptr[i * K + k_block];
 
                         // --- STEP B: VECTORIZED DOT PRODUCT ---
-                        // Both a_row_i and b_buffer are now contiguous in memory (stride-1).
-                        // This allows the CPU's SIMD units to perform 4-8 multiplications per
-                        // cycle.
+                        // Both a_row_i and b_buffer are now contiguous in memory
+                        // (stride-1). This allows the CPU's SIMD units to perform
+                        // 4-8 multiplications per cycle.
                         for (size_type k = 0; k < k_len; ++k) {
                             sum += a_row_i[k] * b_buffer[k];
                         }
@@ -655,7 +714,11 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_col(const matrix<T
     // Parallelizing over j (columns of C) ensures that threads never write to the
     // same memory addresses, eliminating the need for atomics or mutexes.
     auto j_blocks = create_block_indices(N, BLOCK_SIZE);
+#ifdef PARALLEL
     std::for_each(execution::par_unseq, j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
+#else
+    std::for_each(j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
+#endif
         // 3. L1 CACHE BUFFER (Temporal Locality)
         // b_buffer holds a small segment of column j from Matrix B.
         // Even though B is already Column-Major, buffering these K-elements
@@ -675,7 +738,8 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_col(const matrix<T
 
                     // --- STEP A: BUFFERING B ---
                     // B is Column-Major, so B(k, j) is contiguous over k.
-                    // We pull a k-segment into a buffer to reuse it across the i-block.
+                    // We pull a k-segment into a buffer to reuse it across the
+                    // i-block.
                     for (size_type k = 0; k < k_len; ++k)
                         b_buffer[k] = b_ptr[j * K + (k_block + k)];
 
@@ -684,16 +748,19 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_col(const matrix<T
 
                     // --- STEP B: AXPY OPERATION (Rank-1 Update) ---
                     for (size_type k = 0; k < k_len; ++k) {
-                        // val_b is the scalar multiplier for the entire column segment of A.
+                        // val_b is the scalar multiplier for the entire column
+                        // segment of A.
                         const T val_b = b_buffer[k];
                         // A is Column-Major, so column k is contiguous over i.
                         const T *__restrict a_col = &a_ptr[(k_block + k) * M];
 
                         // 5. INNERMOST LOOP (The Hot Spot)
-                        // Both C (destination) and A (source) are accessed linearly (stride-1).
-                        // This is the "Gold Standard" for performance:
+                        // Both C (destination) and A (source) are accessed
+                        // linearly (stride-1). This is the "Gold Standard" for
+                        // performance:
                         // 1. Easy for the CPU to prefetch.
-                        // 2. Ideal for the compiler to use FMA and AVX SIMD instructions.
+                        // 2. Ideal for the compiler to use FMA and AVX SIMD
+                        // instructions.
                         for (size_type i = i_block; i < i_limit; ++i) {
                             c_col[i] += a_col[i] * val_b;
                         }
@@ -724,7 +791,11 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_row(const matrix<T
     // Parallelizing over j (columns of C) ensures that threads own distinct
     // memory segments, preventing "False Sharing" and race conditions.
     auto j_blocks = create_block_indices(N, BLOCK_SIZE);
+#ifdef PARALLEL
     std::for_each(execution::par_unseq, j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
+#else
+    std::for_each(j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
+#endif
         // 3. CACHE BLOCKING (TILING)
         // These loops break the computation into tiles that fit into L1/L2 cache.
         for (size_type k_block = 0; k_block < K; k_block += BLOCK_SIZE) {
@@ -737,21 +808,24 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_row(const matrix<T
                 // 4. MICRO-KERNEL START
                 for (size_type j = j_block; j < j_limit; ++j) {
 
-                    // Optimization: Locate the current target column j in the result matrix C.
+                    // Optimization: Locate the current target column j in the
+                    // result matrix C.
                     T *__restrict c_col = &c_ptr[j * M];
 
                     for (size_type k = k_block; k < k_limit; ++k) {
 
                         // B is Row-Major, so B(k, j) is at [k * N + j].
-                        // This scalar remains constant for the entire innermost 'i' loop.
+                        // This scalar remains constant for the entire innermost
+                        // 'i' loop.
                         const T val_b = b_ptr[k * N + j];
 
-                        // A is Column-Major, so column k is a contiguous array over 'i'.
+                        // A is Column-Major, so column k is a contiguous array
+                        // over 'i'.
                         const T *__restrict a_col = &a_ptr[k * M];
 
                         // 5. INNERMOST LOOP (AXPY Operation)
-                        // Both C (destination) and A (source) are accessed with unit-stride
-                        // (stride-1). This is the ideal pattern for:
+                        // Both C (destination) and A (source) are accessed with
+                        // unit-stride (stride-1). This is the ideal pattern for:
                         // - SIMD (AVX/AVX-512) vectorization.
                         // - CPU Hardware Prefetching.
                         // - Maximum memory bandwidth utilization.
