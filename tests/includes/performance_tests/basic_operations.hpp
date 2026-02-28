@@ -181,13 +181,13 @@ protected:
     inline void run_single_test() override
     {
         if constexpr (StorageLeftT == ROW_WISE && StorageRightT == COLUMN_WISE) {
-            p_C_col = algorithm::matrix_multiplication_col<double>::multiply(p_A_row, p_B_col);
+            p_C_col = p_A_row * p_B_col;
         } else if constexpr (StorageLeftT == ROW_WISE && StorageRightT == ROW_WISE) {
-            p_C_col = algorithm::matrix_multiplication_col<double>::multiply(p_A_row, p_B_row);
+            p_C_col = p_A_row * p_B_row;
         } else if constexpr (StorageLeftT == COLUMN_WISE && StorageRightT == ROW_WISE) {
-            p_C_col = algorithm::matrix_multiplication_col<double>::multiply(p_A_col, p_B_row);
+            p_C_col = p_A_col * p_B_row;
         } else {
-            p_C_col = algorithm::matrix_multiplication_col<double>::multiply(p_A_col, p_B_col);
+            p_C_col = p_A_col * p_B_col;
         }
     }
 
