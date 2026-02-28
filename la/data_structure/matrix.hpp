@@ -243,9 +243,9 @@ public:
 template <typename T, storage_type StorageT>
 std::ostream &operator<<(std::ostream &os, const matrix<T, StorageT> &mat);
 
-/// ===============================================
-/// T E M P L A T E   I M P L E M E N T A T I O N S
-/// ===============================================
+// ===============================================
+// T E M P L A T E   I M P L E M E N T A T I O N S
+// ===============================================
 
 template <typename T, storage_type StorageT>
 void matrix<T, StorageT>::allocate(size_type m, size_type n)

@@ -7,12 +7,16 @@
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_ALGORITHMS_DECOMPOSITION_H
-#define LA_ALGORITHMS_DECOMPOSITION_H
+#ifndef LA_ALGORITHM_LU_DECOMPOSITION_HPP
+#define LA_ALGORITHM_LU_DECOMPOSITION_HPP
 
-#include "includes/assert.hpp"
-#include "includes/matrix.hpp"
-#include "includes/vector.hpp"
+#include "la/data_structure/matrix.hpp"
+#include "la/data_structure/vector.hpp"
+#include "la/util/constants.hpp"
+#include "la/util/error.hpp"
+#include "la/util/types.hpp"
+#include <algorithm>
+#include <ranges>
 
 namespace la {
 namespace algorithm {
@@ -26,9 +30,6 @@ private:
 
     /// @brief Permutation
     vector<size_type> p_p;
-
-    /// @brief Decompose the matrix p_a and determine permutation
-    void decompose();
 
 public:
     /// @brief Decompose the matrix A
@@ -46,6 +47,9 @@ public:
     /// @param rhs right hand side
     /// @return A^-1*rhs
     vector<T> solve(const vector<T> &rhs);
+
+    /// @brief Decompose the matrix p_a and determine permutation
+    void decompose();
 };
 
 /// ===============================================
@@ -64,7 +68,7 @@ void lu_decomposition<T, StorageT>::decompose()
 {
     const size_type n = p_a.rows();
     if (n != p_a.cols()) {
-        throw error("No LU decomposition for rectangular matrices", "algorithm:lup");
+        throw util::error("No LU decomposition for rectangular matrices", "algorithm:lup");
     }
     // Initialize permutation
     auto my_iota = std::views::iota(size_type(0), p_a.rows());
@@ -88,8 +92,8 @@ void lu_decomposition<T, StorageT>::decompose()
         }
 
         // Check if the matrix is not irregular
-        if (max_val < LA_EPS) {
-            throw error("No LU decomposition for irregular matrices", "algorithm:lup");
+        if (max_val < util::EPS) {
+            throw util::error("No LU decomposition for irregular matrices", "algorithm:lup");
         }
 
         // 2. Swap permutation
@@ -113,7 +117,7 @@ void lu_decomposition<T, StorageT>::solve(vector<T> &x, const vector<T> &rhs)
 {
     const size_type n = p_a.rows();
     if (n != rhs.rows()) {
-        throw error("rhs of wrong size", "algorithm:lup");
+        throw util::error("rhs of wrong size", "algorithm:lup");
     }
     if (x.rows() != n) {
         x.allocate(n);

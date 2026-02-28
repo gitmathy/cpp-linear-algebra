@@ -70,6 +70,10 @@ auto operator+(const matrix<T, StorageLeft> &left, const T &right);
 template <typename T, storage_type StorageRight>
 auto operator+(const T &left, const matrix<T, StorageRight> &right);
 
+// ===============================================
+// T E M P L A T E   I M P L E M E N T A T I O N S
+// ===============================================
+
 /// @brief vector + vector
 template <typename T>
 auto operator+(const vector<T> &left, const vector<T> &right)

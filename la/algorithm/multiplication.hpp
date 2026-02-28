@@ -7,17 +7,17 @@
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_ALGORITHMS_MULTIPLICATION_H
-#define LA_ALGORITHMS_MULTIPLICATION_H
+#ifndef LA_ALGORITHM_MULTIPLICATION_HPP
+#define LA_ALGORITHM_MULTIPLICATION_HPP
 
-#include "includes/matrix.hpp"
+#include "la/data_structure/matrix.hpp"
+#include "la/util/constants.hpp"
+#include "la/util/types.hpp"
 #include <algorithm>
 #include <vector>
 
 namespace la {
 namespace algorithm {
-
-inline constexpr size_type BLOCK_SIZE = size_type(64);
 
 /// @brief Helper function to create an index vector used for the execution policy
 inline std::vector<size_type> create_block_indices(size_type total, size_type block_size)
@@ -121,7 +121,7 @@ public:
 template <typename T, storage_type StorageT>
 template <typename MatTypeLeft, typename MatTypeRight>
 matrix<T, StorageT> &matrix<T, StorageT>::operator=(
-    const internal::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult)
+    const expressions::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult)
 {
     matrix<T, StorageT> temp;
     if constexpr (StorageT == ROW_WISE) {
@@ -182,8 +182,8 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_col(const matrix<T, R
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
 
-    const size_type block_size = BLOCK_SIZE;
-    static_assert(BLOCK_SIZE <= 256, "BLOCK_SIZE too large for stack buffer");
+    const size_type block_size = util::BLOCK_SIZE;
+    static_assert(util::BLOCK_SIZE <= 256, "util::BLOCK_SIZE too large for stack buffer");
 
     // Parallelize over the row blocks of the result matrix C
     // execution::par_unseq allows both multi-threading and SIMD vectorization
@@ -253,8 +253,8 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_row(const matrix<T, R
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
 
-    const size_type block_size = BLOCK_SIZE;
-    static_assert(BLOCK_SIZE <= 256, "BLOCK_SIZE too large for stack buffer");
+    const size_type block_size = util::BLOCK_SIZE;
+    static_assert(util::BLOCK_SIZE <= 256, "util::BLOCK_SIZE too large for stack buffer");
 
     // 2. PARALLELIZATION
     // Parallelize over the row-blocks (i) of C.
@@ -324,8 +324,8 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_row(const matrix<T, C
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
 
-    const size_type block_size = BLOCK_SIZE;
-    static_assert(BLOCK_SIZE <= 256, "BLOCK_SIZE too large for stack buffer");
+    const size_type block_size = util::BLOCK_SIZE;
+    static_assert(util::BLOCK_SIZE <= 256, "util::BLOCK_SIZE too large for stack buffer");
 
     // 2. PARALLELIZATION
     // Parallelize over vertical blocks (rows i) of C.
@@ -396,8 +396,8 @@ matrix_multiplication_row<T>::mult_col_col_small(const matrix<T, COLUMN_WISE> &A
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
 
-    const size_type block_size = BLOCK_SIZE;
-    static_assert(BLOCK_SIZE <= 256, "BLOCK_SIZE too large for stack buffer");
+    const size_type block_size = util::BLOCK_SIZE;
+    static_assert(util::BLOCK_SIZE <= 256, "util::BLOCK_SIZE too large for stack buffer");
 
     // 2. SIX-LEVEL NESTED LOOP (Tiling + Computation)
     // The first three loops handle the "Blocks" or "Tiles".
@@ -457,8 +457,8 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_col_big(const matrix<
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
 
-    const size_type block_size = BLOCK_SIZE;
-    static_assert(BLOCK_SIZE <= 256, "BLOCK_SIZE too large for stack buffer");
+    const size_type block_size = util::BLOCK_SIZE;
+    static_assert(util::BLOCK_SIZE <= 256, "util::BLOCK_SIZE too large for stack buffer");
 
     // 2. PARALLELIZATION
     // Parallelize over the rows (i) of C.
@@ -473,7 +473,7 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_col_big(const matrix<
         // It is used to store a contiguous segment of Row i from Matrix A.
         // Since A is Column-Major, Row i is normally strided.
         // Collecting it into a buffer makes the inner dot-product unit-stride.
-        T a_buffer[BLOCK_SIZE];
+        T a_buffer[util::BLOCK_SIZE];
 
         for (size_type j_block = 0; j_block < N; j_block += block_size) {
             for (size_type k_block = 0; k_block < K; k_block += block_size) {
@@ -564,19 +564,19 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_col(const matrix<T
     // 2. PARALLELIZATION (Outer Dimension)
     // Parallelizing over 'j' (columns of C) is ideal for Column-Major storage.
     // Each thread works on a contiguous, independent vertical slice of memory.
-    auto j_blocks = create_block_indices(N, BLOCK_SIZE);
+    auto j_blocks = create_block_indices(N, util::BLOCK_SIZE);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
 #else
     std::for_each(j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
 #endif
         // 3. CACHE BLOCKING (TILING)
-        for (size_type i_block = 0; i_block < M; i_block += BLOCK_SIZE) {
-            for (size_type k_block = 0; k_block < K; k_block += BLOCK_SIZE) {
+        for (size_type i_block = 0; i_block < M; i_block += util::BLOCK_SIZE) {
+            for (size_type k_block = 0; k_block < K; k_block += util::BLOCK_SIZE) {
 
-                const size_type j_limit = std::min(j_block + BLOCK_SIZE, N);
-                const size_type i_limit = std::min(i_block + BLOCK_SIZE, M);
-                const size_type k_limit = std::min(k_block + BLOCK_SIZE, K);
+                const size_type j_limit = std::min(j_block + util::BLOCK_SIZE, N);
+                const size_type i_limit = std::min(i_block + util::BLOCK_SIZE, M);
+                const size_type k_limit = std::min(k_block + util::BLOCK_SIZE, K);
 
                 // 4. MICRO-KERNEL START
                 for (size_type j = j_block; j < j_limit; ++j) {
@@ -632,7 +632,7 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_row(const matrix<T
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
 
-    const size_type block_size = BLOCK_SIZE;
+    const size_type block_size = util::BLOCK_SIZE;
 
     // 2. PARALLELIZATION (Outer Dimension)
     // Parallelizing over j (columns of C) ensures each thread works on
@@ -647,7 +647,7 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_row(const matrix<T
         // This stack-allocated buffer stores a contiguous segment of B's column.
         // This turns a strided read (from Row-Major B) into a unit-stride read
         // for the dot-product.
-        T b_buffer[BLOCK_SIZE];
+        T b_buffer[util::BLOCK_SIZE];
 
         for (size_type i_block = 0; i_block < M; i_block += block_size) {
             for (size_type k_block = 0; k_block < K; k_block += block_size) {
@@ -713,7 +713,7 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_col(const matrix<T
     // 2. PARALLELIZATION
     // Parallelizing over j (columns of C) ensures that threads never write to the
     // same memory addresses, eliminating the need for atomics or mutexes.
-    auto j_blocks = create_block_indices(N, BLOCK_SIZE);
+    auto j_blocks = create_block_indices(N, util::BLOCK_SIZE);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
 #else
@@ -723,14 +723,14 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_col(const matrix<T
         // b_buffer holds a small segment of column j from Matrix B.
         // Even though B is already Column-Major, buffering these K-elements
         // ensures they stay in L1 cache during the entire i-block iteration.
-        T b_buffer[BLOCK_SIZE];
+        T b_buffer[util::BLOCK_SIZE];
 
-        for (size_type k_block = 0; k_block < K; k_block += BLOCK_SIZE) {
-            for (size_type i_block = 0; i_block < M; i_block += BLOCK_SIZE) {
+        for (size_type k_block = 0; k_block < K; k_block += util::BLOCK_SIZE) {
+            for (size_type i_block = 0; i_block < M; i_block += util::BLOCK_SIZE) {
 
-                const size_type j_limit = std::min(j_block + BLOCK_SIZE, N);
-                const size_type k_limit = std::min(k_block + BLOCK_SIZE, K);
-                const size_type i_limit = std::min(i_block + BLOCK_SIZE, M);
+                const size_type j_limit = std::min(j_block + util::BLOCK_SIZE, N);
+                const size_type k_limit = std::min(k_block + util::BLOCK_SIZE, K);
+                const size_type i_limit = std::min(i_block + util::BLOCK_SIZE, M);
                 const size_type k_len = k_limit - k_block;
 
                 // 4. MICRO-KERNEL
@@ -790,7 +790,7 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_row(const matrix<T
     // 2. PARALLELIZATION
     // Parallelizing over j (columns of C) ensures that threads own distinct
     // memory segments, preventing "False Sharing" and race conditions.
-    auto j_blocks = create_block_indices(N, BLOCK_SIZE);
+    auto j_blocks = create_block_indices(N, util::BLOCK_SIZE);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
 #else
@@ -798,12 +798,12 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_row(const matrix<T
 #endif
         // 3. CACHE BLOCKING (TILING)
         // These loops break the computation into tiles that fit into L1/L2 cache.
-        for (size_type k_block = 0; k_block < K; k_block += BLOCK_SIZE) {
-            for (size_type i_block = 0; i_block < M; i_block += BLOCK_SIZE) {
+        for (size_type k_block = 0; k_block < K; k_block += util::BLOCK_SIZE) {
+            for (size_type i_block = 0; i_block < M; i_block += util::BLOCK_SIZE) {
 
-                const size_type j_limit = std::min(j_block + BLOCK_SIZE, N);
-                const size_type k_limit = std::min(k_block + BLOCK_SIZE, K);
-                const size_type i_limit = std::min(i_block + BLOCK_SIZE, M);
+                const size_type j_limit = std::min(j_block + util::BLOCK_SIZE, N);
+                const size_type k_limit = std::min(k_block + util::BLOCK_SIZE, K);
+                const size_type i_limit = std::min(i_block + util::BLOCK_SIZE, M);
 
                 // 4. MICRO-KERNEL START
                 for (size_type j = j_block; j < j_limit; ++j) {
