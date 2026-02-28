@@ -1,6 +1,6 @@
 #include "tests/includes/unit_tests/test_copy_ctor.hpp"
-#include "includes/matrix.hpp"
-#include "includes/vector.hpp"
+#include "la/dense"
+#include "la/util/constants.hpp"
 
 namespace la {
 namespace test {
@@ -15,8 +15,9 @@ int vector_copy_ctor_test::execute()
     if (dst.rows() != src.rows())
         report_error("Copy-constructed vector has incorrect size");
     for (la::size_type i = 0; i < dst.rows(); ++i) {
-        if (std::abs(dst(i) - src(i)) > LA_EPS)
+        if (std::abs(dst(i) - src(i)) > util::EPS) {
             report_error("Copy-constructed vector has incorrect value");
+        }
     }
 
     return (int)errors().size();
@@ -31,11 +32,13 @@ int matrix_copy_ctor_test::execute()
     src(1, 1) = 4.0f;
 
     la::matrix<float> dst(src);
-    if (dst.rows() != src.rows() || dst.cols() != src.cols())
+    if (dst.rows() != src.rows() || dst.cols() != src.cols()) {
         report_error("Copy-constructed matrix has incorrect size");
+    }
 
-    if (std::abs(dst(1, 1) - src(1, 1)) > LA_EPS)
+    if (std::abs(dst(1, 1) - src(1, 1)) > util::EPS) {
         report_error("Copy-constructed matrix has incorrect values");
+    }
 
     return (int)errors().size();
 }

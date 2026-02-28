@@ -1,7 +1,5 @@
 #include "tests/includes/unit_tests/test_iterator.hpp"
-#include "includes/matrix.hpp"
-#include "includes/types.hpp"
-#include "includes/vector.hpp"
+#include "la/dense"
 #include <numeric>
 
 namespace la {

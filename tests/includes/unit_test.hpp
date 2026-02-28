@@ -1,7 +1,7 @@
 #ifndef LA_TEST_UNIT_TEST_H
 #define LA_TEST_UNIT_TEST_H
 
-#include "includes/settings.hpp"
+#include "la/util/constants.hpp"
 #include "tests/includes/base_test.hpp"
 #include <list>
 
@@ -49,7 +49,7 @@ template <typename la_struct>
 inline bool check_values(const la_struct &x, const typename la_struct::value_type &value)
 {
     for (auto it = x.begin(); it != x.end(); ++it) {
-        if ((*it - value) > LA_EPS) {
+        if ((*it - value) > util::EPS) {
             return false;
         }
     }

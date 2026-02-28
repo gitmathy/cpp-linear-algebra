@@ -1,9 +1,7 @@
 #ifndef LA_TEST_DECOMPOSE_H
 #define LA_TEST_DECOMPOSE_H
 
-#include "includes/algorithms/decompositions.hpp"
-#include "includes/matrix.hpp"
-#include "includes/vector.hpp"
+#include "la/dense"
 #include "tests/includes/performance_test.hpp"
 
 namespace la {

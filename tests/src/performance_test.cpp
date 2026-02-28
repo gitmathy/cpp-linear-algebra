@@ -1,5 +1,5 @@
 #include "tests/includes/performance_test.hpp"
-#include "includes/assert.hpp"
+#include <numeric>
 
 namespace la {
 namespace test {

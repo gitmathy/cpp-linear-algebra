@@ -1,10 +1,7 @@
 #ifndef LA_TEST_ADD_TEST_H
 #define LA_TEST_ADD_TEST_H
 
-#include "includes/algorithms/multiplication.hpp"
-#include "includes/la.hpp"
-#include "includes/matrix.hpp"
-#include "includes/vector.hpp"
+#include "la/dense"
 #include "tests/includes/performance_test.hpp"
 
 namespace la {

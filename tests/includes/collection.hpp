@@ -1,9 +1,8 @@
 #ifndef LA_TEST_TEST_COLLECTION_H
 #define LA_TEST_TEST_COLLECTION_H
 
-#include "includes/types.hpp"
+#include "la/util/types.hpp"
 #include "tests/includes/base_test.hpp"
-#include "tests/includes/log.hpp"
 #include "tests/includes/samples.hpp"
 #include <list>
 #include <memory>

@@ -19,7 +19,7 @@ namespace la {
 
 /// @brief p-norm of a vector or matrix.
 /// @return ||x||_p
-template <unsigned int p = 2, typename la_type>
+template <size_type p = 2, typename la_type>
 typename la_type::value_type norm(const la_type &x);
 
 // ===============================================
@@ -27,7 +27,7 @@ typename la_type::value_type norm(const la_type &x);
 // ===============================================
 
 // Some performance improvements for different common norms such as 1-, 2-, and max-norm.
-template <unsigned int p, typename la_type>
+template <size_type p, typename la_type>
 typename la_type::value_type norm(const la_type &x)
 {
     typedef typename la_type::value_type T;

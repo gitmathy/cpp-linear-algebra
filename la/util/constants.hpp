@@ -11,11 +11,12 @@
 #define LA_UTIL_CONSTANTS_H
 
 #include "la/util/types.hpp"
+#include <limits>
 
 namespace la {
 
 /// @brief Used for undefined size_types
-inline constexpr size_type SIZE_TYPE_MAX = size_type(-1);
+inline constexpr size_type SIZE_TYPE_MAX = std::numeric_limits<size_type>::max();
 
 // constants only used internally
 namespace util {

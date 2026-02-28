@@ -1,15 +1,12 @@
 #ifndef LA_TEST_PERFORMANCE_TEST_H
 #define LA_TEST_PERFORMANCE_TEST_H
 
-#include "includes/matrix.hpp"
-#include "includes/types.hpp"
-#include "includes/vector.hpp"
+#include "la/dense"
 #include "tests/includes/base_test.hpp"
 #include "tests/includes/samples.hpp"
 #include "tests/includes/timing.hpp"
 #include <list>
 #include <memory>
-#include <numeric>
 
 namespace la {
 namespace test {

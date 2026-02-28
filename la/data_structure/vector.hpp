@@ -10,6 +10,7 @@
 #ifndef LA_VECTOR_H
 #define LA_VECTOR_H
 
+#include "la/data_structure/expressions/forward.hpp"
 #include "la/util/memory.hpp"
 #include "la/util/types.hpp"
 #include <algorithm>
@@ -18,13 +19,6 @@
 #include <ranges>
 
 namespace la {
-
-namespace internal {
-/// @brief Forward declaration to not include internals
-/// @tparam ExpressionT
-template <typename ExpressionT>
-class operant;
-} // namespace internal
 
 /// @brief Defining a vector used for numerical computations. All elements are stored in a plain
 /// array
@@ -74,7 +68,7 @@ public:
     /// Every element is set to the evaluated element, i.e., x(i) = exp.evaluate(i). This is
     /// used when writing code like x = y+z;
     template <typename ExpressionT>
-    vector(const internal::operant<ExpressionT> &exp);
+    vector(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Destructing a vector
     ~vector() { util::deallocate_aligned(p_vals); }
@@ -125,7 +119,7 @@ public:
 
     /// @brief Assign from expression
     template <typename ExpressionT>
-    vector<T> &operator=(const internal::operant<ExpressionT> &exp);
+    vector<T> &operator=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Assign from initializer list
     vector<T> &operator=(const std::initializer_list<T> &init_list);
@@ -135,7 +129,7 @@ public:
 
     /// @brief Add from another expression
     template <typename ExpressionT>
-    vector<T> &operator+=(const internal::operant<ExpressionT> &exp);
+    vector<T> &operator+=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Multiply with a scalar
     vector<T> &operator*=(const T &rhs);
@@ -145,14 +139,14 @@ public:
 
     /// @brief Multiply (element wise) from another expression
     template <typename ExpressionT>
-    vector<T> &operator*=(const internal::operant<ExpressionT> &exp);
+    vector<T> &operator*=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Substract another vector
     vector<T> &operator-=(const vector<T> &rhs);
 
     /// @brief subtract from another expression
     template <typename ExpressionT>
-    vector<T> &operator-=(const internal::operant<ExpressionT> &exp);
+    vector<T> &operator-=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Apply a function to every entry, i.e., x(i)=func(x(i))
     /// @tparam function, supports func(T)
@@ -214,7 +208,7 @@ vector<T>::vector(const vector<T> &rhs) : p_vals(nullptr), p_size(0)
 
 template <typename T>
 template <typename ExpressionT>
-vector<T>::vector(const internal::operant<ExpressionT> &exp) : p_vals(nullptr), p_size(0)
+vector<T>::vector(const expressions::operant<ExpressionT> &exp) : p_vals(nullptr), p_size(0)
 {
     *this = exp;
 }
@@ -275,7 +269,7 @@ vector<T> &vector<T>::operator=(vector<T> &&rhs) noexcept
 
 template <typename T>
 template <typename ExpressionT>
-vector<T> &vector<T>::operator=(const internal::operant<ExpressionT> &exp)
+vector<T> &vector<T>::operator=(const expressions::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(exp.cols() == 1, "Invalid shape for vector = operant (2d)");
     const size_type n = exp.rows();
@@ -327,7 +321,7 @@ vector<T> &vector<T>::operator+=(const vector<T> &rhs)
 
 template <typename T>
 template <typename ExpressionT>
-vector<T> &vector<T>::operator+=(const internal::operant<ExpressionT> &exp)
+vector<T> &vector<T>::operator+=(const expressions::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(rows() == exp.rows() && cols() == exp.cols(),
                  "Invalid shape for vector += operant");
@@ -373,7 +367,7 @@ vector<T> &vector<T>::operator*=(const vector<T> &rhs)
 
 template <typename T>
 template <typename ExpressionT>
-vector<T> &vector<T>::operator*=(const internal::operant<ExpressionT> &exp)
+vector<T> &vector<T>::operator*=(const expressions::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(rows() == exp.rows() && cols() == exp.cols(),
                  "Invalid shape for vector *= operant");
@@ -405,7 +399,7 @@ vector<T> &vector<T>::operator-=(const vector<T> &rhs)
 
 template <typename T>
 template <typename ExpressionT>
-vector<T> &vector<T>::operator-=(const internal::operant<ExpressionT> &exp)
+vector<T> &vector<T>::operator-=(const expressions::operant<ExpressionT> &exp)
 {
     SHAPE_ASSERT(rows() == exp.rows() && cols() == exp.cols(),
                  "Invalid shape for vector -= operant");
