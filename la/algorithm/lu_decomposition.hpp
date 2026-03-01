@@ -15,6 +15,7 @@
 #include "la/util/block_helper.hpp"
 #include "la/util/constants.hpp"
 #include "la/util/error.hpp"
+#include "la/util/macros.hpp"
 #include "la/util/types.hpp"
 #include <algorithm>
 #include <ranges>
@@ -80,6 +81,8 @@ template <storage_type MatStorageT>
 lu_decomposition<T, StorageT>::lu_decomposition(const matrix<T, MatStorageT> &A)
     : p_lu(0, 0), p_p(0)
 {
+    LOG_INFO("Decompose matrix of format " << StorageT << " and size (" << A.rows() << " x "
+                                           << A.cols() << ')');
     decompose(A);
 }
 
@@ -119,6 +122,7 @@ vector<T> lu_decomposition<T, StorageT>::solve(const vector<T> &rhs) const
 template <typename T, storage_type StorageT>
 void lu_decomposition<T, StorageT>::decompose_col_col(const matrix<T, COLUMN_WISE> &A)
 {
+    LOG_DEBUG("Decompose matrix using specialized column major algorithm");
     const size_type M = A.rows();
     const size_type N = A.cols();
     const size_type min_dim = std::min(M, N);
@@ -227,6 +231,7 @@ void lu_decomposition<T, StorageT>::decompose_col_col(const matrix<T, COLUMN_WIS
 template <typename T, storage_type StorageT>
 void lu_decomposition<T, StorageT>::decompose_row_row(const matrix<T, ROW_WISE> &A)
 {
+    LOG_DEBUG("Decompose matrix using specialized row major algorithm");
     const size_type M = A.rows();
     const size_type N = A.cols();
     const size_type min_dim = std::min(M, N);
@@ -339,6 +344,7 @@ void lu_decomposition<T, StorageT>::decompose_row_row(const matrix<T, ROW_WISE> 
 template <typename T, storage_type StorageT>
 void lu_decomposition<T, StorageT>::solve_col(vector<T> &x, const vector<T> &rhs) const
 {
+    LOG_DEBUG("Solving linear equation system using specialized column major algorithm");
     const size_type N = p_lu.rows();
 
     // Initialize x
@@ -375,6 +381,7 @@ void lu_decomposition<T, StorageT>::solve_col(vector<T> &x, const vector<T> &rhs
 template <typename T, storage_type StorageT>
 void lu_decomposition<T, StorageT>::solve_row(vector<T> &x, const vector<T> &rhs) const
 {
+    LOG_DEBUG("Solving linear equation system using specialized row major algorithm");
     const size_type N = p_lu.rows();
 
     // Initialize x

@@ -181,6 +181,7 @@ std::ostream &operator<<(std::ostream &os, const vector<T> &vec);
 template <typename T>
 void vector<T>::allocate(size_type n)
 {
+    LOG_DEBUG("Allocating memory for vector: " << (n * sizeof(T)) << " B");
     util::deallocate_aligned(p_vals); // Includes a check on nullptr
     p_vals = util::allocate_aligned<T>(n);
     p_size = n;
@@ -222,6 +223,7 @@ vector<T>::vector(const expressions::operant<ExpressionT> &exp) : p_vals(nullptr
 template <typename T>
 void vector<T>::resize(size_type n, const T &val)
 {
+    LOG_DEBUG("Resizing vector to (" << n << ')');
     allocate(n);
 #ifdef PARALLEL
     std::fill(execution::par_unseq, p_vals, p_vals + n, val);
@@ -234,6 +236,7 @@ template <typename T>
 inline const T &vector<T>::operator()(const size_type i) const
 {
     BOUNDARY_ASSERT(i < p_size, "Index out of bound: vector read element");
+    LOG_TRACE("Read access to vector at position " << i);
     return p_vals[i];
 }
 
@@ -241,6 +244,7 @@ template <typename T>
 inline T &vector<T>::operator()(const size_type i)
 {
     BOUNDARY_ASSERT(i < p_size, "Index out of bound: vector write element");
+    LOG_TRACE("Write access to vector at position " << i);
     return p_vals[i];
 }
 
@@ -441,6 +445,7 @@ void vector<T>::to_file(const std::string &filename, const bool binary)
     std::ios_base::openmode mode = binary ? std::ios::out : std::ios::binary | std::ios::out;
     std::ofstream ofs(filename, mode);
     if (!ofs) {
+        LOG_ERROR("Failed to open file '" << filename << "' for writing");
         throw util::error("Cannot open file for write.", "file_io");
     }
     if (binary) {
@@ -458,6 +463,7 @@ void vector<T>::from_file(const std::string &filename, const bool binary)
     std::ios_base::openmode mode = binary ? std::ios::in : std::ios::binary | std::ios::in;
     std::ifstream ifs(filename, mode);
     if (!ifs) {
+        LOG_ERROR("Failed to open file '" << filename << "' for reading");
         throw util::error("Cannot open file for read.", "file_io");
     }
     // Read size information
@@ -465,10 +471,12 @@ void vector<T>::from_file(const std::string &filename, const bool binary)
     if (binary) {
         ifs.read(reinterpret_cast<char *>(&size), sizeof(size_type));
         if (!ifs) {
+            LOG_ERROR("Failed to read binary header information for vector");
             throw util::error("Cannot read header for read.", "file_io");
         }
     } else {
         if (!(ifs >> size)) {
+            LOG_ERROR("Failed to read text header information for vector");
             throw util::error("Cannot read header for read.", "file_io");
         }
     }
@@ -476,6 +484,7 @@ void vector<T>::from_file(const std::string &filename, const bool binary)
     if (binary) {
         ifs.read(reinterpret_cast<char *>(p_vals), p_size * sizeof(T));
         if (!ifs) {
+            LOG_ERROR("Failed to read binary data for vector");
             throw util::error("Cannot read data.", "file_io");
         }
     } else {
@@ -484,6 +493,7 @@ void vector<T>::from_file(const std::string &filename, const bool binary)
             if (ifs >> value) {
                 (*this)(i) = value;
             } else {
+                LOG_ERROR("Failed to read text data for vector");
                 throw util::error("Cannot read data.", "file_io");
             }
         }

@@ -46,7 +46,7 @@ namespace la {
 /// @brief Log everything
 // #define LA_DEBUG_LEVEL 10
 
-// /// @brief Log nothing
+// /// @brief Default: Log errors
 #define LA_DEBUG_LEVEL 2
 
 /// @brief Where to write errors and logs
@@ -54,9 +54,9 @@ namespace la {
 
 // Logging errors
 #if LA_DEBUG_LEVEL >= LA_DEBUG_ERROR_C
-#define LOG_ERROR(a)                                                                               \
+#define LOG_ERROR(...)                                                                             \
     do {                                                                                           \
-        LA_LOG_STREAM << "LA ERROR: " << a << std::endl;                                           \
+        LA_LOG_STREAM << "LA ERROR: " << __VA_ARGS__ << std::endl;                                 \
     } while (false)
 #else
 #define LOG_ERROR(a) ((void)0)
@@ -64,9 +64,9 @@ namespace la {
 
 // Logging warnings
 #if LA_DEBUG_LEVEL >= LA_DEBUG_WARNING_C
-#define LOG_WARNING(a)                                                                             \
+#define LOG_WARNING(...)                                                                           \
     do {                                                                                           \
-        LA_LOG_STREAM << "LA WARNING: " << a << std::endl;                                         \
+        LA_LOG_STREAM << "LA WARNING: " << __VA_ARGS__ << std::endl;                               \
     } while (false)
 #else
 #define LOG_WARNING(a) ((void)0)
@@ -74,9 +74,9 @@ namespace la {
 
 // Logging infos
 #if LA_DEBUG_LEVEL >= LA_DEBUG_INFO_C
-#define LOG_INFO(a)                                                                                \
+#define LOG_INFO(...)                                                                              \
     do {                                                                                           \
-        LA_LOG_STREAM << "LA INFO: " << a << std::endl;                                            \
+        LA_LOG_STREAM << "LA INFO: " << __VA_ARGS__ << std::endl;                                  \
     } while (false)
 #else
 #define LOG_INFO(a) ((void)0)
@@ -84,9 +84,9 @@ namespace la {
 
 // Logging debug information
 #if LA_DEBUG_LEVEL >= LA_DEBUG_DEBUG_C
-#define LOG_DEBUG(a)                                                                               \
+#define LOG_DEBUG(...)                                                                             \
     do {                                                                                           \
-        LA_LOG_STREAM << "LA DEBUG: " << a << std::endl;                                           \
+        LA_LOG_STREAM << "LA DEBUG: " << __VA_ARGS__ << std::endl;                                 \
     } while (false)
 #else
 #define LOG_DEBUG(a) ((void)0)
@@ -94,9 +94,9 @@ namespace la {
 
 // Logging trace information
 #if LA_DEBUG_LEVEL >= LA_DEBUG_TRACE_C
-#define LOG_TRACE(a)                                                                               \
+#define LOG_TRACE(...)                                                                             \
     do {                                                                                           \
-        LA_LOG_STREAM << "LA TRACE: " << a << std::endl;                                           \
+        LA_LOG_STREAM << "LA TRACE: " << __VA_ARGS__ << std::endl;                                 \
     } while (false)
 #else
 #define LOG_TRACE(a) ((void)0)

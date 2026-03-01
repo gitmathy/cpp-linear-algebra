@@ -125,7 +125,7 @@ public:
     inline T &operator()(size_type i, size_type j);
 
     /// @brief Evaluate matrix at (i,j), i.e., read element (i,j)
-    inline const T &evaluate(size_type i, size_type j) const { return (*this)(i, j); }
+    inline const T &evaluate(size_type i, size_type j) const;
 
     /// @brief Evaluate matrix at (i) raises an error
     inline const T &evaluate(size_type i) const;
@@ -253,6 +253,7 @@ std::ostream &operator<<(std::ostream &os, const matrix<T, StorageT> &mat);
 template <typename T, storage_type StorageT>
 void matrix<T, StorageT>::allocate(size_type m, size_type n)
 {
+    LOG_DEBUG("Allocating memory for matrix: " << (m * n * sizeof(T)) << " B");
     util::deallocate_aligned(p_vals);
     p_vals = util::allocate_aligned<T>(m * n);
     p_rows = m;
@@ -317,6 +318,7 @@ matrix<T, StorageT>::matrix(
 template <typename T, storage_type StorageT>
 void matrix<T, StorageT>::resize(size_type m, size_type n, const T &val)
 {
+    LOG_DEBUG("Resizing matrix to (" << m << " x " << n << ')');
     allocate(m, n);
 #ifdef PARALLEL
     std::fill(execution::par_unseq, p_vals, p_vals + m * n, val);
@@ -329,6 +331,7 @@ template <typename T, storage_type StorageT>
 inline const T &matrix<T, StorageT>::operator()(size_type i, size_type j) const
 {
     BOUNDARY_ASSERT(i < p_rows && j < p_cols, "Index out of bound: matrix read element");
+    LOG_TRACE("Read access to matrix at position " << i << ", " << j);
     return StorageT == ROW_WISE ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
 }
 
@@ -336,7 +339,15 @@ template <typename T, storage_type StorageT>
 inline T &matrix<T, StorageT>::operator()(size_type i, size_type j)
 {
     BOUNDARY_ASSERT(i < p_rows && j < p_cols, "Index out of bound: matrix write element");
+    LOG_TRACE("Write access to matrix at position " << i << ", " << j);
     return StorageT == ROW_WISE ? p_vals[i * p_cols + j] : p_vals[j * p_rows + i];
+}
+
+template <typename T, storage_type StorageT>
+inline const T &matrix<T, StorageT>::evaluate(size_type i, size_type j) const
+{
+    LOG_TRACE("Evaluating matrix at position " << i << ", " << j);
+    return (*this)(i, j);
 }
 
 template <typename T, storage_type StorageT>
@@ -683,6 +694,7 @@ void matrix<T, StorageT>::to_file(const std::string &filename, const bool binary
     std::ios_base::openmode mode = binary ? std::ios::out : std::ios::binary | std::ios::out;
     std::ofstream ofs(filename, mode);
     if (!ofs) {
+        LOG_ERROR("Failed to open file '" << filename << "' for write");
         throw util::error("Cannot open file for write.", "file_io");
     }
     if (binary) {
@@ -701,6 +713,7 @@ void matrix<T, StorageT>::from_file(const std::string &filename, const bool bina
     std::ios_base::openmode mode = binary ? std::ios::in : std::ios::binary | std::ios::in;
     std::ifstream ifs(filename, mode);
     if (!ifs) {
+        LOG_ERROR("Failed to open file " << filename);
         throw util::error("Cannot open file for read.", "file_io");
     }
     // Read size information
@@ -709,10 +722,12 @@ void matrix<T, StorageT>::from_file(const std::string &filename, const bool bina
         ifs.read(reinterpret_cast<char *>(&rows), sizeof(size_type));
         ifs.read(reinterpret_cast<char *>(&cols), sizeof(size_type));
         if (!ifs) {
+            LOG_ERROR("Reading binary matrix information failed due to I/O error");
             throw util::error("Cannot read header for read.", "file_io");
         }
     } else {
         if (!(ifs >> rows >> cols)) {
+            LOG_ERROR("Reading text matrix information failed due to I/O error");
             throw util::error("Cannot read header for read.", "file_io");
         }
     }
@@ -720,6 +735,7 @@ void matrix<T, StorageT>::from_file(const std::string &filename, const bool bina
     if (binary) {
         ifs.read(reinterpret_cast<char *>(p_vals), rows * cols * sizeof(T));
         if (!ifs) {
+            LOG_ERROR("Reading binary data failed due to I/O error");
             throw util::error("Cannot read binary data.", "file_io");
         }
     } else {
@@ -728,6 +744,7 @@ void matrix<T, StorageT>::from_file(const std::string &filename, const bool bina
             if (ifs >> value) {
                 *first = value;
             } else {
+                LOG_ERROR("Reading text data failed due to I/O error");
                 throw util::error("Cannot read text data.", "file_io");
             }
         }

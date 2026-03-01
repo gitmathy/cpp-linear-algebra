@@ -137,6 +137,10 @@ template <storage_type StorageLeftT, storage_type StorageRightT>
 matrix<T, ROW_WISE> matrix_multiplication_row<T>::multiply(const matrix<T, StorageLeftT> &A,
                                                            const matrix<T, StorageRightT> &B)
 {
+    LOG_INFO("Matrix multiplication resulting in a row matrix.");
+    LOG_DEBUG("Input " << StorageLeftT << " times " << StorageRightT);
+    LOG_DEBUG("Input (" << A.rows() << " x " << A.cols() << ") times (" << B.rows() << " x "
+                        << B.cols() << ')');
     if constexpr (StorageLeftT == ROW_WISE && StorageRightT == ROW_WISE) {
         return mult_row_row(A, B);
     }
@@ -161,6 +165,7 @@ template <typename T>
 matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_col(const matrix<T, ROW_WISE> &A,
                                                                const matrix<T, COLUMN_WISE> &B)
 {
+    LOG_DEBUG("Specialized row = row*col algorithm");
     // M: rows of A, K: shared dimension, N: columns of B
     const size_type M = A.rows(), K = A.cols(), N = B.cols();
 
@@ -230,6 +235,7 @@ template <typename T>
 matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_row(const matrix<T, ROW_WISE> &A,
                                                                const matrix<T, ROW_WISE> &B)
 {
+    LOG_DEBUG("Specialized row = row*row algorithm");
     // 1. DIMENSIONS & INITIALIZATION
     // M: Rows of A, K: Columns of A (and Rows of B), N: Columns of B
     const size_type M = A.rows(), K = A.cols(), N = B.cols();
@@ -304,6 +310,7 @@ template <typename T>
 matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_row(const matrix<T, COLUMN_WISE> &A,
                                                                const matrix<T, ROW_WISE> &B)
 {
+    LOG_DEBUG("Specialized row = col*row algorithm");
     // 1. SETUP & ALIASING OPTIMIZATION
     const size_type M = A.rows(), K = A.cols(), N = B.cols();
     matrix<T, ROW_WISE> C(M, N, T(0));
@@ -374,6 +381,7 @@ matrix<T, ROW_WISE>
 matrix_multiplication_row<T>::mult_col_col_small(const matrix<T, COLUMN_WISE> &A,
                                                  const matrix<T, COLUMN_WISE> &B)
 {
+    LOG_DEBUG("Specialized row = col*col algorithm for small matrices");
     // 1. SETUP
     const size_type M = A.rows();
     const size_type K = A.cols(); // Shared dimension
@@ -440,6 +448,7 @@ template <typename T>
 matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_col_big(const matrix<T, COLUMN_WISE> &A,
                                                                    const matrix<T, COLUMN_WISE> &B)
 {
+    LOG_DEBUG("Specialized row = col*col algorithm for big matrices");
     // 1. SETUP & ALIASING
     const size_type M = A.rows(), K = A.cols(), N = B.cols();
     matrix<T, ROW_WISE> C(M, N, T(0)); // Output is Row-Major
@@ -524,6 +533,10 @@ template <storage_type StorageLeftT, storage_type StorageRightT>
 matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::multiply(const matrix<T, StorageLeftT> &A,
                                                               const matrix<T, StorageRightT> &B)
 {
+    LOG_INFO("Matrix multiplication resulting in a column matrix.");
+    LOG_DEBUG("Input " << StorageLeftT << " times " << StorageRightT);
+    LOG_DEBUG("Input (" << A.rows() << " x " << A.cols() << ") times (" << B.rows() << " x "
+                        << B.cols() << ')');
     if constexpr (StorageLeftT == ROW_WISE && StorageRightT == ROW_WISE) {
         return mult_row_row(A, B);
     }
@@ -542,6 +555,7 @@ template <typename T>
 matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_col(const matrix<T, ROW_WISE> &A,
                                                                   const matrix<T, COLUMN_WISE> &B)
 {
+    LOG_DEBUG("Specialized col = row*col algorithm");
     // 1. SETUP & ALIASING
     const size_type M = A.rows(), K = A.cols(), N = B.cols();
     // Result C is Column-Major. Each column will be calculated independently.
@@ -613,6 +627,7 @@ template <typename T>
 matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_row(const matrix<T, ROW_WISE> &A,
                                                                   const matrix<T, ROW_WISE> &B)
 {
+    LOG_DEBUG("Specialized col = row*row algorithm");
     // 1. DIMENSIONS & STORAGE INITIALIZATION
     const size_type M = A.rows(), K = A.cols(), N = B.cols();
     // Result C is Column-Major: contiguous over i, strided over j.
@@ -691,6 +706,7 @@ template <typename T>
 matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_col(const matrix<T, COLUMN_WISE> &A,
                                                                   const matrix<T, COLUMN_WISE> &B)
 {
+    LOG_DEBUG("Specialized col = col*col algorithm");
     // 1. SETUP & ALIASING
     const size_type M = A.rows(), K = A.cols(), N = B.cols();
     // Result C is Column-Major: contiguous over i, strided over j.
@@ -766,6 +782,7 @@ template <typename T>
 matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_row(const matrix<T, COLUMN_WISE> &A,
                                                                   const matrix<T, ROW_WISE> &B)
 {
+    LOG_DEBUG("Specialized col = col*row algorithm");
     // 1. DIMENSIONS & ALIASING OPTIMIZATION
     const size_type M = A.rows(), K = A.cols(), N = B.cols();
     // Result C is Column-Major: contiguous over i, strided over j.
