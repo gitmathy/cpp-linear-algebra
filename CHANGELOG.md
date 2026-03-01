@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.7.0...v1.8.0) (2026-03-01)
+
+
+### Features
+
+* Inner product for vectors ([6d0ca53](https://github.com/gitmathy/cpp-linear-algebra/commit/6d0ca53559e4cc392a97d5d23a9b7954438637c0))
+
 # [1.7.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.6.2...v1.7.0) (2026-03-01)
 
 
