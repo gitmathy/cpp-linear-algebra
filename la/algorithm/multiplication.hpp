@@ -11,6 +11,7 @@
 #define LA_ALGORITHM_MULTIPLICATION_HPP
 
 #include "la/data_structure/matrix.hpp"
+#include "la/util/block_helper.hpp"
 #include "la/util/constants.hpp"
 #include "la/util/types.hpp"
 #include <algorithm>
@@ -18,17 +19,6 @@
 
 namespace la {
 namespace algorithm {
-
-/// @brief Helper function to create an index vector used for the execution policy
-inline std::vector<size_type> create_block_indices(size_type total, size_type block_size)
-{
-    size_type num_blocks = (total + block_size - 1) / block_size;
-    std::vector<size_type> indices(num_blocks);
-    for (size_type i = 0; i < num_blocks; ++i) {
-        indices[i] = i * block_size;
-    }
-    return indices;
-}
 
 /// @brief Multiplying matrices resulting in row wise storage
 ///
@@ -187,7 +177,7 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_col(const matrix<T, R
 
     // Parallelize over the row blocks of the result matrix C
     // execution::par_unseq allows both multi-threading and SIMD vectorization
-    auto i_blocks = create_block_indices(M, block_size);
+    auto i_blocks = util::create_block_indices(0, M, block_size);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
 #else
@@ -259,7 +249,7 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_row_row(const matrix<T, R
     // 2. PARALLELIZATION
     // Parallelize over the row-blocks (i) of C.
     // execution::par_unseq enables both multi-threading and SIMD/Vectorization.
-    auto i_blocks = create_block_indices(M, block_size);
+    auto i_blocks = util::create_block_indices(0, M, block_size);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
 #else
@@ -329,7 +319,7 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_row(const matrix<T, C
 
     // 2. PARALLELIZATION
     // Parallelize over vertical blocks (rows i) of C.
-    auto i_blocks = create_block_indices(M, block_size);
+    auto i_blocks = util::create_block_indices(0, M, block_size);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
 #else
@@ -462,7 +452,7 @@ matrix<T, ROW_WISE> matrix_multiplication_row<T>::mult_col_col_big(const matrix<
 
     // 2. PARALLELIZATION
     // Parallelize over the rows (i) of C.
-    auto i_blocks = create_block_indices(M, block_size);
+    auto i_blocks = util::create_block_indices(0, M, block_size);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
 #else
@@ -564,7 +554,7 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_col(const matrix<T
     // 2. PARALLELIZATION (Outer Dimension)
     // Parallelizing over 'j' (columns of C) is ideal for Column-Major storage.
     // Each thread works on a contiguous, independent vertical slice of memory.
-    auto j_blocks = create_block_indices(N, util::BLOCK_SIZE);
+    auto j_blocks = util::create_block_indices(0, N, util::BLOCK_SIZE);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
 #else
@@ -637,7 +627,7 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_row_row(const matrix<T
     // 2. PARALLELIZATION (Outer Dimension)
     // Parallelizing over j (columns of C) ensures each thread works on
     // a separate, contiguous memory block in Column-Major storage.
-    auto j_blocks = create_block_indices(N, block_size);
+    auto j_blocks = util::create_block_indices(0, N, block_size);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
 #else
@@ -713,7 +703,7 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_col(const matrix<T
     // 2. PARALLELIZATION
     // Parallelizing over j (columns of C) ensures that threads never write to the
     // same memory addresses, eliminating the need for atomics or mutexes.
-    auto j_blocks = create_block_indices(N, util::BLOCK_SIZE);
+    auto j_blocks = util::create_block_indices(0, N, util::BLOCK_SIZE);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
 #else
@@ -790,7 +780,7 @@ matrix<T, COLUMN_WISE> matrix_multiplication_col<T>::mult_col_row(const matrix<T
     // 2. PARALLELIZATION
     // Parallelizing over j (columns of C) ensures that threads own distinct
     // memory segments, preventing "False Sharing" and race conditions.
-    auto j_blocks = create_block_indices(N, util::BLOCK_SIZE);
+    auto j_blocks = util::create_block_indices(0, N, util::BLOCK_SIZE);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, j_blocks.begin(), j_blocks.end(), [&](size_type j_block) {
 #else
