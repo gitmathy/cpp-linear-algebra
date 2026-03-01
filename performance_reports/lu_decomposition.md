@@ -50,3 +50,9 @@ Failed tests        : 0
 Total execution time: 1.418s
 ================================================================================
 ```
+
+## Comparison with Eigen:
+```
+Solving a linear equation system (size 1000) 10 times for column based storage took: 0.17524s, avg: 0.017524
+Solving a linear equation system (size 1000) 10 times for column based storage took: 0.167743s, avg: 0.0167743
+```
