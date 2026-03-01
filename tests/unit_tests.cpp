@@ -17,6 +17,7 @@
 #include "tests/includes/unit_tests/test_construct.hpp"
 #include "tests/includes/unit_tests/test_copy_assignment.hpp"
 #include "tests/includes/unit_tests/test_copy_ctor.hpp"
+#include "tests/includes/unit_tests/test_inner_product.hpp"
 #include "tests/includes/unit_tests/test_iterator.hpp"
 #include "tests/includes/unit_tests/test_lu_decomp.hpp"
 #include "tests/includes/unit_tests/test_mixed_operations.hpp"
@@ -49,6 +50,7 @@ int main()
     tests.transfer("vector", std::make_unique<vector_read_write_test>());
     tests.transfer("vector", std::make_unique<vector_mult_div_assignment_test>());
     tests.transfer("vector", std::make_unique<vec_vec_mult_test>());
+    tests.transfer("vector", std::make_unique<vector_inner_product_test>());
 
     tests.transfer("matrix", std::make_unique<matrix_resize_test>());
     tests.transfer("matrix", std::make_unique<matrix_construct_test>());
