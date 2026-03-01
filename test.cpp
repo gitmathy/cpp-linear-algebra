@@ -14,7 +14,4 @@ int main()
     matrix<double> F = A - B;
 
     std::cout << norm(C) << std::endl;
-
-    lu_decomposition<double> LU(A);
-    LU.decompose();
 }
