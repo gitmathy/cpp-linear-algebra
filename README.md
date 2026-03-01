@@ -65,9 +65,7 @@ Here is a quick example of how to use the library to perform basic vector and ma
 
 ```cpp
 #include <iostream>
-#include "la.hpp"
-#include "matrix.hpp"
-#include "vector.hpp"
+#include "la/dense"
 
 int main() {
     // Create two vectors
@@ -78,7 +76,7 @@ int main() {
     la::vector<double> v_sum = v1 + v2;
     std::cout << "v1 + v2 = \n" << v_sum << std::endl;
 
-    // Create a 2x3 matrix
+    // Create a 2x3 matrix, default is row major storage
     la::matrix<double> m1 = {{1, 2, 3}, {4, 5, 6}};
 
     // Create another 2x3 matrix
