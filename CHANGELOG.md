@@ -1,3 +1,11 @@
+# [1.9.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.8.0...v1.9.0) (2026-03-01)
+
+
+### Features
+
+* Add more logging ([c0df184](https://github.com/gitmathy/cpp-linear-algebra/commit/c0df18415a754e0ffa9ede0bd21004116a703084))
+* LOG macros supporting multiple lines ([308f69e](https://github.com/gitmathy/cpp-linear-algebra/commit/308f69ef261d5203fc0d010c198c1c9382cf600b))
+
 # [1.8.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.7.0...v1.8.0) (2026-03-01)
 
 
