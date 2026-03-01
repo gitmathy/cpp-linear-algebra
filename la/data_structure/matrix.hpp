@@ -37,6 +37,9 @@ public:
     /// @brief Type of every element
     typedef T value_type;
 
+    /// @brief Storage type
+    typedef StorageT storage_type;
+
     /// @brief Definition of iterator type
     typedef T *iterator;
     /// @brief Definition of constant iterator type

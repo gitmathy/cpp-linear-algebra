@@ -5,7 +5,7 @@
 CXX ?= g++-12
 
 # Compiler flags (exactly as requested)
-PERF_CXXFLAGS := -Wall -Wextra -pedantic -std=c++20  -Ofast -march=native -flto -fstrict-aliasing -fopt-info-vec-optimized -I. -MMD -MP -DPARALLEL
+PERF_CXXFLAGS := -Wall -Wextra -pedantic -std=c++20  -Ofast -march=native -flto -fstrict-aliasing  -I. -MMD -MP -DPARALLEL
 UNIT_CXXFLAGS := -Wall -Wextra -pedantic -std=c++20 -g -I. -MMD -MP
 
 SRC_DIR := tests/src
