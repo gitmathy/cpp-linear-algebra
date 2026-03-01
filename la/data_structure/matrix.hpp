@@ -38,7 +38,7 @@ public:
     typedef T value_type;
 
     /// @brief Storage type
-    typedef StorageT storage_type;
+    static constexpr storage_type storage = StorageT;
 
     /// @brief Definition of iterator type
     typedef T *iterator;
