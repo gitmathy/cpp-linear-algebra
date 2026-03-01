@@ -10,6 +10,8 @@
 #ifndef LA_UTIL_TYPES_HPP
 #define LA_UTIL_TYPES_HPP
 
+#include <iostream>
+
 #include <cstddef>
 #ifdef PARALLEL
 #include <execution>
@@ -30,6 +32,12 @@ namespace execution = std::execution;
 #else
 enum class execution { seq, unseq, par_unseq, par };
 #endif
+
+inline std::ostream &operator<<(std::ostream &os, const storage_type st)
+{
+    os << (st == ROW_WISE ? "ROW" : "COL");
+    return os;
+}
 
 } // namespace la
 #endif
