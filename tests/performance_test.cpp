@@ -68,12 +68,13 @@ int main()
 
     tests.transfer("row_algorithms",
                    std::make_unique<decompose_solve_lu<ROW_WISE, ROW_WISE>>(RUNS, MATRIX_SOLVE));
-    tests.transfer("col_algorithms",
-                   std::make_unique<decompose_solve_lu<ROW_WISE, COLUMN_WISE>>(RUNS, MATRIX_SOLVE));
-    tests.transfer("row_algorithms",
-                   std::make_unique<decompose_solve_lu<COLUMN_WISE, ROW_WISE>>(RUNS, MATRIX_SOLVE));
     tests.transfer("col_algorithms", std::make_unique<decompose_solve_lu<COLUMN_WISE, COLUMN_WISE>>(
                                          RUNS, MATRIX_SOLVE));
+
+    tests.transfer("row_algorithms",
+                   std::make_unique<lu_decompose<ROW_WISE, ROW_WISE>>(RUNS, MATRIX_SOLVE));
+    tests.transfer("col_algorithms",
+                   std::make_unique<lu_decompose<COLUMN_WISE, COLUMN_WISE>>(RUNS, MATRIX_SOLVE));
 
     tests.transfer(
         "matrix_mult_blocked",

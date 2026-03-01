@@ -16,5 +16,6 @@
         "${workspaceFolder}/",
         "/usr/include/eigen3"
     ],
-    "makefile.configureOnOpen": true
+    "makefile.configureOnOpen": true,
+    "C_Cpp.default.compilerPath": "/usr/bin/g++-12"
  }

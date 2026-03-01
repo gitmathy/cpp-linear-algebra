@@ -16,6 +16,39 @@
 namespace la {
 namespace test {
 
+/// @brief LU decomposition of A
+template <storage_type MatStorageT, storage_type DecompositionStorageT>
+class lu_decompose : public performance_test
+{
+private:
+    /// @brief Size of the system
+    size_type p_size;
+
+protected:
+    /// @brief Execute a single test
+    void run_single_test() override
+    {
+        if constexpr (MatStorageT == ROW_WISE) {
+            la::algorithm::lu_decomposition<double, DecompositionStorageT> decomposition(p_A_row);
+        } else {
+            la::algorithm::lu_decomposition<double, DecompositionStorageT> decomposition(p_A_col);
+        }
+    }
+
+public:
+    /// @brief Set me up
+    lu_decompose(const size_type runs, const size_type n)
+        : performance_test(std::string("lu_decompose (") +
+                               (DecompositionStorageT == ROW_WISE ? "row): " : "col): ") +
+                               (MatStorageT == ROW_WISE ? "row" : "col"),
+                           "Testing LU-decompose A", runs),
+          p_size(n)
+    {}
+
+    /// @brief Setup the test
+    void setup() override { p_samples->adjust(p_size, p_size, p_size); }
+};
+
 /// @brief Solve x= A^-1 * b
 template <storage_type MatStorageT, storage_type DecompositionStorageT>
 class decompose_solve_lu : public performance_test
@@ -40,8 +73,8 @@ protected:
 public:
     /// @brief Set me up
     decompose_solve_lu(const size_type runs, const size_type n)
-        : performance_test(std::string("decompose_solve_lu_") +
-                               (DecompositionStorageT == ROW_WISE ? "row: " : "col: ") +
+        : performance_test(std::string("decompose_solve_lu(") +
+                               (DecompositionStorageT == ROW_WISE ? "row): " : "col): ") +
                                (MatStorageT == ROW_WISE ? "row" : "col"),
                            "Testing A^1*b", runs),
           p_size(n)

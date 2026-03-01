@@ -11,6 +11,7 @@
 #define LA_UTIL_MACROS_HPP
 
 #include "la/util/error.hpp"
+#include <iostream>
 
 namespace la {
 
@@ -46,7 +47,7 @@ namespace la {
 // #define LA_DEBUG_LEVEL 10
 
 // /// @brief Log nothing
-#define LA_DEBUG_LEVEL 0
+#define LA_DEBUG_LEVEL 2
 
 /// @brief Where to write errors and logs
 #define LA_LOG_STREAM std::cout

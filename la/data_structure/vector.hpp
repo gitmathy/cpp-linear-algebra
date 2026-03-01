@@ -111,6 +111,12 @@ public:
     /// @brief Constant iterator to end
     inline citerator end() const { return p_vals + p_size; }
 
+    /// @brief Direct access to the memory. Use with caution
+    inline T *vals() { return p_vals; }
+
+    /// @brief Direct access to the memory. Use with caution
+    inline T const *vals() const { return p_vals; }
+
     /// @brief Assign another vector
     vector<T> &operator=(const vector<T> &rhs);
 
