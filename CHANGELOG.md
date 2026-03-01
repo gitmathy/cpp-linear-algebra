@@ -1,3 +1,20 @@
+# [1.7.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.6.2...v1.7.0) (2026-03-01)
+
+
+### Bug Fixes
+
+* Update plain test ([4a9f830](https://github.com/gitmathy/cpp-linear-algebra/commit/4a9f830a224e563202cb040eebdaaa67d31f3547))
+
+
+### Features
+
+* Default warning level to error ([8565f0a](https://github.com/gitmathy/cpp-linear-algebra/commit/8565f0ac30610c039f027fc10ca76873173265fb))
+* Include blocking algorithm for lu decomposition depending on storage type ([306adf9](https://github.com/gitmathy/cpp-linear-algebra/commit/306adf9dbe9c5740b334e40d756c6cb8730fd852))
+* Include helper functions for blocking ([d17860d](https://github.com/gitmathy/cpp-linear-algebra/commit/d17860d6923e89d60b2829c35bfe2b18f967468d))
+* Include output storage type ([a18cccf](https://github.com/gitmathy/cpp-linear-algebra/commit/a18cccf00422da56d74c66c407a2506eeb9dc27b))
+* Member vals to get access to values ([d49a0d9](https://github.com/gitmathy/cpp-linear-algebra/commit/d49a0d9c49c365381dc09e7e40fad47473188fef))
+* Public member to provide storage type ([0e6da2c](https://github.com/gitmathy/cpp-linear-algebra/commit/0e6da2c4b551e462db405e2554bb97955161718a))
+
 ## [1.6.2](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.6.1...v1.6.2) (2026-02-28)
 
 
