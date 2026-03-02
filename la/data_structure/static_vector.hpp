@@ -11,6 +11,8 @@
 #define LA_STATIC_VECTOR_HPP
 
 #include "la/data_structure/expressions/forward.hpp"
+#include "la/data_structure/forward.hpp"
+#include "la/util/macros.hpp"
 #include "la/util/types.hpp"
 #include <algorithm>
 #include <cstring>
@@ -48,6 +50,9 @@ public:
     /// @brief fill with values.
     explicit static_vector(const T &val = T());
 
+    /// @brief Construct from vector
+    explicit static_vector(const vector<T> &vec);
+
     /// @brief Construct a vector with a list of values
     static_vector(const std::initializer_list<T> &init_list);
 
@@ -69,6 +74,9 @@ public:
 
     /// @brief Assign another vector
     static_vector<T, N> &operator=(const static_vector<T, N> &rhs);
+
+    /// @brief Assign another vector
+    static_vector<T, N> &operator=(const vector<T> &rhs);
 
     /// @brief Move assign a vector
     static_vector<T, N> &operator=(static_vector<T, N> &&rhs) noexcept;
@@ -103,6 +111,9 @@ public:
     /// @brief subtract from another expression
     template <typename ExpressionT>
     static_vector<T, N> &operator-=(const expressions::operant<ExpressionT> &exp);
+
+    /// @brief Get number of rows
+    inline size_type rows() const { return N; }
 
     /// @brief Get i'th element for reading
     inline const T &operator()(const size_type i) const;

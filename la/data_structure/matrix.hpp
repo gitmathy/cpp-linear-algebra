@@ -187,8 +187,6 @@ public:
     operator=(const std::initializer_list<std::initializer_list<T>> &init_list);
 
     /// @brief Assign the result of a matrix-matrix multiplication
-    ///
-    /// This function is implemented in includes/algorithms/multiplication.hpp
     template <typename MatTypeLeft, typename MatTypeRight>
     matrix<T, StorageT> &
     operator=(const expressions::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult);

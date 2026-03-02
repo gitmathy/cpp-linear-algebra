@@ -11,6 +11,7 @@
 #define LA_VECTOR_HPP
 
 #include "la/data_structure/expressions/forward.hpp"
+#include "la/data_structure/forward.hpp"
 #include "la/util/memory.hpp"
 #include "la/util/types.hpp"
 #include <algorithm>
@@ -53,6 +54,10 @@ public:
 
     /// @brief Construct a vector of given size and initialize elements with a default value
     explicit vector(size_type n, const T &val = T(0));
+
+    /// @brief Construct a static_vector
+    template <size_type N>
+    explicit vector(const static_vector<T, N> &static_vec);
 
     /// @brief Construct a vector with a list of values
     vector(const std::initializer_list<T> &init_list);
@@ -119,6 +124,10 @@ public:
 
     /// @brief Assign another vector
     vector<T> &operator=(const vector<T> &rhs);
+
+    /// @brief Assign another static_vector
+    template <size_type N>
+    vector<T> &operator=(const static_vector<T, N> &rhs);
 
     /// @brief Move assign a vector
     vector<T> &operator=(vector<T> &&rhs) noexcept;
