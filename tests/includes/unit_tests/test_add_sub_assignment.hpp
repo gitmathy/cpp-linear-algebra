@@ -20,7 +20,20 @@ class vector_add_sub_assignment_test : public unit_test
 {
 public:
     /// @brief Constructing the test
-    vector_add_sub_assignment_test() : unit_test("vector_add_sub_assignment", "Testing +0 and -=")
+    vector_add_sub_assignment_test() : unit_test("vector_add_sub_assignment", "Testing += and -=")
+    {}
+
+    /// @brief Run the test
+    int execute() override;
+};
+
+/// @brief Test add and sub assignment of static_vectors
+class static_vector_add_sub_assignment_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    static_vector_add_sub_assignment_test()
+        : unit_test("static_vector_add_sub_assignment_test", "Testing += and -=")
     {}
 
     /// @brief Run the test

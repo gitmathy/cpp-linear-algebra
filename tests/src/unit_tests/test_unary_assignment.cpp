@@ -9,6 +9,7 @@
 
 #include "tests/includes/unit_tests/test_unary_assignment.hpp"
 #include "la/dense"
+#include "la/static"
 
 namespace la {
 namespace test {
@@ -20,6 +21,18 @@ int vector_unary_assignment_test::execute()
 
     if (!check_values(b, -1)) {
         report_error("vector = -vector produced wrong values");
+    }
+
+    return (int)errors().size();
+}
+
+int static_vector_unary_assignment_test::execute()
+{
+    static_vector<int, 3> a(1);
+    static_vector<int, 3> b = -a;
+
+    if (!check_values(b, -1)) {
+        report_error("static_vector = -static_vector produced wrong values");
     }
 
     return (int)errors().size();

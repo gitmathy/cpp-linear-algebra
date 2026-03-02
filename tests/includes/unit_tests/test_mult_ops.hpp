@@ -26,6 +26,19 @@ public:
     int execute() override;
 };
 
+/// @brief Test elementwise multiplication of static_vectors
+class static_vec_vec_mult_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    static_vec_vec_mult_test()
+        : unit_test("static_vec_vec_mult_test", "Testing x*y and (x*y)*alpha")
+    {}
+
+    /// @brief Run the test
+    int execute() override;
+};
+
 /// @brief Matrix-matrix multiplication
 class mat_mat_mult_test : public unit_test
 {
@@ -37,7 +50,7 @@ public:
     int execute() override;
 };
 
-/// @brief Test add and sub of vectors
+/// @brief Test multiply matrix and vector
 class mat_vec_mult_test : public unit_test
 {
 public:

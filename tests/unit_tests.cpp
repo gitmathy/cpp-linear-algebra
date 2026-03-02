@@ -52,6 +52,19 @@ int main()
     tests.transfer("vector", std::make_unique<vec_vec_mult_test>());
     tests.transfer("vector", std::make_unique<vector_inner_product_test>());
 
+    tests.transfer("static_vector", std::make_unique<static_vector_construct_test>());
+    tests.transfer("static_vector", std::make_unique<static_vector_iterator_test>());
+    tests.transfer("static_vector", std::make_unique<static_vector_copy_assignment_test>());
+    tests.transfer("static_vector", std::make_unique<static_vector_copy_ctor_test>());
+    tests.transfer("static_vector", std::make_unique<static_vector_move_assignment_test>());
+    tests.transfer("static_vector", std::make_unique<static_vector_move_ctor_test>());
+    tests.transfer("static_vector", std::make_unique<static_vector_add_sub_assignment_test>());
+    tests.transfer("static_vector", std::make_unique<static_vector_add_sub_ops_test>());
+    tests.transfer("static_vector", std::make_unique<static_vector_norms_test>());
+    tests.transfer("static_vector", std::make_unique<static_vector_mult_div_assignment_test>());
+    tests.transfer("static_vector", std::make_unique<static_vec_vec_mult_test>());
+    tests.transfer("static_vector", std::make_unique<static_vector_inner_product_test>());
+
     tests.transfer("matrix", std::make_unique<matrix_resize_test>());
     tests.transfer("matrix", std::make_unique<matrix_construct_test>());
     tests.transfer("matrix", std::make_unique<matrix_iterator_test>());

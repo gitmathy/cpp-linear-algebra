@@ -13,21 +13,22 @@
 
 namespace la {
 namespace test {
+
 int vector_move_assignment_test::execute()
 {
     // double
-    la::vector<double> src(4);
-    for (la::size_type i = 0; i < src.rows(); ++i)
+    vector<double> src(4);
+    for (size_type i = 0; i < src.rows(); ++i)
         src(i) = static_cast<double>(i * 10 + 1);
 
-    la::vector<double> dst(1);
+    vector<double> dst(1);
     dst = std::move(src);
     if (dst.rows() != 4) {
         report_error("Moved-to vector has incorrect size");
     }
 
     // basic value checks
-    for (la::size_type i = 0; i < dst.rows(); ++i) {
+    for (size_type i = 0; i < dst.rows(); ++i) {
         if (std::abs(dst(i) - static_cast<double>(i * 10 + 1)) > util::EPS) {
             report_error("Moved-to vector has incorrect value");
         }
@@ -41,15 +42,38 @@ int vector_move_assignment_test::execute()
     return (int)errors().size();
 }
 
+int static_vector_move_assignment_test::execute()
+{
+    // double
+    static_vector<double, 4> src;
+    for (size_type i = 0; i < src.rows(); ++i)
+        src(i) = static_cast<double>(i * 10 + 1);
+
+    static_vector<double, 4> dst;
+    dst = std::move(src);
+    if (dst.rows() != 4) {
+        report_error("Moved-to vector has incorrect size");
+    }
+
+    // basic value checks
+    for (size_type i = 0; i < dst.rows(); ++i) {
+        if (std::abs(dst(i) - static_cast<double>(i * 10 + 1)) > util::EPS) {
+            report_error("Moved-to vector has incorrect value");
+        }
+    }
+
+    return (int)errors().size();
+}
+
 int matrix_move_assignment_test::execute()
 {
-    la::matrix<int> src(2, 2);
+    matrix<int> src(2, 2);
     src(0, 0) = 1;
     src(0, 1) = 2;
     src(1, 0) = 3;
     src(1, 1) = 4;
 
-    la::matrix<int> dst(1, 1);
+    matrix<int> dst(1, 1);
     dst = std::move(src);
 
     if (dst.rows() != 2 || dst.cols() != 2) {

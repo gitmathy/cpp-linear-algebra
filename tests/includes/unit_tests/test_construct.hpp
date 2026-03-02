@@ -26,6 +26,19 @@ public:
     int execute() override;
 };
 
+/// @brief Test construction of static_vectors
+class static_vector_construct_test : public unit_test
+{
+public:
+    /// @brief Construct the test
+    static_vector_construct_test()
+        : unit_test("static_vector_construct_test", "Testing constructor")
+    {}
+
+    /// @brief Run the test
+    int execute() override;
+};
+
 /// @brief Test construction of matrices
 class matrix_construct_test : public unit_test
 {

@@ -9,6 +9,7 @@
 
 #include "tests/includes/unit_tests/test_mult_ops.hpp"
 #include "la/dense"
+#include "la/static"
 
 namespace la {
 namespace test {
@@ -32,6 +33,30 @@ int vec_vec_mult_test::execute()
     }
     if (!check_values(z, 24)) {
         report_error("Wrong elements for (vector+vector) * scalar");
+    }
+
+    return (int)errors().size();
+}
+
+int static_vec_vec_mult_test::execute()
+{
+    static_vector<int, 2> x = {3, 4};
+    static_vector<int, 2> y = {4, 3};
+    static_vector<int, 2> z = (x * y);
+    static_vector<int, 2> z_scalar = (x * y) * 2;
+
+    if (!(z.rows() == 2)) {
+        report_error("Wrong size of static_vector*static_vector");
+    }
+    if (!check_values(z, 12)) {
+        report_error("Wrong elements for static_vector * static_vector");
+    }
+
+    if (!(z_scalar.rows() == 2)) {
+        report_error("Wrong size of (static_vector+static_vector) * scalar");
+    }
+    if (!check_values(z, 24)) {
+        report_error("Wrong elements for (static_vector+static_vector) * scalar");
     }
 
     return (int)errors().size();

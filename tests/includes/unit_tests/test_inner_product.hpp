@@ -26,6 +26,19 @@ public:
     int execute() override;
 };
 
+/// @brief Test inner product of a static_vector
+class static_vector_inner_product_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    static_vector_inner_product_test()
+        : unit_test("static_vector_inner_product_test", "Testing inner product")
+    {}
+
+    /// @brief Run the test
+    int execute() override;
+};
+
 } // namespace test
 } // namespace la
 #endif

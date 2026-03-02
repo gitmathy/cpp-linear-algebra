@@ -9,6 +9,7 @@
 
 #include "tests/includes/unit_tests/test_norms.hpp"
 #include "la/dense"
+#include "la/static"
 #include "la/util/constants.hpp"
 #include <cmath>
 
@@ -22,6 +23,29 @@ int vector_norms_test::execute()
     v(1) = 2.0;
     v(2) = -2.0;
     v(3) = 3.0;
+
+    // 1-norm = sum abs = 1+2+2+3 = 8
+    if (std::abs(norm<1>(v) - 8.0) > util::EPS)
+        report_error("vector 1-norm is incorrect");
+
+    // 2-norm = sqrt(1+4+4+9) = sqrt(18)
+    if (std::abs(norm<2>(v) - std::sqrt(18.0)) > util::EPS)
+        report_error("vector 2-norm is incorrect");
+
+    // 3-norm = (1+8+8+27)^(1/3) = (44)^(1/3)
+    if (std::abs(norm<3>(v) - std::pow(44.0, 1.0 / 3.0)) > util::EPS)
+        report_error("vector 3-norm is incorrect");
+
+    // max-norm = 3
+    if (std::abs(norm<SIZE_TYPE_MAX>(v) - 3.0) > util::EPS)
+        report_error("vector max-norm is incorrect");
+
+    return (int)errors().size();
+}
+
+int static_vector_norms_test::execute()
+{
+    static_vector<double, 4> v = {-1.0, 2.0, -2.0, 3.0};
 
     // 1-norm = sum abs = 1+2+2+3 = 8
     if (std::abs(norm<1>(v) - 8.0) > util::EPS)
