@@ -47,8 +47,16 @@ int vector_construct_test::execute()
     if (!((*vi)(0) == 1 && (*vi)(1) == 2)) {
         report_error("Values set by initializer list are not correct");
     }
-
     delete vi;
+
+    static_vector<int, 3> v_static(2);
+    vector<int> v_from_static(v_static);
+    if (v_from_static.rows() != 3) {
+        report_error("Vector constructor from static_vector produced wrong size");
+    }
+    if (!check_values(v_from_static, 2)) {
+        report_error("Wrong values in vector constructed from static_vector");
+    }
 
     return (int)errors().size();
 }
@@ -86,8 +94,16 @@ int static_vector_construct_test::execute()
     if (!((*vi)(0) == 1 && (*vi)(1) == 2)) {
         report_error("Values set by initializer list are not correct");
     }
-
     delete vi;
+
+    vector<int> v_dynamic(10, 4);
+    static_vector<int, 10> v_from_dynamic(v_dynamic);
+    if (v_from_dynamic.rows() != 10) {
+        report_error("Vector constructor from static_vector produced wrong size");
+    }
+    if (!check_values(v_from_dynamic, 4)) {
+        report_error("Wrong values in vector constructed from static_vector");
+    }
 
     return (int)errors().size();
 }
