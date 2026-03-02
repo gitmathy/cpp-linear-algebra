@@ -27,6 +27,19 @@ public:
     int execute() override;
 };
 
+/// @brief Test move assignment of static_vectors
+class static_vector_move_assignment_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    static_vector_move_assignment_test()
+        : unit_test("static_vector_move_assignment_test", "Test moving during assign")
+    {}
+
+    /// @brief Run the test
+    int execute() override;
+};
+
 /// @brief Test move assignment of matrices
 class matrix_move_assignment_test : public unit_test
 {

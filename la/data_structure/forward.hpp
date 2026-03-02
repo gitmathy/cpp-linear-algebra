@@ -24,5 +24,10 @@ class matrix;
 template <typename T>
 class vector;
 
+// Forward declaration of static_vector
+// see la/data_structure/static_vector.hpp
+template <typename T, size_type N>
+class static_vector;
+
 } // namespace la
 #endif

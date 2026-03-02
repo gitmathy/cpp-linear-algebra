@@ -26,6 +26,19 @@ public:
     int execute() override;
 };
 
+/// @brief Test copy assignment of static_vectors
+class static_vector_copy_assignment_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    static_vector_copy_assignment_test()
+        : unit_test("static_vector_copy_assignment_test", "Testing a=b")
+    {}
+
+    /// @brief Run the test
+    int execute() override;
+};
+
 /// @brief Test copy assignment of matrices
 class matrix_copy_assignment_test : public unit_test
 {

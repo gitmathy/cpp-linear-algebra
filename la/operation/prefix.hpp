@@ -22,6 +22,10 @@ namespace la {
 template <typename T>
 auto operator-(const vector<T> &right);
 
+/// @brief -static_vector
+template <typename T, size_type N>
+auto operator-(const static_vector<T, N> &right);
+
 /// @brief -matrix
 template <typename T, storage_type StorageT>
 auto operator-(const matrix<T, StorageT> &right);
@@ -39,6 +43,16 @@ template <typename T>
 auto operator-(const vector<T> &right)
 {
     typedef expressions::unary_expression<vector<T>, expressions::minus_operation<vector<T>>>
+        new_bin_exp_type;
+    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(right));
+}
+
+/// @brief -static_vector
+template <typename T, size_type N>
+auto operator-(const static_vector<T, N> &right)
+{
+    typedef expressions::unary_expression<static_vector<T, N>,
+                                          expressions::minus_operation<static_vector<T, N>>>
         new_bin_exp_type;
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(right));
 }

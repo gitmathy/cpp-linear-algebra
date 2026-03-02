@@ -18,6 +18,8 @@
 
 namespace la {
 
+// vector
+
 /// @brief vector + vector
 template <typename T>
 auto operator+(const vector<T> &left, const vector<T> &right);
@@ -30,10 +32,6 @@ auto operator+(const vector<T> &left, const expressions::operant<ExpT> &right);
 template <typename T, typename ExpT>
 auto operator+(const expressions::operant<ExpT> &left, const vector<T> &right);
 
-/// @brief operant + operant
-template <typename ExpLT, typename ExpRT>
-auto operator+(const expressions::operant<ExpLT> &left, const expressions::operant<ExpRT> &right);
-
 /// @brief vector + scalar
 template <typename T>
 auto operator+(const vector<T> &left, const T &right);
@@ -42,6 +40,34 @@ auto operator+(const vector<T> &left, const T &right);
 template <typename T>
 auto operator+(const T &left, const vector<T> &right);
 
+// static_vector
+
+/// @brief static_vector + static_vector
+template <typename T, size_type N>
+auto operator+(const static_vector<T, N> &left, const static_vector<T, N> &right);
+
+/// @brief static_vector + operant
+template <typename T, size_type N, typename ExpT>
+auto operator+(const static_vector<T, N> &left, const expressions::operant<ExpT> &right);
+
+/// @brief operant + static_vector
+template <typename T, size_type N, typename ExpT>
+auto operator+(const expressions::operant<ExpT> &left, const static_vector<T, N> &right);
+
+/// @brief static_vector + scalar
+template <typename T, size_type N>
+auto operator+(const static_vector<T, N> &left, const T &right);
+
+/// @brief scalar + static_vector
+template <typename T, size_type N>
+auto operator+(const T &left, const static_vector<T, N> &right);
+
+// operant
+
+/// @brief operant + operant
+template <typename ExpLT, typename ExpRT>
+auto operator+(const expressions::operant<ExpLT> &left, const expressions::operant<ExpRT> &right);
+
 /// @brief scalar + operant
 template <typename T, typename ExpT>
 auto operator+(const T &left, const expressions::operant<ExpT> &right);
@@ -49,6 +75,8 @@ auto operator+(const T &left, const expressions::operant<ExpT> &right);
 /// @brief operant + scalar
 template <typename T, typename ExpT>
 auto operator+(const expressions::operant<ExpT> &left, const T &right);
+
+// matrix
 
 /// @brief matrix + matrix
 template <typename T, storage_type StorageLeft, storage_type StorageRight>
@@ -73,6 +101,8 @@ auto operator+(const T &left, const matrix<T, StorageRight> &right);
 // ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
 // ===============================================
+
+// vector
 
 /// @brief vector + vector
 template <typename T>
@@ -106,17 +136,6 @@ auto operator+(const expressions::operant<ExpT> &left, const vector<T> &right)
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }
 
-/// @brief operant + operant
-template <typename ExpLT, typename ExpRT>
-auto operator+(const expressions::operant<ExpLT> &left, const expressions::operant<ExpRT> &right)
-{
-    typedef expressions::binary_expression<
-        expressions::operant<ExpLT>, expressions::operant<ExpRT>,
-        expressions::add_operation<expressions::operant<ExpLT>, expressions::operant<ExpRT>>>
-        new_bin_exp_type;
-    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
-}
-
 /// @brief vector + scalar
 template <typename T>
 auto operator+(const vector<T> &left, const T &right)
@@ -135,6 +154,76 @@ auto operator+(const T &left, const vector<T> &right)
     typedef expressions::binary_expression<
         expressions::literal<T>, vector<T>,
         expressions::add_operation<expressions::literal<T>, vector<T>>>
+        new_bin_exp_type;
+    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+// static_vector
+
+/// @brief static_vector + static_vector
+template <typename T, size_type N>
+auto operator+(const static_vector<T, N> &left, const static_vector<T, N> &right)
+{
+    typedef expressions::binary_expression<
+        static_vector<T, N>, static_vector<T, N>,
+        expressions::add_operation<static_vector<T, N>, static_vector<T, N>>>
+        new_bin_exp_type;
+    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief static_vector + operant
+template <typename T, size_type N, typename ExpT>
+auto operator+(const static_vector<T, N> &left, const expressions::operant<ExpT> &right)
+{
+    typedef expressions::binary_expression<
+        static_vector<T, N>, expressions::operant<ExpT>,
+        expressions::add_operation<static_vector<T, N>, expressions::operant<ExpT>>>
+        new_bin_exp_type;
+    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief operant + static_vector
+template <typename T, size_type N, typename ExpT>
+auto operator+(const expressions::operant<ExpT> &left, const static_vector<T, N> &right)
+{
+    typedef expressions::binary_expression<
+        expressions::operant<ExpT>, static_vector<T, N>,
+        expressions::add_operation<expressions::operant<ExpT>, static_vector<T, N>>>
+        new_bin_exp_type;
+    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief static_vector + scalar
+template <typename T, size_type N>
+auto operator+(const static_vector<T, N> &left, const T &right)
+{
+    typedef expressions::binary_expression<
+        static_vector<T, N>, expressions::literal<T>,
+        expressions::add_operation<static_vector<T, N>, expressions::literal<T>>>
+        new_bin_exp_type;
+    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief scalar + static_vector
+template <typename T, size_type N>
+auto operator+(const T &left, const static_vector<T, N> &right)
+{
+    typedef expressions::binary_expression<
+        expressions::literal<T>, static_vector<T, N>,
+        expressions::add_operation<expressions::literal<T>, static_vector<T, N>>>
+        new_bin_exp_type;
+    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+// operant
+
+/// @brief operant + operant
+template <typename ExpLT, typename ExpRT>
+auto operator+(const expressions::operant<ExpLT> &left, const expressions::operant<ExpRT> &right)
+{
+    typedef expressions::binary_expression<
+        expressions::operant<ExpLT>, expressions::operant<ExpRT>,
+        expressions::add_operation<expressions::operant<ExpLT>, expressions::operant<ExpRT>>>
         new_bin_exp_type;
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }
@@ -160,6 +249,8 @@ auto operator+(const expressions::operant<ExpT> &left, const T &right)
         new_bin_exp_type;
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }
+
+// matrix
 
 /// @brief matrix + matrix
 template <typename T, storage_type StorageLeft, storage_type StorageRight>

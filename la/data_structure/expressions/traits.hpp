@@ -12,6 +12,7 @@
 
 #include "la/data_structure/expressions/literal.hpp"
 #include "la/data_structure/matrix.hpp"
+#include "la/data_structure/static_vector.hpp"
 #include "la/data_structure/vector.hpp"
 #include "la/util/types.hpp"
 
@@ -40,6 +41,17 @@ template <typename T>
 struct expression_traits<vector<T>>
 {
     typedef const vector<T> &expression_type;
+    typedef T value_type;
+    const static size_type dimension = size_type(1);
+};
+
+/// @brief Specialization for `static_vector<T,N>`: store as a reference in expression nodes
+/// This avoids copying large vector objects into expression trees; operant/binary_expression
+/// will hold references to existing vectors while `operant` itself still owns temporaries.
+template <typename T, size_type N>
+struct expression_traits<static_vector<T, N>>
+{
+    typedef const static_vector<T, N> &expression_type;
     typedef T value_type;
     const static size_type dimension = size_type(1);
 };

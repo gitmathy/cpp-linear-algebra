@@ -26,6 +26,19 @@ public:
     int execute() override;
 };
 
+/// @brief Test add and sub assignment of static_vectors
+class static_vector_unary_assignment_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    static_vector_unary_assignment_test()
+        : unit_test("static_vector_unary_assignment_test", "Testing b -= a")
+    {}
+
+    /// @brief Run the test
+    int execute() override;
+};
+
 /// @brief Test add and sub assignment of matrices
 class matrix_unary_assignment_test : public unit_test
 {

@@ -28,6 +28,17 @@ public:
     int execute();
 };
 
+/// @brief Test iterating of static_vectors
+class static_vector_iterator_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    static_vector_iterator_test() : unit_test("static_vector_iterator_test", "Testing iterators") {}
+
+    /// @brief Run the test
+    int execute();
+};
+
 /// @brief Test iterating of matrices
 class matrix_iterator_test : public unit_test
 {

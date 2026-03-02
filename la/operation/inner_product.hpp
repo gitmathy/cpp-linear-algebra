@@ -21,6 +21,11 @@ namespace la {
 template <typename T>
 T inner_product(const vector<T> &left, const vector<T> &right);
 
+/// @brief Inner product of a static_vector
+/// @return left^T * right
+template <typename T, size_type N>
+T inner_product(const static_vector<T, N> &left, const static_vector<T, N> &right);
+
 // ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
 // ===============================================
@@ -29,6 +34,12 @@ template <typename T>
 T inner_product(const vector<T> &left, const vector<T> &right)
 {
     SHAPE_ASSERT(left.rows() == right.rows(), "vectors for inner product not of same length");
+    return std::inner_product(left.begin(), left.end(), right.begin(), T(0));
+}
+
+template <typename T, size_type N>
+T inner_product(const static_vector<T, N> &left, const static_vector<T, N> &right)
+{
     return std::inner_product(left.begin(), left.end(), right.begin(), T(0));
 }
 

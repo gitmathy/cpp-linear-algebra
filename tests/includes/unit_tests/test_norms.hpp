@@ -15,12 +15,25 @@
 namespace la {
 namespace test {
 
-/// @brief Test norms for vectors (and simple matrix sanity)
+/// @brief Test norms for vectors
 class vector_norms_test : public unit_test
 {
 public:
     /// @brief Constructing the test
     vector_norms_test() : unit_test("vector_norms", "Testing 1, 2, 3, and max-norm") {}
+
+    /// @brief Run the test
+    int execute() override;
+};
+
+/// @brief Test norms for static_vectors
+class static_vector_norms_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    static_vector_norms_test()
+        : unit_test("static_vector_norms_test", "Testing 1, 2, 3, and max-norm")
+    {}
 
     /// @brief Run the test
     int execute() override;

@@ -26,6 +26,19 @@ public:
     int execute() override;
 };
 
+/// @brief Test add and sub of static_vectors
+class static_vector_add_sub_ops_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    static_vector_add_sub_ops_test()
+        : unit_test("static_vector_add_sub_ops_test", "Testing - and +")
+    {}
+
+    /// @brief Run the test
+    int execute() override;
+};
+
 /// @brief Test add and sub of matrices
 class matrix_add_sub_ops_test : public unit_test
 {

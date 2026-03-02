@@ -103,29 +103,6 @@ public:
 };
 
 // ===============================================
-// M A T R I X   M E M B E R
-// ===============================================
-
-} // end of namespace algorithm
-
-template <typename T, storage_type StorageT>
-template <typename MatTypeLeft, typename MatTypeRight>
-matrix<T, StorageT> &matrix<T, StorageT>::operator=(
-    const expressions::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult)
-{
-    matrix<T, StorageT> temp;
-    if constexpr (StorageT == ROW_WISE) {
-        temp = algorithm::matrix_multiplication_row<T>::multiply(mat_mult.left, mat_mult.right);
-    } else {
-        temp = algorithm::matrix_multiplication_col<T>::multiply(mat_mult.left, mat_mult.right);
-    }
-    *this = std::move(temp);
-    return *this;
-}
-
-namespace algorithm {
-
-// ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
 // ===============================================
 
