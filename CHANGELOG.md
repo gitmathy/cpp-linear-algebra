@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.11.0...v1.11.1) (2026-03-03)
+
+
+### Bug Fixes
+
+* default value for vectors and matrix elements to T() instead of T(0) ([1b849e0](https://github.com/gitmathy/cpp-linear-algebra/commit/1b849e000f6e31d77b7d5fcc9345da14665e8c0d))
+
 # [1.11.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.10.0...v1.11.0) (2026-03-03)
 
 
