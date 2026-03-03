@@ -46,6 +46,24 @@ public:
     {}
 };
 
+/// @brief Test c=a+b for vectors where c, a, and b are static_vectors<double,3>
+class vector_add_vectors : public performance_test
+{
+private:
+    vector<static_vector<double, 3>> p_a, p_b, p_c;
+
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override { p_c_vec = p_a_vec + p_b_vec; }
+
+public:
+    /// @brief Set me up
+    vector_add_vectors(const size_type runs)
+        : performance_test("vector_add_static_vector", "Testing c = a+b", runs),
+          p_a(p_a_vec.rows()), p_b(p_b_vec.rows()), p_c(p_b_vec.rows())
+    {}
+};
+
 /// @brief Test c = -a - b - 2 + a - b + 2 for vector
 class vector_mixed_add_sub : public performance_test
 {
