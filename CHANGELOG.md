@@ -1,3 +1,15 @@
+# [1.11.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.10.0...v1.11.0) (2026-03-03)
+
+
+### Bug Fixes
+
+* unit test for non-trivial types ([788df4d](https://github.com/gitmathy/cpp-linear-algebra/commit/788df4d2aa2af1e9bd4be1adf4612e14e88ab35c))
+
+
+### Features
+
+* Support non-trivial types ([ed25184](https://github.com/gitmathy/cpp-linear-algebra/commit/ed251840a9c9b2f410e19f6fdc62e34ea04df06e))
+
 # [1.10.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.9.0...v1.10.0) (2026-03-03)
 
 
