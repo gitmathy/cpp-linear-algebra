@@ -29,23 +29,24 @@ namespace util {
 template <typename T>
 T *allocate_aligned(size_type n)
 {
-    static_assert(std::is_trivial<T>::value, "allocate_aligned only for trivial types");
+    if constexpr (std::is_trivial<T>::value) {
+        const std::size_t alignment = std::max(std::size_t(64), alignof(T));
+        std::size_t size = n * sizeof(T);
+        // if size is not a multiple of the alignment, adjust it's value (needed for aligned alloc)
+        if (size % alignment != 0) {
+            size = ((size + alignment - 1) / alignment) * alignment;
+        }
 
-    const std::size_t alignment = std::max(std::size_t(64), alignof(T));
-    std::size_t size = n * sizeof(T);
-    // if size is not a multiple of the alignment, adjust it's value (needed for aligned alloc)
-    if (size % alignment != 0) {
-        size = ((size + alignment - 1) / alignment) * alignment;
-    }
-
-    // Allocate the memory
-    void *ptr = nullptr;
+        // Allocate the memory
+        void *ptr = nullptr;
 #ifdef _MSC_VER
-    ptr = _aligned_malloc(size, alignment);
+        ptr = _aligned_malloc(size, alignment);
 #else
-    ptr = std::aligned_alloc(alignment, size);
+        ptr = std::aligned_alloc(alignment, size);
 #endif
-    return static_cast<T *>(ptr);
+        return static_cast<T *>(ptr);
+    }
+    return new T[n];
 }
 
 /// @brief Deallocate memory which has been allocated with allocate_aligned
@@ -57,12 +58,16 @@ void deallocate_aligned(T *ptr)
     if (ptr == nullptr) {
         return;
     }
-    static_assert(std::is_trivial<T>::value, "deallocate_aligned only for trivial types");
+    if constexpr (std::is_trivial<T>::value) {
+        static_assert(std::is_trivial<T>::value, "deallocate_aligned only for trivial types");
 #ifdef _MSC_VER
-    _aligned_free(ptr);
+        _aligned_free(ptr);
 #else
-    std::free(ptr);
+        std::free(ptr);
 #endif
+    } else {
+        delete[] ptr;
+    }
 }
 
 } // namespace util

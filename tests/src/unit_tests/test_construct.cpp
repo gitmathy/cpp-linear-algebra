@@ -58,6 +58,14 @@ int vector_construct_test::execute()
         report_error("Wrong values in vector constructed from static_vector");
     }
 
+    vector<static_vector<int, 3>> vector_non_trivial_type(1, static_vector<int, 3>(2));
+    if (vector_non_trivial_type.rows() != 1) {
+        report_error("Vector constructor for non-trivial type produced wrong size");
+    }
+    if (!check_values(vector_non_trivial_type(0), 2)) {
+        report_error("Wrong values in vector of non-trivial type");
+    }
+
     return (int)errors().size();
 }
 
