@@ -53,7 +53,7 @@ public:
     explicit vector() : p_vals(nullptr), p_size(0) {}
 
     /// @brief Construct a vector of given size and initialize elements with a default value
-    explicit vector(size_type n, const T &val = T(0));
+    explicit vector(size_type n, const T &val = T());
 
     /// @brief Construct a static_vector
     template <size_type N>
