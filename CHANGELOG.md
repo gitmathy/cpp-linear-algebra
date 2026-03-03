@@ -1,3 +1,14 @@
+# [1.10.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.9.0...v1.10.0) (2026-03-03)
+
+
+### Features
+
+* Adding static_vector ([f4e5616](https://github.com/gitmathy/cpp-linear-algebra/commit/f4e5616d916ba7b35112b46715d819edf008d797))
+* Include a file for member functions using multiple data structure includes ([67d7dec](https://github.com/gitmathy/cpp-linear-algebra/commit/67d7decf5e8f03a8e488753df1e1ebb16defc957))
+* Include dedicated header for static vectors ([66e34de](https://github.com/gitmathy/cpp-linear-algebra/commit/66e34de0ad647dd9434bd092ed1c35a79151119b))
+* Include static_vector in forward declaration ([498d76f](https://github.com/gitmathy/cpp-linear-algebra/commit/498d76f8b5deabc0ecd197132dad38a468d16dc3))
+* linear algebra operations on static vectors ([c4f01b8](https://github.com/gitmathy/cpp-linear-algebra/commit/c4f01b856eec2a62fe0e1afa2ae22d190b16355a))
+
 # [1.9.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.8.0...v1.9.0) (2026-03-01)
 
 
