@@ -69,7 +69,7 @@ public:
     /// @param m number of rows
     /// @param n number of columns
     /// @param val default value for all elements
-    explicit matrix(size_type m, size_type n, const T &val = T(0));
+    explicit matrix(size_type m, size_type n, const T &val = T());
 
     /// @brief Construct a matrix with a list of values
     matrix(const std::initializer_list<std::initializer_list<T>> &init_list);

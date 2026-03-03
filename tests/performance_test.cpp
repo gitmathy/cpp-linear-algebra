@@ -37,6 +37,7 @@ int main()
     tests.transfer("vector", std::make_unique<vector_add>(RUNS));
     tests.transfer("vector", std::make_unique<vector_multiple_add>(RUNS));
     tests.transfer("vector", std::make_unique<vector_mixed_add_sub>(RUNS));
+    tests.transfer("vector", std::make_unique<vector_add_vectors>(RUNS));
     tests.transfer("row_matrix", std::make_unique<matrix_add<ROW_WISE>>(RUNS));
     tests.transfer("row_matrix", std::make_unique<matrix_multiple_add<ROW_WISE>>(RUNS));
     tests.transfer("row_matrix", std::make_unique<matrix_mixed_add_sub<ROW_WISE>>(RUNS));
