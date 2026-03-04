@@ -508,7 +508,7 @@ void vector<T>::from_file(const std::string &filename, const bool binary)
             }
         }
     }
-    ofs.close();
+    ifs.close();
 }
 
 template <typename T>

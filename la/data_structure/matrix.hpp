@@ -748,7 +748,7 @@ void matrix<T, StorageT>::from_file(const std::string &filename, const bool bina
             }
         }
     }
-    ofs.close();
+    ifs.close();
 }
 
 template <typename T, storage_type StorageT>
