@@ -1,3 +1,11 @@
+## [1.11.2](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.11.1...v1.11.2) (2026-03-04)
+
+
+### Bug Fixes
+
+* Close files after reading and writing ([425f8b7](https://github.com/gitmathy/cpp-linear-algebra/commit/425f8b7c638e9a6d19d9fee2d5f3a0b4e035acc2))
+* close input file ([57b500a](https://github.com/gitmathy/cpp-linear-algebra/commit/57b500ac6cd87ced702789ef0a32228211939b2d))
+
 ## [1.11.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.11.0...v1.11.1) (2026-03-03)
 
 
