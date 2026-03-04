@@ -703,6 +703,7 @@ void matrix<T, StorageT>::to_file(const std::string &filename, const bool binary
         ofs << p_rows << ' ' << p_cols << ' ';
         std::copy(p_vals, p_vals + p_rows * p_cols, std::ostream_iterator<T>(ofs, " "));
     }
+    ofs.close();
 }
 
 template <typename T, storage_type StorageT>
@@ -747,6 +748,7 @@ void matrix<T, StorageT>::from_file(const std::string &filename, const bool bina
             }
         }
     }
+    ifs.close();
 }
 
 template <typename T, storage_type StorageT>
