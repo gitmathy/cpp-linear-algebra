@@ -464,6 +464,7 @@ void vector<T>::to_file(const std::string &filename, const bool binary)
         ofs << p_size << ' ';
         std::copy(p_vals, p_vals + p_size, std::ostream_iterator<T>(ofs, " "));
     }
+    ofs.close();
 }
 
 template <typename T>
@@ -507,6 +508,7 @@ void vector<T>::from_file(const std::string &filename, const bool binary)
             }
         }
     }
+    ofs.close();
 }
 
 template <typename T>
