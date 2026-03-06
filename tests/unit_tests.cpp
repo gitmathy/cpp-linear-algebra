@@ -28,6 +28,7 @@
 #include "tests/includes/unit_tests/test_norms.hpp"
 #include "tests/includes/unit_tests/test_read_write.hpp"
 #include "tests/includes/unit_tests/test_resize.hpp"
+#include "tests/includes/unit_tests/test_sparse_matrix_builder.hpp"
 
 using namespace la::test;
 
@@ -83,7 +84,10 @@ int main()
     tests.transfer("matrix_vector", std::make_unique<lu_decomposition_test>());
     tests.transfer("matrix_vector", std::make_unique<mixed_operations>());
 
-    int result = tests.run();
+    tests.transfer("sparse_matrix", std::make_unique<sparse_matrix_builder_insert_test>());
+    tests.transfer("sparse_matrix", std::make_unique<sparse_matrix_builder_assemble_test>());
+
+    int result = tests.run(std::set<std::string>({"sparse_matrix"}));
 
     return result > 0 ? 1 : 0;
 }

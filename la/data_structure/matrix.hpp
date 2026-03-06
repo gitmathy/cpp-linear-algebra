@@ -7,8 +7,8 @@
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_MATRIX_HPP
-#define LA_MATRIX_HPP
+#ifndef LA_DATA_STRUCTURE_MATRIX_HPP
+#define LA_DATA_STRUCTURE_MATRIX_HPP
 
 #include "la/data_structure/expressions/forward.hpp"
 #include "la/util/macros.hpp"
@@ -16,12 +16,9 @@
 #include "la/util/types.hpp"
 #include <algorithm>
 #include <fstream>
+#include <initializer_list>
 #include <ranges>
 #include <string>
-
-#ifdef _MSC_VER
-#define LOG_WARNING(a) ((void)0)
-#endif
 
 namespace la {
 
@@ -236,9 +233,9 @@ public:
     void from_file(const std::string &filename, const bool binary = true);
 };
 
-/// ===============================================
-/// P U B L I C   F U N C T I O N S
-/// ===============================================
+// ===============================================
+// P U B L I C   F U N C T I O N S
+// ===============================================
 
 /// @brief Write a vector to an output stream
 template <typename T, storage_type StorageT>

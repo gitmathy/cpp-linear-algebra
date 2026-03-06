@@ -19,6 +19,16 @@ namespace la {
 template <typename T, storage_type StorageT>
 class matrix;
 
+// Forward declaration of sparse matrix
+// see la/data_structure/sparse_matrix.hpp
+template <typename T>
+class sparse_matrix;
+
+// Forward declaration of sparse matrix builder
+// see la/data_structure/sparse_matrix_builder.hpp
+template <typename T>
+class sparse_matrix_builder;
+
 // Forward declaration of vector
 // see la/data_structure/vector.hpp
 template <typename T>
