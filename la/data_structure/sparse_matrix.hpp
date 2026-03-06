@@ -103,8 +103,9 @@ inline T &sparse_matrix<T>::operator()(const size_type i, const size_type j)
 {
     BOUNDARY_ASSERT(i < rows() && j < cols(), "sparse_matrix: out of bound");
     LOG_TRACE("sparse_matrix: Write access to element " << i << ", " << j);
-    size_type *it = std::lower_bound(p_col_idx + p_row_ptr[i], p_col_idx + p_row_ptr[i + 1], j);
-    if (it == p_col_idx + p_row_ptr[i + 1] || *it != j) {
+    size_type *last = p_col_idx + p_row_ptr[i + 1];
+    size_type *it = std::lower_bound(p_col_idx + p_row_ptr[i], last, j);
+    if (it == last || *it != j) {
         throw util::error("sparse_matrix: Cannot write to a non-zero element");
     }
     return p_vals[*it];
@@ -115,9 +116,9 @@ inline const T &sparse_matrix<T>::operator()(const size_type i, const size_type 
 {
     BOUNDARY_ASSERT(i < rows() && j < cols(), "sparse_matrix: out of bound");
     LOG_TRACE("sparse_matrix: Read access to element " << i << ", " << j);
-    size_type const *it =
-        std::lower_bound(p_col_idx + p_row_ptr[i], p_col_idx + p_row_ptr[i + 1], j);
-    if (it == p_col_idx + p_row_ptr[i + 1] || *it != j) {
+    size_type *const last = p_col_idx + p_row_ptr[i + 1];
+    size_type *const it = std::lower_bound(p_col_idx + p_row_ptr[i], last, j);
+    if (it == last || *it != j) {
         return T(0);
     }
     return *it;
