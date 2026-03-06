@@ -1,3 +1,20 @@
+# [1.12.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.11.2...v1.12.0) (2026-03-06)
+
+
+### Bug Fixes
+
+* Explicit include of #include <initializer_list> ([52a7d7c](https://github.com/gitmathy/cpp-linear-algebra/commit/52a7d7cfb372c88c83dcf889171e07de8e4ebcc6)), closes [#include](https://github.com/gitmathy/cpp-linear-algebra/issues/include)
+* Move to mixed dense matrix and adjust include protection ([d97ece9](https://github.com/gitmathy/cpp-linear-algebra/commit/d97ece97376dd1ac68a32841f9d7b22c896f71dc))
+
+
+### Features
+
+* First tests for sparse matrix builder ([48c3248](https://github.com/gitmathy/cpp-linear-algebra/commit/48c3248b9c46706bb632f2c66379bd19743a6ae7))
+* forward definition of sparse matrix ([bc0433c](https://github.com/gitmathy/cpp-linear-algebra/commit/bc0433cee19dfb1710d14b5ff88680451d2d5628))
+* Include matrix builder to sparse matrix ([6bb738d](https://github.com/gitmathy/cpp-linear-algebra/commit/6bb738d999f558f98c2fbf1589c3828a05de34e8))
+* Include sparse matrix in forward definition ([8fbe367](https://github.com/gitmathy/cpp-linear-algebra/commit/8fbe3679efad9de8fd3828905a619d82b69e8fb2))
+* Include top level include for sparse matrix ([d2e7794](https://github.com/gitmathy/cpp-linear-algebra/commit/d2e779465aff3cb5c2d0f7d1b7eb5d779cca0e6f))
+
 ## [1.11.2](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.11.1...v1.11.2) (2026-03-04)
 
 
