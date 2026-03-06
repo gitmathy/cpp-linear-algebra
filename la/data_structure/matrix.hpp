@@ -19,10 +19,6 @@
 #include <ranges>
 #include <string>
 
-#ifdef _MSC_VER
-#define LOG_WARNING(a) ((void)0)
-#endif
-
 namespace la {
 
 /// @brief Class representing a dense matrix, i.e., all values are stored
@@ -236,9 +232,9 @@ public:
     void from_file(const std::string &filename, const bool binary = true);
 };
 
-/// ===============================================
-/// P U B L I C   F U N C T I O N S
-/// ===============================================
+// ===============================================
+// P U B L I C   F U N C T I O N S
+// ===============================================
 
 /// @brief Write a vector to an output stream
 template <typename T, storage_type StorageT>
