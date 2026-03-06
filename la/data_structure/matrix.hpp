@@ -16,6 +16,7 @@
 #include "la/util/types.hpp"
 #include <algorithm>
 #include <fstream>
+#include <initializer_list>
 #include <ranges>
 #include <string>
 
