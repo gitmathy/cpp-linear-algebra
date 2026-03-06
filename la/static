@@ -9,4 +9,4 @@
 
 #include "la/data_structure/static_vector.hpp"
 #include "la/ops"
-#include "la/data_structure/mixed_data.hpp"
+#include "la/data_structure/mixed_dense_data.hpp"

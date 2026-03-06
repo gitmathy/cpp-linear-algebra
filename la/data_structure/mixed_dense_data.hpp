@@ -1,14 +1,14 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file la/data_structure/mixed_data.hpp
-/// @brief Implementations of function using mixed data structures
+/// @file la/data_structure/mixed_dense_data.hpp
+/// @brief Implementations of function using mixed dense data structures
 /// @author Gitmathy, https://github.com/gitmathy
 ///
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_DATA_STRUCTURE_MIXED_DATA_HPP
-#define LA_DATA_STRUCTURE_MIXED_DATA_HPP
+#ifndef LA_DATA_STRUCTURE_MIXED_DENSE_DATA_HPP
+#define LA_DATA_STRUCTURE_MIXED_DENSE_DATA_HPP
 
 #include "la/data_structure/expressions/operations.hpp"
 #include "la/data_structure/matrix.hpp"
