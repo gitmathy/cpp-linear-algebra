@@ -56,6 +56,9 @@ public:
     /// @brief Construct an empty matrix
     explicit sparse_matrix();
 
+    /// @brief Move from a sparse matrix builder
+    explicit sparse_matrix(sparse_matrix_builder<T> &&rhs) noexcept;
+
     /// @brief Allocate memory and set shape
     void allocate(size_type rows, size_type cols, size_type num_values);
 
@@ -63,13 +66,16 @@ public:
     inline T &operator()(const size_type i, const size_type j);
 
     /// @brief read access to an element
-    inline const T &operator()(const size_type i, const size_type j) const;
+    inline const T operator()(const size_type i, const size_type j) const;
 
     /// @brief Number of rows
     inline size_type rows() const { return p_rows; }
 
     /// @brief Number of columns
     inline size_type cols() const { return p_cols; }
+
+    /// @brief Move assign a sparse matrix
+    sparse_matrix<T> &operator=(sparse_matrix_builder<T> &&rhs) noexcept;
 };
 
 // ===============================================
@@ -112,7 +118,7 @@ inline T &sparse_matrix<T>::operator()(const size_type i, const size_type j)
 }
 
 template <typename T>
-inline const T &sparse_matrix<T>::operator()(const size_type i, const size_type j) const
+inline const T sparse_matrix<T>::operator()(const size_type i, const size_type j) const
 {
     BOUNDARY_ASSERT(i < rows() && j < cols(), "sparse_matrix: out of bound");
     LOG_TRACE("sparse_matrix: Read access to element " << i << ", " << j);

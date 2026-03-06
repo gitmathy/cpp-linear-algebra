@@ -40,8 +40,7 @@ int sparse_matrix_builder_assemble_test::execute()
     a_build(1, 1) += 1;
     a_build(2, 2) = 3;
 
-    sparse_matrix<int> a;
-    a_build.assemble(a);
+    const sparse_matrix<int> a(std::move(a_build));
 
     if (!(a(0, 0) == 1 || a(1, 1) == 2 || a(2, 2) == 3 || a(0, 1) == 0)) {
         report_error("Wrong element in matrix");

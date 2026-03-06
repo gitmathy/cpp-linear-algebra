@@ -33,7 +33,7 @@ class sparse_matrix_builder_assemble_test : public unit_test
 public:
     /// @brief Constructing the test
     sparse_matrix_builder_assemble_test()
-        : unit_test("sparse_matrix_builder_assemble_test", "Test assemble sparse matrix")
+        : unit_test("sparse_matrix_builder_assemble_test", "Test move sparse matrix")
     {}
 
     /// @brief Run the test

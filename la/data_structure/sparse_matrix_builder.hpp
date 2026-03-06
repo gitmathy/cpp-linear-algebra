@@ -56,8 +56,8 @@ public:
     /// @brief Number of columns
     inline size_type cols() const { return p_cols; }
 
-    /// @brief Build the sparse matrix (modify reference and return)
-    sparse_matrix<T> &assemble(sparse_matrix<T> &a);
+    /// @brief Build the sparse matrix (moves all elements to the matrix)
+    sparse_matrix<T> &move(sparse_matrix<T> &a);
 };
 
 // ===============================================
@@ -95,7 +95,7 @@ inline const T sparse_matrix_builder<T>::operator()(const size_type i, const siz
 }
 
 template <typename T>
-sparse_matrix<T> &sparse_matrix_builder<T>::assemble(sparse_matrix<T> &a)
+sparse_matrix<T> &sparse_matrix_builder<T>::move(sparse_matrix<T> &a)
 {
     // allocate memory for the matrix
     a.allocate(rows(), cols(), p_num_values);
@@ -127,6 +127,9 @@ sparse_matrix<T> &sparse_matrix_builder<T>::assemble(sparse_matrix<T> &a)
         }
     }
     LOG_DEBUG("Created sparse matrix from builder");
+    p_vals.resize(0);
+    p_cols = 0;
+    p_num_values = 0;
     return a;
 }
 
