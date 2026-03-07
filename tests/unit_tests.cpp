@@ -88,6 +88,7 @@ int main()
     tests.transfer("sparse_matrix", std::make_unique<sparse_matrix_builder_insert_test>());
     tests.transfer("sparse_matrix", std::make_unique<sparse_matrix_builder_assemble_test>());
     tests.transfer("sparse_matrix", std::make_unique<sparse_matrix_read_write_test>());
+    tests.transfer("sparse_matrix", std::make_unique<sparse_matrix_iterator_test>());
 
     int result = tests.run(std::set<std::string>());
 

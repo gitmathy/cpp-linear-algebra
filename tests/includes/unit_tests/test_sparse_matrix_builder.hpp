@@ -40,6 +40,18 @@ public:
     int execute();
 };
 
+class sparse_matrix_iterator_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    sparse_matrix_iterator_test()
+        : unit_test("sparse_matrix_iterator_test", "Test iterators of sparse matrix")
+    {}
+
+    /// @brief Run the test
+    int execute();
+};
+
 } // namespace test
 } // namespace la
 #endif
