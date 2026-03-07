@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.13.0...v1.14.0) (2026-03-07)
+
+
+### Features
+
+* Include pointers to elements ([6efb3ba](https://github.com/gitmathy/cpp-linear-algebra/commit/6efb3bae1a1f11d6f0a24fa27d2905ecba6e4603))
+
 # [1.13.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.12.0...v1.13.0) (2026-03-07)
 
 
