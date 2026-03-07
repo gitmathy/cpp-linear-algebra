@@ -211,10 +211,9 @@ vector<T>::vector(const std::initializer_list<T> &init_list) : p_vals(nullptr), 
 
 // take ownership and leave rhs in a valid empty state
 template <typename T>
-vector<T>::vector(vector<T> &&rhs) noexcept : p_vals(rhs.p_vals), p_size(rhs.p_size)
+vector<T>::vector(vector<T> &&rhs) noexcept : p_vals(nullptr), p_size(0)
 {
-    rhs.p_vals = nullptr;
-    rhs.p_size = 0;
+    *this = std::move(rhs);
 }
 
 template <typename T>
