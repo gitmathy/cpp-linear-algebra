@@ -17,6 +17,7 @@
 #include "la/util/memory.hpp"
 #include "la/util/types.hpp"
 #include <algorithm>
+#include <initializer_list>
 
 namespace la {
 
@@ -65,6 +66,10 @@ public:
     /// @brief Construct an empty matrix
     explicit sparse_matrix();
 
+    /// @brief Construct from initializer lists
+    sparse_matrix(const std::initializer_list<std::initializer_list<size_type>> &col_idx,
+                  const std::initializer_list<T> &values, const size_type cols);
+
     /// @brief Move from a sparse matrix builder
     explicit sparse_matrix(sparse_matrix_builder<T> &&rhs) noexcept;
 
@@ -82,6 +87,9 @@ public:
 
     /// @brief Number of columns
     inline size_type cols() const { return p_cols; }
+
+    /// @brief Number of non-zeros
+    inline size_type num_vals() const { return p_num_vals; }
 
     /// @brief Move assign a sparse matrix
     sparse_matrix<T> &operator=(sparse_matrix_builder<T> &&rhs) noexcept;
@@ -133,10 +141,33 @@ sparse_matrix<T>::sparse_matrix()
 {}
 
 template <typename T>
+sparse_matrix<T>::sparse_matrix(
+    const std::initializer_list<std::initializer_list<size_type>> &col_idx,
+    const std::initializer_list<T> &values, const size_type cols)
+    : p_vals(nullptr), p_col_idx(nullptr), p_row_ptr(nullptr), p_rows(0), p_cols(0), p_num_vals(0)
+{
+    allocate(col_idx.size(), cols, values.size());
+    LOG_DEBUG("Construct sparse matrix by initializer list");
+    size_type *next_row = begin_row_ptr();
+    *next_row = 0;
+    for (std::initializer_list<size_type> col_indices_in_row : col_idx) {
+        LOG_TRACE("Assigning " << col_indices_in_row.size() << " values in row");
+        const size_type next_row_ptr = *next_row + col_indices_in_row.size();
+        std::copy(col_indices_in_row.begin(), col_indices_in_row.end(),
+                  begin_col_idx() + *next_row);
+        BOUNDARY_ASSERT(next_row + 1 != end_row_ptr(), "Row pointer out of bound");
+        *(++next_row) = next_row_ptr;
+    }
+    LOG_DEBUG("Indices assigned (" << *next_row << "), now, assign values(" << num_vals() << ")");
+    SHAPE_ASSERT(*next_row == num_vals(), "column indices do not match number of values");
+    std::copy(values.begin(), values.end(), p_vals);
+}
+
+template <typename T>
 void sparse_matrix<T>::allocate(size_type rows, size_type cols, size_type num_values)
 {
-    LOG_DEBUG("Allocating memory for sparse matrix: rows: "
-              << rows << "values: " << num_values << ", memory: "
+    LOG_DEBUG("Allocating memory for sparse matrix - rows: "
+              << rows << ", values: " << num_values << ", memory: "
               << (num_values * (sizeof(T) + sizeof(size_type)) + rows * sizeof(size_type)) << " B");
 
     util::deallocate_aligned(p_vals);

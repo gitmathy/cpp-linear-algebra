@@ -33,6 +33,18 @@ public:
     int execute();
 };
 
+/// @brief Test constructing sparse matrices
+class sparse_matrix_constructor_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    sparse_matrix_constructor_test()
+        : unit_test("sparse_matrix_constructor_test", "Test constructors")
+    {}
+    /// @brief Run the test
+    int execute();
+};
+
 /// @brief Test assembling a sparse matrix
 class sparse_matrix_builder_assemble_test : public unit_test
 {

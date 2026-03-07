@@ -22,6 +22,7 @@ void add_all_sparse_matrix(unit_test_collection &collection)
     collection.transfer("sparse_matrix", std::make_unique<sparse_matrix_builder_assemble_test>());
     collection.transfer("sparse_matrix", std::make_unique<sparse_matrix_iterator_test>());
     collection.transfer("sparse_matrix", std::make_unique<sparse_matrix_read_write_test>());
+    collection.transfer("sparse_matrix", std::make_unique<sparse_matrix_constructor_test>());
 }
 
 int sparse_matrix_builder_insert_test::execute()
@@ -36,6 +37,17 @@ int sparse_matrix_builder_insert_test::execute()
 
     if (!(a_build(0, 0) == 1 || a_build(1, 1) == 2 || a_build(2, 2) == 3 || a_build(0, 1) == 0)) {
         report_error("Wrong element in builder");
+    }
+
+    return (int)errors().size();
+}
+
+int sparse_matrix_constructor_test::execute()
+{
+    sparse_matrix<int> a({{0, 2}, {1}, {1, 2}}, {1, 2, 3, 4, 5}, 3);
+
+    if (!(a(0, 0) == 1 || a(0, 2) == 2 || a(1, 1) == 3 || a(2, 1) == 4 || a(2, 2) == 5)) {
+        report_error("Wrong element in construct matrix by initializer");
     }
 
     return (int)errors().size();
