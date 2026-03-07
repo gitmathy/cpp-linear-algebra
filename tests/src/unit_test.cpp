@@ -8,6 +8,8 @@
 /// Licensed under the MIT License (see LICENSE file in project root).
 
 #include "tests/includes/unit_test.hpp"
+#include "la/util/error.hpp"
+#include "la/util/macros.hpp"
 
 namespace la {
 namespace test {

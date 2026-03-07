@@ -13,6 +13,7 @@
 #include "la/util/constants.hpp"
 #include "tests/includes/base_test.hpp"
 #include <list>
+#include <string>
 
 namespace la {
 namespace test {

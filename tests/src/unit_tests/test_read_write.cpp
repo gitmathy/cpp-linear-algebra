@@ -10,25 +10,12 @@
 #include "tests/includes/unit_tests/test_read_write.hpp"
 #include "la/dense"
 #include "la/util/error.hpp"
+#include "la/util/file_io.hpp"
 #include <cmath>
-#include <filesystem>
 #include <iostream>
 
 namespace la {
 namespace test {
-
-bool delete_file(const std::string &filename)
-{
-    try {
-        if (!std::filesystem::remove(filename)) {
-            throw util::error("Cannot delete temporary file", "file_error");
-        }
-        return false;
-    } catch (const std::filesystem::filesystem_error &) {
-        LOG_ERROR("Failed to delete temporary file");
-        throw util::error("Cannot delete temporary file", "file_error");
-    }
-}
 
 int vector_read_write_test::execute()
 {
@@ -52,7 +39,7 @@ int vector_read_write_test::execute()
         report_error("Vector binary: Cannot write to or read from file");
     }
 
-    delete_file(filename);
+    util::delete_file(filename);
 
     // Test ascii write and read
     v.to_file(filename, false);
@@ -69,7 +56,7 @@ int vector_read_write_test::execute()
     } catch (const util::error &) {
         report_error("Vector ascii: Cannot write to or read from file");
     }
-    delete_file(filename);
+    util::delete_file(filename);
 
     return (int)errors().size();
 }
@@ -99,7 +86,7 @@ int matrix_read_write_test::execute()
     } catch (const util::error &) {
         report_error("Matrix binary ascii: Cannot write to or read from file");
     }
-    delete_file(filename);
+    util::delete_file(filename);
 
     // Test ascii write and read
     try {
@@ -121,7 +108,7 @@ int matrix_read_write_test::execute()
     } catch (const util::error &) {
         report_error("Matrix row ascii: Cannot write to or read from file");
     }
-    delete_file(filename);
+    util::delete_file(filename);
 
     return (int)errors().size();
 }

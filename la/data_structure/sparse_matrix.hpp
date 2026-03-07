@@ -12,6 +12,7 @@
 
 #include "la/data_structure/forward.hpp"
 #include "la/util/error.hpp"
+#include "la/util/file_io.hpp"
 #include "la/util/macros.hpp"
 #include "la/util/memory.hpp"
 #include "la/util/types.hpp"
@@ -52,6 +53,9 @@ private:
     /// @brief Number of columns
     size_type p_cols;
 
+    /// @brief Total number of values
+    size_type p_num_vals;
+
 public:
     /// @brief Construct an empty matrix
     explicit sparse_matrix();
@@ -76,6 +80,12 @@ public:
 
     /// @brief Move assign a sparse matrix
     sparse_matrix<T> &operator=(sparse_matrix_builder<T> &&rhs) noexcept;
+
+    /// @brief Write matrix to a file (default in binary mode)
+    void to_file(const std::string &filename, const bool binary = true) const;
+
+    /// @brief Read matrix from a file (default in binary mode)
+    void from_file(const std::string &filename, const bool binary = true);
 };
 
 // ===============================================
@@ -84,7 +94,7 @@ public:
 
 template <typename T>
 sparse_matrix<T>::sparse_matrix()
-    : p_vals(nullptr), p_col_idx(nullptr), p_row_ptr(nullptr), p_rows(0), p_cols(0)
+    : p_vals(nullptr), p_col_idx(nullptr), p_row_ptr(nullptr), p_rows(0), p_cols(0), p_num_vals(0)
 {}
 
 template <typename T>
@@ -99,9 +109,10 @@ void sparse_matrix<T>::allocate(size_type rows, size_type cols, size_type num_va
     util::deallocate_aligned(p_row_ptr);
     p_vals = util::allocate_aligned<T>(num_values);
     p_col_idx = util::allocate_aligned<size_type>(num_values);
-    p_row_ptr = util::allocate_aligned<size_type>(rows);
+    p_row_ptr = util::allocate_aligned<size_type>(rows + 1);
     p_rows = rows;
     p_cols = cols;
+    p_num_vals = num_values;
 }
 
 template <typename T>
@@ -128,6 +139,35 @@ inline const T sparse_matrix<T>::operator()(const size_type i, const size_type j
         return T(0);
     }
     return *it;
+}
+
+template <typename T>
+void sparse_matrix<T>::to_file(const std::string &filename, const bool binary) const
+{
+    util::file_writer writer(filename, binary);
+    writer.append(p_rows);
+    writer.append(p_cols);
+    writer.append(p_num_vals);
+    writer.append(p_vals, p_num_vals);
+    writer.append(p_col_idx, p_num_vals);
+    writer.append(p_row_ptr, p_rows + 1);
+}
+
+template <typename T>
+void sparse_matrix<T>::from_file(const std::string &filename, const bool binary)
+{
+    util::file_reader reader(filename, binary);
+    // Read size information
+    size_type rows = size_type(0), cols = size_type(0), num_vals = size_type(0);
+    reader.get(rows);
+    reader.get(cols);
+    reader.get(num_vals);
+    // Allocate memory
+    allocate(rows, cols, num_vals);
+    // Read values
+    reader.get(p_vals, num_vals);
+    reader.get(p_col_idx, num_vals);
+    reader.get(p_row_ptr, rows + 1);
 }
 
 } // namespace la
