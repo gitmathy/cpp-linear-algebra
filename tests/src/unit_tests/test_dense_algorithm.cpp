@@ -1,62 +1,54 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file tests/src/unit_tests/test_mult_ops.cpp
-/// @brief Implementation of test of multiplication computations
+/// @file tests/src/unit_tests/test_dense_algorithm.cpp
+/// @brief Definition of testing dense algorithm
 /// @author Gitmathy, https://github.com/gitmathy
 ///
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#include "tests/includes/unit_tests/test_mult_ops.hpp"
+#include "tests/includes/unit_tests/test_dense_algorithm.hpp"
 #include "la/dense"
-#include "la/static"
+#include "tests/includes/collection.hpp"
+#include <memory>
 
 namespace la {
 namespace test {
 
-int vec_vec_mult_test::execute()
+void add_all_dense_algorithm(unit_test_collection &collection)
 {
-    vector<int> x = {3, 4};
-    vector<int> y = {4, 3};
-    vector<int> z = (x * y);
-    vector<int> z_scalar = (x * y) * 2;
-
-    if (!(z.rows() == 2)) {
-        report_error("Wrong size of vector*vector");
-    }
-    if (!check_values(z, 12)) {
-        report_error("Wrong elements for vector * vector");
-    }
-
-    if (!(z_scalar.rows() == 2)) {
-        report_error("Wrong size of (vector+vector) * scalar");
-    }
-    if (!check_values(z, 24)) {
-        report_error("Wrong elements for (vector+vector) * scalar");
-    }
-
-    return (int)errors().size();
+    collection.transfer("dense_algorithm", std::make_unique<lu_decomposition_test>());
 }
 
-int static_vec_vec_mult_test::execute()
+int lu_decomposition_test::execute()
 {
-    static_vector<int, 2> x = {3, 4};
-    static_vector<int, 2> y = {4, 3};
-    static_vector<int, 2> z = (x * y);
-    static_vector<int, 2> z_scalar = (x * y) * 2;
+    matrix<double, ROW_WISE> A({{0, 2, 1}, {1, 1, 2}, {2, 1, 1}});
+    const vector<double> b({4, 6, 7});
 
-    if (!(z.rows() == 2)) {
-        report_error("Wrong size of static_vector*static_vector");
-    }
-    if (!check_values(z, 12)) {
-        report_error("Wrong elements for static_vector * static_vector");
+    la::algorithm::lu_decomposition<double, ROW_WISE> lu(A);
+    vector<double> x = lu.solve(b);
+
+    if (x.rows() != 3) {
+        report_error("wrong size of LU decomposition solve");
     }
 
-    if (!(z_scalar.rows() == 2)) {
-        report_error("Wrong size of (static_vector+static_vector) * scalar");
+    if (!(std::abs(x(0) - 2.2) < util::EPS && std::abs(x(1) - 1.4) < util::EPS &&
+          std::abs(x(2) - 1.2) < util::EPS)) {
+        report_error("lu decomposition solve (row) produced wrong results");
     }
-    if (!check_values(z, 24)) {
-        report_error("Wrong elements for (static_vector+static_vector) * scalar");
+
+    matrix<double, COLUMN_WISE> A_col({{0, 1, 2}, {2, 1, 1}, {1, 2, 1}});
+
+    la::algorithm::lu_decomposition<double, COLUMN_WISE> lu_col(A_col);
+    x = lu.solve(b);
+
+    if (x.rows() != 3) {
+        report_error("wrong size of LU decomposition solve");
+    }
+
+    if (!(std::abs(x(0) - 2.2) < util::EPS && std::abs(x(1) - 1.4) < util::EPS &&
+          std::abs(x(2) - 1.2) < util::EPS)) {
+        report_error("lu decomposition (col) solve produced wrong results");
     }
 
     return (int)errors().size();
@@ -155,26 +147,6 @@ int mat_mat_mult_test::execute()
           C_row_col_row(1, 0) == 8 && C_row_col_row(1, 1) == 10 && C_row_col_row(1, 2) == 12)) {
         report_error("Wrong size of matrix*scalar");
     }
-
-    return (int)errors().size();
-}
-
-int mat_vec_mult_test::execute()
-{
-    matrix<int> A(2, 3);
-    A(0, 0) = 1;
-    A(0, 1) = 2;
-    A(0, 2) = 3;
-    A(1, 0) = 4;
-    A(1, 1) = 5;
-    A(1, 2) = 6;
-    vector<int> x(3);
-    x(0) = 1;
-    x(1) = 2;
-    x(2) = 3;
-    vector<int> y = A * x;
-    if (!(y(0) == 14 && y(1) == 32))
-        report_error("matrix*vector produced wrong values");
 
     return (int)errors().size();
 }

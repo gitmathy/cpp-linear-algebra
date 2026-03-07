@@ -272,11 +272,9 @@ matrix<T, StorageT>::matrix(const std::initializer_list<std::initializer_list<T>
 // take ownership and leave rhs in a valid empty state
 template <typename T, storage_type StorageT>
 matrix<T, StorageT>::matrix(matrix<T, StorageT> &&rhs) noexcept
-    : p_vals(rhs.p_vals), p_rows(rhs.p_rows), p_cols(rhs.p_cols)
+    : p_vals(nullptr), p_rows(0), p_cols(0)
 {
-    rhs.p_vals = nullptr;
-    rhs.p_rows = 0;
-    rhs.p_cols = 0;
+    *this = std::move(rhs);
 }
 
 template <typename T, storage_type StorageT>
