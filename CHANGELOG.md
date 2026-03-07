@@ -1,3 +1,10 @@
+## [1.14.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.14.0...v1.14.1) (2026-03-07)
+
+
+### Bug Fixes
+
+* include iterator for ostream ([ac14243](https://github.com/gitmathy/cpp-linear-algebra/commit/ac14243bb843d117a8f8c551a707e662959275dc))
+
 # [1.14.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.13.0...v1.14.0) (2026-03-07)
 
 
