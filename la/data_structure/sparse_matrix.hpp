@@ -34,6 +34,11 @@ public:
     /// @brief Definition of constant iterator type
     typedef const T *citerator;
 
+    /// @brief Definition of index iterator type
+    typedef size_type *idx_iterator;
+    /// @brief Definition of constant index iterator type
+    typedef const size_type *cidx_iterator;
+
     /// @brief Builder is allowed to access the raw (private) elements
     friend class sparse_matrix_builder<T>;
 
@@ -80,6 +85,36 @@ public:
 
     /// @brief Move assign a sparse matrix
     sparse_matrix<T> &operator=(sparse_matrix_builder<T> &&rhs) noexcept;
+
+    /// @brief Iterator to begin of values
+    inline iterator begin() { return p_vals; }
+    /// @brief Iterator to end of values
+    inline iterator end() { return p_vals + p_num_vals; }
+
+    /// @brief Constant iterator to begin of values
+    inline citerator begin() const { return p_vals; }
+    /// @brief Constant iterator to end of values
+    inline citerator end() const { return p_vals + p_num_vals; }
+
+    /// @brief Iterator to begin of row pointer
+    inline idx_iterator begin_row_ptr() { return p_row_ptr; }
+    /// @brief Iterator to end of row pointer
+    inline idx_iterator end_row_ptr() { return p_row_ptr + p_rows + 1; }
+
+    /// @brief Constant iterator to begin of row pointer
+    inline cidx_iterator begin_row_ptr() const { return p_row_ptr; }
+    /// @brief Constant iterator to end of row pointer
+    inline cidx_iterator end_row_ptr() const { return p_row_ptr + p_rows + 1; }
+
+    /// @brief Iterator to begin of column indices
+    inline idx_iterator begin_col_idx() { return p_col_idx; }
+    /// @brief Iterator to end of column indices
+    inline idx_iterator end_col_idx() { return p_col_idx + p_num_vals; }
+
+    /// @brief Constant iterator to begin of column indices
+    inline cidx_iterator begin_col_idx() const { return p_col_idx; }
+    /// @brief Constant iterator to end of column indices
+    inline cidx_iterator end_col_idx() const { return p_col_idx + p_num_vals; }
 
     /// @brief Write matrix to a file (default in binary mode)
     void to_file(const std::string &filename, const bool binary = true) const;
