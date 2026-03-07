@@ -1,3 +1,12 @@
+# [1.13.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.12.0...v1.13.0) (2026-03-07)
+
+
+### Features
+
+* Add general file io classes ([0cebd61](https://github.com/gitmathy/cpp-linear-algebra/commit/0cebd61ce3449d822d0ecf00d1cde239a6efa82a))
+* Include reading and writing sparse matrices to and from files ([6050a44](https://github.com/gitmathy/cpp-linear-algebra/commit/6050a44e013d0feaa1fc659807c603ae9beae002))
+* Using general file io classes ([222e95b](https://github.com/gitmathy/cpp-linear-algebra/commit/222e95bfdcb2a7e4f6cdd9062fb15884f7a36640))
+
 # [1.12.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.11.2...v1.12.0) (2026-03-06)
 
 
