@@ -14,6 +14,7 @@
 #include "la/util/macros.hpp"
 #include "la/util/types.hpp"
 #include <algorithm>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <type_traits>
@@ -76,6 +77,13 @@ public:
     template <typename T>
     void get(T &where, const size_type size = 1);
 };
+
+// ===============================================
+// G L O B A L   F U N C T I O N S
+// ===============================================
+
+/// @brief Delete a file
+inline bool delete_file(const std::string &filename);
 
 // ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
@@ -164,6 +172,20 @@ void file_reader::get(T &where, const size_type size)
     if (!p_ifs) {
         LOG_ERROR("Reading file failed due to I/O error");
         throw util::error("Cannot read text data.", "file_io");
+    }
+}
+
+inline bool delete_file(const std::string &filename)
+{
+    std::cout << "Deleting " << filename << std::endl;
+    try {
+        if (!std::filesystem::remove(filename)) {
+            throw util::error("Cannot delete temporary file", "file_error");
+        }
+        return false;
+    } catch (const std::filesystem::filesystem_error &) {
+        LOG_ERROR("Failed to delete temporary file");
+        throw util::error("Cannot delete temporary file", "file_error");
     }
 }
 

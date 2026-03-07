@@ -29,6 +29,7 @@
 #include "tests/includes/unit_tests/test_read_write.hpp"
 #include "tests/includes/unit_tests/test_resize.hpp"
 #include "tests/includes/unit_tests/test_sparse_matrix_builder.hpp"
+#include "tests/includes/unit_tests/test_sparse_read_write.hpp"
 
 using namespace la::test;
 
@@ -86,8 +87,9 @@ int main()
 
     tests.transfer("sparse_matrix", std::make_unique<sparse_matrix_builder_insert_test>());
     tests.transfer("sparse_matrix", std::make_unique<sparse_matrix_builder_assemble_test>());
+    tests.transfer("sparse_matrix", std::make_unique<sparse_matrix_read_write_test>());
 
-    int result = tests.run(std::set<std::string>({"sparse_matrix"}));
+    int result = tests.run(std::set<std::string>());
 
     return result > 0 ? 1 : 0;
 }
