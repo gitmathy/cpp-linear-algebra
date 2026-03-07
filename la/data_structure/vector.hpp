@@ -12,6 +12,7 @@
 
 #include "la/data_structure/expressions/forward.hpp"
 #include "la/data_structure/forward.hpp"
+#include "la/util/file_io.hpp"
 #include "la/util/memory.hpp"
 #include "la/util/types.hpp"
 #include <algorithm>
@@ -169,7 +170,7 @@ public:
     vector<T> &apply_func(function func);
 
     /// @brief Write a vector to a file (default in binary mode)
-    void to_file(const std::string &filename, const bool binary = true);
+    void to_file(const std::string &filename, const bool binary = true) const;
 
     /// @brief Read vector from a file (default in binary mode)
     void from_file(const std::string &filename, const bool binary = true);
@@ -449,66 +450,23 @@ vector<T> &vector<T>::apply_func(function func)
 }
 
 template <typename T>
-void vector<T>::to_file(const std::string &filename, const bool binary)
+void vector<T>::to_file(const std::string &filename, const bool binary) const
 {
-    std::ios_base::openmode mode = binary ? std::ios::out : std::ios::binary | std::ios::out;
-    std::ofstream ofs(filename, mode);
-    if (!ofs) {
-        LOG_ERROR("Failed to open file '" << filename << "' for writing");
-        throw util::error("Cannot open file for write.", "file_io");
-    }
-    if (binary) {
-        ofs.write(reinterpret_cast<const char *>(&p_size), sizeof(size_type));
-        ofs.write(reinterpret_cast<const char *>(p_vals), p_size * sizeof(T));
-    } else {
-        ofs << p_size << ' ';
-        std::copy(p_vals, p_vals + p_size, std::ostream_iterator<T>(ofs, " "));
-    }
-    ofs.close();
+    util::file_writer writer(filename, binary);
+    writer.append(p_size);
+    writer.append(p_vals, p_size);
 }
 
 template <typename T>
 void vector<T>::from_file(const std::string &filename, const bool binary)
 {
-    std::ios_base::openmode mode = binary ? std::ios::in : std::ios::binary | std::ios::in;
-    std::ifstream ifs(filename, mode);
-    if (!ifs) {
-        LOG_ERROR("Failed to open file '" << filename << "' for reading");
-        throw util::error("Cannot open file for read.", "file_io");
-    }
+    util::file_reader reader(filename, binary);
     // Read size information
-    size_type size;
-    if (binary) {
-        ifs.read(reinterpret_cast<char *>(&size), sizeof(size_type));
-        if (!ifs) {
-            LOG_ERROR("Failed to read binary header information for vector");
-            throw util::error("Cannot read header for read.", "file_io");
-        }
-    } else {
-        if (!(ifs >> size)) {
-            LOG_ERROR("Failed to read text header information for vector");
-            throw util::error("Cannot read header for read.", "file_io");
-        }
-    }
-    allocate(size);
-    if (binary) {
-        ifs.read(reinterpret_cast<char *>(p_vals), p_size * sizeof(T));
-        if (!ifs) {
-            LOG_ERROR("Failed to read binary data for vector");
-            throw util::error("Cannot read data.", "file_io");
-        }
-    } else {
-        T value;
-        for (size_type i = 0; i < p_size; ++i) {
-            if (ifs >> value) {
-                (*this)(i) = value;
-            } else {
-                LOG_ERROR("Failed to read text data for vector");
-                throw util::error("Cannot read data.", "file_io");
-            }
-        }
-    }
-    ifs.close();
+    size_type rows = size_type(0);
+    reader.get(rows);
+    // Allocate memory
+    allocate(rows);
+    reader.get(p_vals, rows);
 }
 
 template <typename T>

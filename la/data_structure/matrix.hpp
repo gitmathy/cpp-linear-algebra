@@ -11,11 +11,11 @@
 #define LA_DATA_STRUCTURE_MATRIX_HPP
 
 #include "la/data_structure/expressions/forward.hpp"
+#include "la/util/file_io.hpp"
 #include "la/util/macros.hpp"
 #include "la/util/memory.hpp"
 #include "la/util/types.hpp"
 #include <algorithm>
-#include <fstream>
 #include <initializer_list>
 #include <ranges>
 #include <string>
@@ -227,7 +227,7 @@ public:
     matrix<T, StorageT> &apply_func(function func);
 
     /// @brief Write matrix to a file (default in binary mode)
-    void to_file(const std::string &filename, const bool binary = true);
+    void to_file(const std::string &filename, const bool binary = true) const;
 
     /// @brief Read matrix from a file (default in binary mode)
     void from_file(const std::string &filename, const bool binary = true);
@@ -684,68 +684,25 @@ matrix<T, StorageT> &matrix<T, StorageT>::apply_func(function func)
 }
 
 template <typename T, storage_type StorageT>
-void matrix<T, StorageT>::to_file(const std::string &filename, const bool binary)
+void matrix<T, StorageT>::to_file(const std::string &filename, const bool binary) const
 {
-    std::ios_base::openmode mode = binary ? std::ios::out : std::ios::binary | std::ios::out;
-    std::ofstream ofs(filename, mode);
-    if (!ofs) {
-        LOG_ERROR("Failed to open file '" << filename << "' for write");
-        throw util::error("Cannot open file for write.", "file_io");
-    }
-    if (binary) {
-        ofs.write(reinterpret_cast<const char *>(&p_rows), sizeof(size_type));
-        ofs.write(reinterpret_cast<const char *>(&p_cols), sizeof(size_type));
-        ofs.write(reinterpret_cast<const char *>(p_vals), p_rows * p_cols * sizeof(T));
-    } else {
-        ofs << p_rows << ' ' << p_cols << ' ';
-        std::copy(p_vals, p_vals + p_rows * p_cols, std::ostream_iterator<T>(ofs, " "));
-    }
-    ofs.close();
+    util::file_writer writer(filename, binary);
+    writer.append(p_rows);
+    writer.append(p_cols);
+    writer.append(p_vals, p_rows * p_cols);
 }
 
 template <typename T, storage_type StorageT>
 void matrix<T, StorageT>::from_file(const std::string &filename, const bool binary)
 {
-    std::ios_base::openmode mode = binary ? std::ios::in : std::ios::binary | std::ios::in;
-    std::ifstream ifs(filename, mode);
-    if (!ifs) {
-        LOG_ERROR("Failed to open file " << filename);
-        throw util::error("Cannot open file for read.", "file_io");
-    }
+    util::file_reader reader(filename, binary);
     // Read size information
     size_type rows = size_type(0), cols = size_type(0);
-    if (binary) {
-        ifs.read(reinterpret_cast<char *>(&rows), sizeof(size_type));
-        ifs.read(reinterpret_cast<char *>(&cols), sizeof(size_type));
-        if (!ifs) {
-            LOG_ERROR("Reading binary matrix information failed due to I/O error");
-            throw util::error("Cannot read header for read.", "file_io");
-        }
-    } else {
-        if (!(ifs >> rows >> cols)) {
-            LOG_ERROR("Reading text matrix information failed due to I/O error");
-            throw util::error("Cannot read header for read.", "file_io");
-        }
-    }
+    reader.get(rows);
+    reader.get(cols);
+    // Allocate memory
     allocate(rows, cols);
-    if (binary) {
-        ifs.read(reinterpret_cast<char *>(p_vals), rows * cols * sizeof(T));
-        if (!ifs) {
-            LOG_ERROR("Reading binary data failed due to I/O error");
-            throw util::error("Cannot read binary data.", "file_io");
-        }
-    } else {
-        T value = T(0);
-        for (T *first = begin(); first != end(); ++first) {
-            if (ifs >> value) {
-                *first = value;
-            } else {
-                LOG_ERROR("Reading text data failed due to I/O error");
-                throw util::error("Cannot read text data.", "file_io");
-            }
-        }
-    }
-    ifs.close();
+    reader.get(p_vals, rows * cols);
 }
 
 template <typename T, storage_type StorageT>
