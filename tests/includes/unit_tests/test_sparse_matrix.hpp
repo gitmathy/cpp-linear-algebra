@@ -81,6 +81,16 @@ public:
     int execute();
 };
 
+/// @brief Test writing and reading sparse matrices
+class sparse_matrix_mult_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    sparse_matrix_mult_test() : unit_test("sparse_matrix_mult_test", "Multiplying sparse matrix") {}
+    /// @brief Run the test
+    int execute();
+};
+
 } // namespace test
 } // namespace la
 #endif

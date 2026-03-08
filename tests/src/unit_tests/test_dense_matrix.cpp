@@ -118,7 +118,7 @@ int matrix_construct_test::execute()
     // test with double
     // ----------------
     matrix<double> *md = new matrix<double>(2, 3, 3.14);
-    if (md->rows() != 2 || md->cols() != 3) {
+    if (md->rows() != 2 || md->cols() != 3 || md->non_zeros() != 6) {
         report_error("Constructor set wrong sizes of double matrix");
     }
     if (!check_values(*md, 3.14)) {

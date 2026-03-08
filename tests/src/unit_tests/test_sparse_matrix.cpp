@@ -23,6 +23,7 @@ void add_all_sparse_matrix(unit_test_collection &collection)
     collection.transfer("sparse_matrix", std::make_unique<sparse_matrix_iterator_test>());
     collection.transfer("sparse_matrix", std::make_unique<sparse_matrix_read_write_test>());
     collection.transfer("sparse_matrix", std::make_unique<sparse_matrix_constructor_test>());
+    collection.transfer("sparse_matrix", std::make_unique<sparse_matrix_mult_test>());
 }
 
 int sparse_matrix_builder_insert_test::execute()
@@ -128,6 +129,47 @@ int sparse_matrix_read_write_test::execute()
     }
 
     util::delete_file(filename);
+
+    return (int)errors().size();
+}
+
+int sparse_matrix_mult_test::execute()
+{
+    sparse_matrix<int> A({{0, 2}, {1}, {1, 2}}, {1, 2, 3, 4, 5}, 3);
+    vector<int> x({1, 2, 3});
+
+    vector<int> y = A * x;
+    if (!(y(0) == 7 || y(1) == 6 || y(2) == 23)) {
+        report_error("Wrong element in sparse matrix * vector");
+    }
+
+    y = (A * 2) * x;
+    if (!(y(0) == 14 || y(1) == 12 || y(2) == 49)) {
+        report_error("Wrong element in sparse matrix * scalar * vector");
+    }
+
+    y = (2 * A) * x;
+    if (!(y(0) == 14 || y(1) == 12 || y(2) == 49)) {
+        report_error("Wrong element in sparse matrix * scalar * vector");
+    }
+
+    matrix<int> B(3, 2, 1);
+    matrix<int> C = A * B;
+    if (!(C(0, 0) == 3 || C(1, 0) == 3 || C(2, 0) == 9 || C(0, 1) == 3 || C(1, 1) == 3 ||
+          C(2, 1) == 9)) {
+        report_error("Wrong element in sparse matrix * matrix");
+    }
+
+    matrix<int> D = (2 * A) * B;
+    if (!(D(0, 0) == 6 || D(1, 0) == 6 || D(2, 0) == 18 || D(0, 1) == 6 || D(1, 1) == 6 ||
+          D(2, 1) == 18)) {
+        report_error("Wrong element in scalar *  sparse matrix * matrix");
+    }
+    D = (A * 2) * B;
+    if (!(D(0, 0) == 6 || D(1, 0) == 6 || D(2, 0) == 18 || D(0, 1) == 6 || D(1, 1) == 6 ||
+          D(2, 1) == 18)) {
+        report_error("Wrong element in sparse matrix * scalar * matrix");
+    }
 
     return (int)errors().size();
 }
