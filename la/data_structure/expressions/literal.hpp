@@ -48,25 +48,28 @@ public:
     inline const T &evaluate(const size_type, const size_type) const { return p_value; }
 
     /// @brief Get row_idx_begin
-    inline size_type row_idx_begin(const size_type) const { return 0; }
+    constexpr inline size_type row_idx_begin(const size_type) const { return 0; }
 
     /// @brief Get column index of non-zero index
-    inline size_type col_idx(const size_type) const { return 0; }
+    constexpr inline size_type col_idx(const size_type) const { return 0; }
 
     /// @brief Size of literal
-    inline size_type size() const { return 1; }
+    constexpr inline size_type size() const { return 1; }
 
     /// @brief Number of rows
-    inline size_type rows() const { return 1; }
+    constexpr inline size_type rows() const { return 1; }
+
+    /// @brief Number of non-zeros
+    constexpr inline size_type non_zeros() const { return 1; }
 
     /// @brief Number of cols
-    inline size_type cols() const { return 1; }
+    constexpr inline size_type cols() const { return 1; }
 
     /// @brief A literal is zero dimensional
-    const static size_type dimension = size_type(0);
+    constexpr static size_type dimension = size_type(0);
 
     /// @brief A literal is not dense
-    const static bool dense = false;
+    constexpr static bool dense = false;
 };
 
 } // namespace expressions

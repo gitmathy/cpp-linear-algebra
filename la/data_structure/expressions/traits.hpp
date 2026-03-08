@@ -32,7 +32,10 @@ struct expression_traits
     typedef typename ExpressionT::value_type value_type;
 
     /// @brief dimension of the expression
-    const static size_type dimension = ExpressionT::dimension;
+    constexpr static size_type dimension = ExpressionT::dimension;
+
+    /// @brief density
+    constexpr static bool dense = ExpressionT::dense;
 };
 
 /// @brief Specialization for `vector<T>`: store as a reference in expression nodes
@@ -43,7 +46,8 @@ struct expression_traits<vector<T>>
 {
     typedef const vector<T> &expression_type;
     typedef T value_type;
-    const static size_type dimension = size_type(1);
+    constexpr static size_type dimension = size_type(1);
+    constexpr static bool dense = vector<T>::dense;
 };
 
 /// @brief Specialization for `static_vector<T,N>`: store as a reference in expression nodes
@@ -54,7 +58,8 @@ struct expression_traits<static_vector<T, N>>
 {
     typedef const static_vector<T, N> &expression_type;
     typedef T value_type;
-    const static size_type dimension = size_type(1);
+    constexpr static size_type dimension = size_type(1);
+    constexpr static bool dense = static_vector<T, N>::dense;
 };
 
 /// @brief Specialization for `matrix<T,StorageT>`: store as a reference in expression nodes
@@ -65,7 +70,8 @@ struct expression_traits<matrix<T>>
 {
     typedef const matrix<T> &expression_type;
     typedef T value_type;
-    const static size_type dimension = size_type(2);
+    constexpr static size_type dimension = size_type(2);
+    constexpr static bool dense = matrix<T>::dense;
 };
 
 /// @brief Specialization for `spare_matrix<T>`: store as a reference in expression nodes
@@ -76,7 +82,8 @@ struct expression_traits<sparse_matrix<T>>
 {
     typedef const sparse_matrix<T> &expression_type;
     typedef T value_type;
-    const static size_type dimension = size_type(2);
+    constexpr static size_type dimension = size_type(2);
+    constexpr static bool dense = sparse_matrix<T>::dense;
 };
 
 /// @brief Specialization for `internal::literal<T>`: store as a reference in expression nodes
@@ -87,7 +94,8 @@ struct expression_traits<literal<T>>
 {
     typedef literal<T> expression_type;
     typedef T value_type;
-    const static size_type dimension = size_type(0);
+    constexpr static size_type dimension = size_type(0);
+    constexpr static bool dense = literal<T>::dense;
 };
 
 } // namespace expressions
