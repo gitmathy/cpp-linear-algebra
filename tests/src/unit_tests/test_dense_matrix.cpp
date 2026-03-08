@@ -9,7 +9,6 @@
 
 #include "tests/includes/unit_tests/test_dense_matrix.hpp"
 #include "la/dense"
-#include "tests/includes/collection.hpp"
 #include <memory>
 
 namespace la {

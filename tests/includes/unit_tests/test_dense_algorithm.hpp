@@ -11,12 +11,10 @@
 #define LA_TEST_INCLUDES_UNIT_TEST_DENSE_ALGORITHM_HPP
 
 #include "tests/includes/unit_test.hpp"
+#include "tests/includes/unit_tests/unit_test_collection.hpp"
 
 namespace la {
 namespace test {
-
-// forward declaration
-class unit_test_collection;
 
 /// @brief Add all dense tests to the test_collection
 void add_all_dense_algorithm(unit_test_collection &collection);

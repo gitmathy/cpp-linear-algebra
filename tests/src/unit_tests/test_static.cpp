@@ -9,7 +9,6 @@
 
 #include "tests/includes/unit_tests/test_static.hpp"
 #include "la/static"
-#include "tests/includes/collection.hpp"
 #include <memory>
 
 namespace la {
