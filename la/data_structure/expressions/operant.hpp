@@ -58,6 +58,15 @@ public:
         return p_expression.evaluate(i, j);
     }
 
+    /// @brief Get row_idx_begin
+    inline size_type row_idx_begin(const size_type i) const
+    {
+        return p_expression.row_idx_begin(i);
+    }
+
+    /// @brief Get column index of non-zero index
+    inline size_type col_idx(const size_type nz_idx) const { return p_expression.col_idx(nz_idx); }
+
     /// @brief Number of rows
     inline size_type rows() const { return p_expression.rows(); }
 
@@ -66,6 +75,9 @@ public:
 
     /// @brief Dimension of the operant is defined by the expression
     const static size_type dimension = ExpressionT::dimension;
+
+    /// @brief Density is the same as for the expression
+    const static bool dense = ExpressionT::dense;
 };
 
 } // namespace expressions
