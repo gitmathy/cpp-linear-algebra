@@ -290,7 +290,7 @@ void matrix<T>::resize(const size_type m, const size_type n, const T &val)
 template <typename T>
 inline size_type matrix<T>::row_idx_begin(const size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "matrix: row_idx_begin only valid for row_wise");
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_idx_begin index out of bound");
     return i * p_cols;
 }
 
@@ -335,7 +335,7 @@ inline const T &matrix<T>::evaluate(const size_type i, const size_type j) const
 template <typename T>
 inline const T &matrix<T>::evaluate(const size_type nz_idx) const
 {
-    LOG_TRACE("Evaluating matrix at position " << i);
+    LOG_TRACE("Evaluating matrix at position " << nz_idx);
     return (*this)(nz_idx);
 }
 
