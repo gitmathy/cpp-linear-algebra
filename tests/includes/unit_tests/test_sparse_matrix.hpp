@@ -33,6 +33,18 @@ public:
     int execute();
 };
 
+/// @brief Test constructing sparse matrices
+class sparse_matrix_constructor_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    sparse_matrix_constructor_test()
+        : unit_test("sparse_matrix_constructor_test", "Test constructors")
+    {}
+    /// @brief Run the test
+    int execute();
+};
+
 /// @brief Test assembling a sparse matrix
 class sparse_matrix_builder_assemble_test : public unit_test
 {
@@ -65,6 +77,16 @@ public:
     sparse_matrix_read_write_test()
         : unit_test("sparse_matrix_read_write_test", "Writing and reading sparse matrices")
     {}
+    /// @brief Run the test
+    int execute();
+};
+
+/// @brief Test writing and reading sparse matrices
+class sparse_matrix_mult_test : public unit_test
+{
+public:
+    /// @brief Constructing the test
+    sparse_matrix_mult_test() : unit_test("sparse_matrix_mult_test", "Multiplying sparse matrix") {}
     /// @brief Run the test
     int execute();
 };

@@ -17,6 +17,7 @@
 #include "la/util/memory.hpp"
 #include "la/util/types.hpp"
 #include <algorithm>
+#include <initializer_list>
 
 namespace la {
 
@@ -62,20 +63,30 @@ private:
     size_type p_num_vals;
 
 public:
+    /// public variable members
+
+    /// @brief Dimension of a matrix
+    const static size_type dimension = size_type(2);
+
+    /// @brief This matrix is dense
+    const static bool dense = false;
+
+public:
     /// @brief Construct an empty matrix
     explicit sparse_matrix();
+
+    /// @brief Construct from initializer lists
+    sparse_matrix(const std::initializer_list<std::initializer_list<size_type>> &col_idx,
+                  const std::initializer_list<T> &values, const size_type cols);
 
     /// @brief Move from a sparse matrix builder
     explicit sparse_matrix(sparse_matrix_builder<T> &&rhs) noexcept;
 
+    /// @brief Free all the memory
+    ~sparse_matrix();
+
     /// @brief Allocate memory and set shape
-    void allocate(size_type rows, size_type cols, size_type num_values);
-
-    /// @brief write access to an element
-    inline T &operator()(const size_type i, const size_type j);
-
-    /// @brief read access to an element
-    inline const T operator()(const size_type i, const size_type j) const;
+    void allocate(const size_type rows, const size_type cols, const size_type num_values);
 
     /// @brief Number of rows
     inline size_type rows() const { return p_rows; }
@@ -83,8 +94,32 @@ public:
     /// @brief Number of columns
     inline size_type cols() const { return p_cols; }
 
-    /// @brief Move assign a sparse matrix
-    sparse_matrix<T> &operator=(sparse_matrix_builder<T> &&rhs) noexcept;
+    /// @brief Number of non-zeros
+    inline size_type non_zeros() const { return p_num_vals; }
+
+    /// @brief Get first index in row i
+    inline size_type row_idx_begin(const size_type i) const;
+
+    /// @brief Get column index of non-zero index
+    inline size_type col_idx(const size_type nz_idx) const;
+
+    /// @brief write access to an element
+    inline T &operator()(const size_type i, const size_type j);
+
+    /// @brief read access to an element
+    inline const T operator()(const size_type i, const size_type j) const;
+
+    /// @brief read access to i'th element
+    inline const T &operator()(const size_type i) const;
+
+    /// @brief Evaluate matrix at (i,j), i.e., read element (i,j)
+    inline const T evaluate(size_type i, size_type j) const;
+
+    /// @brief Evaluate sparse matrix at (i), means reading i'th non-zero
+    inline const T &evaluate(size_type i) const;
+
+    /// @brief Get position of first non-zeros of row i
+    inline size_type row_begin(const size_type i) const { return p_row_ptr[i]; }
 
     /// @brief Iterator to begin of values
     inline iterator begin() { return p_vals; }
@@ -95,6 +130,16 @@ public:
     inline citerator begin() const { return p_vals; }
     /// @brief Constant iterator to end of values
     inline citerator end() const { return p_vals + p_num_vals; }
+
+    /// @brief Iterator to begin of values
+    inline iterator begin_vals(const size_type i) { return p_vals + p_row_ptr[i]; }
+    /// @brief Iterator to end of values
+    inline iterator end_vals(const size_type i) { return p_vals + p_row_ptr[i + 1]; }
+
+    /// @brief Constant iterator to begin of values
+    inline citerator begin_vals(const size_type i) const { return p_vals + p_row_ptr[i]; }
+    /// @brief Constant iterator to end of values
+    inline citerator end_vals(const size_type i) const { return p_vals + p_row_ptr[i + 1]; }
 
     /// @brief Iterator to begin of row pointer
     inline idx_iterator begin_row_ptr() { return p_row_ptr; }
@@ -116,6 +161,22 @@ public:
     /// @brief Constant iterator to end of column indices
     inline cidx_iterator end_col_idx() const { return p_col_idx + p_num_vals; }
 
+    /// @brief Iterator to begin of column indices
+    inline idx_iterator begin_col_idx(const size_type i) { return p_col_idx + p_row_ptr[i]; }
+    /// @brief Iterator to end of column indices
+    inline idx_iterator end_col_idx(const size_type i) { return p_col_idx + p_row_ptr[i + 1]; }
+
+    /// @brief Constant iterator to begin of column indices
+    inline cidx_iterator begin_col_idx(const size_type i) const { return p_col_idx + p_row_ptr[i]; }
+    /// @brief Constant iterator to end of column indices
+    inline cidx_iterator end_col_idx(const size_type i) const
+    {
+        return p_col_idx + p_row_ptr[i + 1];
+    }
+
+    /// @brief Move assign a sparse matrix
+    sparse_matrix<T> &operator=(sparse_matrix_builder<T> &&rhs) noexcept;
+
     /// @brief Write matrix to a file (default in binary mode)
     void to_file(const std::string &filename, const bool binary = true) const;
 
@@ -133,10 +194,42 @@ sparse_matrix<T>::sparse_matrix()
 {}
 
 template <typename T>
-void sparse_matrix<T>::allocate(size_type rows, size_type cols, size_type num_values)
+sparse_matrix<T>::sparse_matrix(
+    const std::initializer_list<std::initializer_list<size_type>> &col_idx,
+    const std::initializer_list<T> &values, const size_type cols)
+    : p_vals(nullptr), p_col_idx(nullptr), p_row_ptr(nullptr), p_rows(0), p_cols(0), p_num_vals(0)
 {
-    LOG_DEBUG("Allocating memory for sparse matrix: rows: "
-              << rows << "values: " << num_values << ", memory: "
+    allocate(col_idx.size(), cols, values.size());
+    LOG_DEBUG("Construct sparse matrix by initializer list");
+    size_type *next_row = begin_row_ptr();
+    *next_row = 0;
+    for (std::initializer_list<size_type> col_indices_in_row : col_idx) {
+        LOG_TRACE("Assigning " << col_indices_in_row.size() << " values in row");
+        const size_type next_row_ptr = *next_row + col_indices_in_row.size();
+        std::copy(col_indices_in_row.begin(), col_indices_in_row.end(),
+                  begin_col_idx() + *next_row);
+        BOUNDARY_ASSERT(next_row + 1 != end_row_ptr(), "Row pointer out of bound");
+        *(++next_row) = next_row_ptr;
+    }
+    LOG_DEBUG("Indices assigned (" << *next_row << "), now, assign values(" << num_vals() << ")");
+    SHAPE_ASSERT(*next_row == non_zeros(), "column indices do not match number of values");
+    std::copy(values.begin(), values.end(), p_vals);
+}
+
+template <typename T>
+sparse_matrix<T>::~sparse_matrix()
+{
+    util::deallocate_aligned(p_vals);
+    util::deallocate_aligned(p_col_idx);
+    util::deallocate_aligned(p_row_ptr);
+}
+
+template <typename T>
+void sparse_matrix<T>::allocate(const size_type rows, const size_type cols,
+                                const size_type num_values)
+{
+    LOG_DEBUG("Allocating memory for sparse matrix - rows: "
+              << rows << ", values: " << num_values << ", memory: "
               << (num_values * (sizeof(T) + sizeof(size_type)) + rows * sizeof(size_type)) << " B");
 
     util::deallocate_aligned(p_vals);
@@ -148,6 +241,20 @@ void sparse_matrix<T>::allocate(size_type rows, size_type cols, size_type num_va
     p_rows = rows;
     p_cols = cols;
     p_num_vals = num_values;
+}
+
+template <typename T>
+inline size_type sparse_matrix<T>::row_idx_begin(const size_type i) const
+{
+    BOUNDARY_ASSERT(i <= rows(), "sparse_matrix: row_idx_begin index out of bound");
+    return p_row_ptr[i];
+}
+
+template <typename T>
+inline size_type sparse_matrix<T>::col_idx(const size_type nz_idx) const
+{
+    BOUNDARY_ASSERT(nz_idx < non_zeros(), "sparse_matrix: col_idx index out of bound");
+    return p_col_idx[nz_idx];
 }
 
 template <typename T>
@@ -174,6 +281,28 @@ inline const T sparse_matrix<T>::operator()(const size_type i, const size_type j
         return T(0);
     }
     return *it;
+}
+
+template <typename T>
+inline const T &sparse_matrix<T>::operator()(const size_type i) const
+{
+    BOUNDARY_ASSERT(i < non_zeros(), "sparse_matrix: index out of bound");
+    LOG_TRACE("sparse_matrix: Read access to " << i << "'th element");
+    return p_vals[i];
+}
+
+template <typename T>
+inline const T sparse_matrix<T>::evaluate(size_type i, size_type j) const
+{
+    LOG_TRACE("Evaluating matrix at position " << i << ", " << j);
+    return (*this)(i, j);
+}
+
+template <typename T>
+inline const T &sparse_matrix<T>::evaluate(size_type i) const
+{
+    LOG_TRACE("Evaluating matrix at " << i << "'th non-zero");
+    return (*this)(i);
 }
 
 template <typename T>

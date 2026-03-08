@@ -47,6 +47,12 @@ public:
     /// @brief Evaluate literal (2d access)
     inline const T &evaluate(const size_type, const size_type) const { return p_value; }
 
+    /// @brief Get row_idx_begin
+    inline size_type row_idx_begin(const size_type) const { return 0; }
+
+    /// @brief Get column index of non-zero index
+    inline size_type col_idx(const size_type) const { return 0; }
+
     /// @brief Size of literal
     inline size_type size() const { return 1; }
 
@@ -58,6 +64,9 @@ public:
 
     /// @brief A literal is zero dimensional
     const static size_type dimension = size_type(0);
+
+    /// @brief A literal is not dense
+    const static bool dense = false;
 };
 
 } // namespace expressions

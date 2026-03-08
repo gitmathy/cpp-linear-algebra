@@ -58,6 +58,9 @@ public:
     /// @brief Dimension of a matrix
     const static size_type dimension = size_type(2);
 
+    /// @brief This matrix is dense
+    const static bool dense = true;
+
 public:
     /// @brief Default constructor creates an empty matrix
     explicit matrix() : p_vals(nullptr), p_rows(0), p_cols(0) {}
@@ -66,7 +69,7 @@ public:
     /// @param m number of rows
     /// @param n number of columns
     /// @param val default value for all elements
-    explicit matrix(size_type m, size_type n, const T &val = T());
+    explicit matrix(const size_type m, const size_type n, const T &val = T());
 
     /// @brief Construct a matrix with a list of values
     matrix(const std::initializer_list<std::initializer_list<T>> &init_list);
@@ -101,13 +104,13 @@ public:
     ~matrix() { util::deallocate_aligned(p_vals); }
 
     /// @brief Allocate memory and set shape
-    void allocate(size_type m, size_type n);
+    void allocate(const size_type m, const size_type n);
 
     /// @brief Resize a matrix. And set all values to val
     /// @param m number of rows
     /// @param n number of columns
     /// @param val value applied to every element of the matrix
-    void resize(size_type m, size_type n, const T &val = T(0));
+    void resize(const size_type m, const size_type n, const T &val = T(0));
 
     /// @brief Get number of rows
     inline size_type rows() const { return p_rows; }
@@ -115,17 +118,29 @@ public:
     /// @brief Get number of columns
     inline size_type cols() const { return p_cols; }
 
+    /// @brief Number of non-zeros
+    inline size_type non_zeros() const { return p_rows * p_cols; }
+
+    /// @brief Get first index in row i (also available for i==rows())
+    inline size_type row_idx_begin(const size_type i) const;
+
+    /// @brief Get column index of non-zero index
+    inline size_type col_idx(const size_type nz_idx) const;
+
     /// @brief Get element (i,j) for reading
-    inline const T &operator()(size_type i, size_type j) const;
+    inline const T &operator()(const size_type i, const size_type j) const;
 
     /// @brief Get element (i,j) for writing
-    inline T &operator()(size_type i, size_type j);
+    inline T &operator()(const size_type i, const size_type j);
 
-    /// @brief Evaluate matrix at (i,j), i.e., read element (i,j)
-    inline const T &evaluate(size_type i, size_type j) const;
+    /// @brief Get nz_idx't element for reading
+    inline const T &operator()(const size_type nz_idx) const;
 
-    /// @brief Evaluate matrix at (i) raises an error
-    inline const T &evaluate(size_type i) const;
+    /// @brief Evaluate matrix at (i,j), i.e., (wrapper to (*this)(i,j)))
+    inline const T &evaluate(const size_type i, const size_type j) const;
+
+    /// @brief Evaluate matrix at (nz_idx) gives nz_idx'th element (wrapper to (*this)(nz_idx)))
+    inline const T &evaluate(const size_type nz_idx) const;
 
     /// @brief Iterator to begin
     inline iterator begin() { return p_vals; }
@@ -221,6 +236,10 @@ public:
     template <typename ExpressionT>
     matrix<T, StorageT> &operator-=(const expressions::operant<ExpressionT> &exp);
 
+    /// @brief Multiply row i with a right hand side
+    template <typename ExpressionT>
+    T row_multiply(const expressions::operant<ExpressionT> &right, const size_t i);
+
     /// @brief Apply a function to every entry, i.e., A(i,j)=func(A(i,j))
     /// @tparam function, supports func(T)
     template <typename function>
@@ -246,7 +265,7 @@ std::ostream &operator<<(std::ostream &os, const matrix<T, StorageT> &mat);
 // ===============================================
 
 template <typename T, storage_type StorageT>
-void matrix<T, StorageT>::allocate(size_type m, size_type n)
+void matrix<T, StorageT>::allocate(const size_type m, const size_type n)
 {
     LOG_DEBUG("Allocating memory for matrix: " << (m * n * sizeof(T)) << " B");
     util::deallocate_aligned(p_vals);
@@ -256,7 +275,7 @@ void matrix<T, StorageT>::allocate(size_type m, size_type n)
 }
 
 template <typename T, storage_type StorageT>
-matrix<T, StorageT>::matrix(size_type m, size_type n, const T &val)
+matrix<T, StorageT>::matrix(const size_type m, const size_type n, const T &val)
     : p_vals(nullptr), p_rows(0), p_cols(0)
 {
     resize(m, n, val);
@@ -309,7 +328,7 @@ matrix<T, StorageT>::matrix(
 }
 
 template <typename T, storage_type StorageT>
-void matrix<T, StorageT>::resize(size_type m, size_type n, const T &val)
+void matrix<T, StorageT>::resize(const size_type m, const size_type n, const T &val)
 {
     LOG_DEBUG("Resizing matrix to (" << m << " x " << n << ')');
     allocate(m, n);
@@ -321,7 +340,21 @@ void matrix<T, StorageT>::resize(size_type m, size_type n, const T &val)
 }
 
 template <typename T, storage_type StorageT>
-inline const T &matrix<T, StorageT>::operator()(size_type i, size_type j) const
+inline size_type matrix<T, StorageT>::row_idx_begin(const size_type i) const
+{
+    LAYOUT_ASSERT(StorageT == ROW_WISE, "matrix: row_idx_begin only valid for row_wise");
+    return i * p_cols;
+}
+
+template <typename T, storage_type StorageT>
+inline size_type matrix<T, StorageT>::col_idx(const size_type nz_idx) const
+{
+    BOUNDARY_ASSERT(nz_idx < non_zeros(), "matrix: col_idx index out of bound");
+    return nz_idx % p_cols;
+}
+
+template <typename T, storage_type StorageT>
+inline const T &matrix<T, StorageT>::operator()(const size_type i, const size_type j) const
 {
     BOUNDARY_ASSERT(i < p_rows && j < p_cols, "Index out of bound: matrix read element");
     LOG_TRACE("Read access to matrix at position " << i << ", " << j);
@@ -329,7 +362,7 @@ inline const T &matrix<T, StorageT>::operator()(size_type i, size_type j) const
 }
 
 template <typename T, storage_type StorageT>
-inline T &matrix<T, StorageT>::operator()(size_type i, size_type j)
+inline T &matrix<T, StorageT>::operator()(const size_type i, const size_type j)
 {
     BOUNDARY_ASSERT(i < p_rows && j < p_cols, "Index out of bound: matrix write element");
     LOG_TRACE("Write access to matrix at position " << i << ", " << j);
@@ -337,16 +370,25 @@ inline T &matrix<T, StorageT>::operator()(size_type i, size_type j)
 }
 
 template <typename T, storage_type StorageT>
-inline const T &matrix<T, StorageT>::evaluate(size_type i, size_type j) const
+inline const T &matrix<T, StorageT>::operator()(const size_type nz_idx) const
+{
+    BOUNDARY_ASSERT(nz_idx < non_zeros(), "Index out of bound: matrix read i'th value");
+    LOG_TRACE("Read " << nz_idx << "'th element of dense matrix");
+    return p_vals[nz_idx];
+}
+
+template <typename T, storage_type StorageT>
+inline const T &matrix<T, StorageT>::evaluate(const size_type i, const size_type j) const
 {
     LOG_TRACE("Evaluating matrix at position " << i << ", " << j);
     return (*this)(i, j);
 }
 
 template <typename T, storage_type StorageT>
-inline const T &matrix<T, StorageT>::evaluate(size_type) const
+inline const T &matrix<T, StorageT>::evaluate(const size_type nz_idx) const
 {
-    throw util::error("Evaluate matrix at i is not implemented");
+    LOG_TRACE("Evaluating matrix at position " << i);
+    return (*this)(nz_idx);
 }
 
 // ITERATORS
@@ -664,6 +706,19 @@ matrix<T, StorageT> &matrix<T, StorageT>::operator-=(const expressions::operant<
     });
 #endif
     return *this;
+}
+
+template <typename T, storage_type StorageT>
+template <typename ExpressionT>
+T matrix<T, StorageT>::row_multiply(const expressions::operant<ExpressionT> &right, const size_t i)
+{
+    SHAPE_ASSERT(right.row() == cols() && ExpressionT::dimension < 2,
+                 "Row multiply mismatching dimensions");
+    T init = T(0);
+    for (size_type j = 0; j < this->p_cols; ++j) {
+        init += (*this)(i, j) * right.evaluate(j);
+    }
+    return init;
 }
 
 template <typename T, storage_type StorageT>

@@ -70,6 +70,22 @@ public:
         return OpsT::evaluate(p_left, p_right, i, j);
     }
 
+    /// @brief Get row_idx_begin
+    inline size_type row_idx_begin(const size_type i) const
+    {
+        SHAPE_ASSERT(ExpTLeft::dimension == 2 || ExpTRight::dimension,
+                     "binary_expression: row_idx_begin one side needs to be a matrix");
+        return ExpTLeft::dimension == 2 ? p_left.row_idx_begin(i) : p_right.row_idx_begin(i);
+    }
+
+    /// @brief Get column index of non-zero index
+    inline size_type col_idx(const size_type nz_idx) const
+    {
+        SHAPE_ASSERT(ExpTLeft::dimension == 2 || ExpTRight::dimension,
+                     "binary_expression: col_idx one side needs to be a matrix");
+        return ExpTLeft::dimension == 2 ? p_left.col_idx(nz_idx) : p_right.col_idx(nz_idx);
+    }
+
     /// @brief Get the rows of the result
     inline size_type rows() const;
 
@@ -79,6 +95,9 @@ public:
     /// @brief Get dimension of result
     const static size_type dimension =
         ExpTLeft::dimension == 0 ? ExpTRight::dimension : ExpTLeft::dimension;
+
+    /// @brief If any side is dense, the result is dense, too
+    const static bool dense = ExpTLeft::dense || ExpTRight::dense;
 };
 
 /// ===============================================

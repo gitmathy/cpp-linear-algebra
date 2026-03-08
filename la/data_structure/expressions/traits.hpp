@@ -12,6 +12,7 @@
 
 #include "la/data_structure/expressions/literal.hpp"
 #include "la/data_structure/matrix.hpp"
+#include "la/data_structure/sparse_matrix.hpp"
 #include "la/data_structure/static_vector.hpp"
 #include "la/data_structure/vector.hpp"
 #include "la/util/types.hpp"
@@ -63,6 +64,17 @@ template <typename T, storage_type StorageT>
 struct expression_traits<matrix<T, StorageT>>
 {
     typedef const matrix<T, StorageT> &expression_type;
+    typedef T value_type;
+    const static size_type dimension = size_type(2);
+};
+
+/// @brief Specialization for `spare_matrix<T>`: store as a reference in expression nodes
+/// This avoids copying large sparse matrix objects into expression trees; operant/binary_expression
+/// will hold references to existing vectors while `operant` itself still owns temporaries.
+template <typename T>
+struct expression_traits<sparse_matrix<T>>
+{
+    typedef const sparse_matrix<T> &expression_type;
     typedef T value_type;
     const static size_type dimension = size_type(2);
 };
