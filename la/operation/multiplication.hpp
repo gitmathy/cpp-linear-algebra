@@ -104,6 +104,24 @@ auto operator*(const matrix<T, StorageLeft> &left, const T &right);
 template <typename T, storage_type StorageRight>
 auto operator*(const T &left, const matrix<T, StorageRight> &right);
 
+// sparse matrix
+
+/// @brief sparse_matrix * vector
+template <typename T>
+auto operator*(const sparse_matrix<T> &left, const vector<T> &right);
+
+/// @brief sparse_matrix * matrix
+template <typename T, storage_type StorageRight>
+auto operator*(const sparse_matrix<T> &left, const matrix<T, StorageRight> &right);
+
+/// @brief sparse_matrix * scalar
+template <typename T>
+auto operator*(const sparse_matrix<T> &left, const T &right);
+
+/// @brief scalar * sparse_matrix
+template <typename T>
+auto operator*(const T &left, const sparse_matrix<T> &right);
+
 // ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
 // ===============================================
@@ -319,6 +337,51 @@ auto operator*(const T &left, const matrix<T, StorageRight> &right)
     typedef expressions::binary_expression<
         expressions::literal<T>, matrix<T, StorageRight>,
         expressions::mult_operation<expressions::literal<T>, matrix<T, StorageRight>>>
+        new_bin_exp_type;
+    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+// sparse matrix
+
+/// @brief sparse_matrix * vector
+template <typename T>
+auto operator*(const sparse_matrix<T> &left, const vector<T> &right)
+{
+    typedef expressions::binary_expression<sparse_matrix<T>, vector<T>,
+                                           expressions::mult_operation<sparse_matrix<T>, vector<T>>>
+        new_bin_exp_type;
+    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief sparse_matrix * matrix
+template <typename T, storage_type StorageRight>
+auto operator*(const sparse_matrix<T> &left, const matrix<T, StorageRight> &right)
+{
+    typedef expressions::binary_expression<
+        sparse_matrix<T>, matrix<T, StorageRight>,
+        expressions::mult_operation<sparse_matrix<T>, matrix<T, StorageRight>>>
+        new_bin_exp_type;
+    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief sparse_matrix * scalar
+template <typename T>
+auto operator*(const sparse_matrix<T> &left, const T &right)
+{
+    typedef expressions::binary_expression<
+        sparse_matrix<T>, expressions::literal<T>,
+        expressions::mult_operation<sparse_matrix<T>, expressions::literal<T>>>
+        new_bin_exp_type;
+    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief scalar * sparse_matrix
+template <typename T>
+auto operator*(const T &left, const sparse_matrix<T> &right)
+{
+    typedef expressions::binary_expression<
+        expressions::literal<T>, sparse_matrix<T>,
+        expressions::mult_operation<expressions::literal<T>, sparse_matrix<T>>>
         new_bin_exp_type;
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }

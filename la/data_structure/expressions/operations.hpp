@@ -114,14 +114,15 @@ struct mult_operation
     static inline value_type evaluate(const ExpressionLeft &left, const ExpressionRight &right,
                                       const size_type i)
     {
-        LAYOUT_ASSERT(ExpressionRight::dimension < 2,
-                      "Multiplication at (i) is only valid for zero- or one-dimensional rhs");
+        LAYOUT_ASSERT(!(ExpressionLeft::dimension == 2 && ExpressionRight::dimension == 2),
+                      "Multiplication at (i) is not valid for matrix*matrix");
         if constexpr (ExpressionLeft::dimension == 2 && ExpressionRight::dimension == 1) {
             // multiplying a matrix-like left hand side with a vector-like right hand side
             SHAPE_ASSERT(left.cols() == right.rows(), "Multiplying matrix*vector");
             value_type init = value_type(0);
-            for (size_type j = 0; j < right.rows(); ++j) {
-                init += left.evaluate(i, j) * right.evaluate(j);
+            for (size_type nz_idx = left.row_idx_begin(i); nz_idx < left.row_idx_begin(i + 1);
+                 ++nz_idx) {
+                init += left.evaluate(nz_idx) * right.evaluate(left.col_idx(nz_idx));
             }
             return init;
         }
@@ -136,13 +137,14 @@ struct mult_operation
         LAYOUT_ASSERT((ExpressionLeft::dimension == 2 && ExpressionRight::dimension == 2) ||
                           (ExpressionLeft::dimension == 2 && ExpressionRight::dimension == 0) ||
                           (ExpressionLeft::dimension == 0 && ExpressionRight::dimension == 2),
-                      "Multiplication at (i) is only valid for zero- or one-dimensional rhs");
+                      "Multiplication at (i,j) is only valid for zero- or one-dimensional rhs");
         if constexpr (ExpressionLeft::dimension == 2 && ExpressionRight::dimension == 2) {
             // multiplying a matrix-like left hand side with a matrix-like right hand side
             SHAPE_ASSERT(left.cols() == right.rows(), "Multiplying matrix*vector");
             value_type init = value_type(0);
-            for (size_type k = 0; k < right.rows(); ++k) {
-                init += left.evaluate(i, k) * right.evaluate(k, j);
+            for (size_type nz_idx = left.row_idx_begin(i); nz_idx < left.row_idx_begin(i + 1);
+                 ++nz_idx) {
+                init += left.evaluate(nz_idx) * right.evaluate(left.col_idx(nz_idx), j);
             }
             return init;
         }
