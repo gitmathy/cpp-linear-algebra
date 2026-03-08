@@ -113,10 +113,10 @@ public:
     inline const T &operator()(const size_type i) const;
 
     /// @brief Evaluate matrix at (i,j), i.e., read element (i,j)
-    inline const T evaluate(size_type i, size_type j) const;
+    inline const T evaluate(const size_type i, const size_type j) const;
 
     /// @brief Evaluate sparse matrix at (i), means reading i'th non-zero
-    inline const T &evaluate(size_type i) const;
+    inline const T &evaluate(const size_type i) const;
 
     /// @brief Get position of first non-zeros of row i
     inline size_type row_begin(const size_type i) const { return p_row_ptr[i]; }
@@ -292,14 +292,14 @@ inline const T &sparse_matrix<T>::operator()(const size_type i) const
 }
 
 template <typename T>
-inline const T sparse_matrix<T>::evaluate(size_type i, size_type j) const
+inline const T sparse_matrix<T>::evaluate(const size_type i, const size_type j) const
 {
     LOG_TRACE("Evaluating matrix at position " << i << ", " << j);
     return (*this)(i, j);
 }
 
 template <typename T>
-inline const T &sparse_matrix<T>::evaluate(size_type i) const
+inline const T &sparse_matrix<T>::evaluate(const size_type i) const
 {
     LOG_TRACE("Evaluating matrix at " << i << "'th non-zero");
     return (*this)(i);

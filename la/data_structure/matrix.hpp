@@ -142,14 +142,14 @@ public:
     inline citerator end() const { return p_vals + p_rows * p_cols; }
 
     /// @brief Iterator to row begin
-    inline iterator row_begin(size_type i);
+    inline iterator row_begin(const size_type i);
     /// @brief Iterator to row end
-    inline iterator row_end(size_type i);
+    inline iterator row_end(const size_type i);
 
     /// @brief Constant iterator to row begin
-    inline citerator row_begin(size_type i) const;
+    inline citerator row_begin(const size_type i) const;
     /// @brief Constant iterator to row end
-    inline citerator row_end(size_type i) const;
+    inline citerator row_end(const size_type i) const;
 
     /// @brief Direct access to the memory. Use with caution
     inline T *vals() { return p_vals; }
@@ -343,30 +343,30 @@ inline const T &matrix<T>::evaluate(const size_type nz_idx) const
 // ---------
 
 template <typename T>
-typename matrix<T>::iterator matrix<T>::row_begin(size_type i)
+typename matrix<T>::iterator matrix<T>::row_begin(const size_type i)
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_begin");
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_begin index out of bound")
     return p_vals + i * p_cols;
 }
 
 template <typename T>
-typename matrix<T>::iterator matrix<T>::row_end(size_type i)
+typename matrix<T>::iterator matrix<T>::row_end(const size_type i)
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_end");
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_end index out of bound")
     return p_vals + (i + 1) * p_cols;
 }
 
 template <typename T>
-typename matrix<T>::citerator matrix<T>::row_begin(size_type i) const
+typename matrix<T>::citerator matrix<T>::row_begin(const size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_begin const");
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_begin index out of bound")
     return p_vals + i * p_cols;
 }
 
 template <typename T>
-typename matrix<T>::citerator matrix<T>::row_end(size_type i) const
+typename matrix<T>::citerator matrix<T>::row_end(const size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_end const");
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_end index out of bound")
     return p_vals + (i + 1) * p_cols;
 }
 
