@@ -58,6 +58,9 @@ public:
 
     /// @brief Build the sparse matrix (moves all elements to the matrix)
     sparse_matrix<T> &move(sparse_matrix<T> &a);
+
+    /// @brief Assemble a sparse matrix (while keeping all elements in the builder)
+    sparse_matrix<T> assemble() const;
 };
 
 // ===============================================
@@ -97,6 +100,7 @@ inline const T sparse_matrix_builder<T>::operator()(const size_type i, const siz
 template <typename T>
 sparse_matrix<T> &sparse_matrix_builder<T>::move(sparse_matrix<T> &a)
 {
+    LOG_DEBUG("Move all elements from a sparse matrix builder to a sparse matrix");
     // allocate memory for the matrix
     a.allocate(rows(), cols(), p_num_values);
 
@@ -130,6 +134,46 @@ sparse_matrix<T> &sparse_matrix_builder<T>::move(sparse_matrix<T> &a)
     p_vals.resize(0);
     p_cols = 0;
     p_num_values = 0;
+    return a;
+}
+
+template <typename T>
+sparse_matrix<T> sparse_matrix_builder<T>::assemble() const
+{
+    LOG_DEBUG("Build a sparse matrix from a sparse matrix builder");
+
+    sparse_matrix<T> a;
+
+    // allocate memory for the matrix
+    a.allocate(rows(), cols(), p_num_values);
+
+    // Next element to insert
+    T *next_val = a.p_vals;
+    // Next column index to insert
+    size_type *next_idx = a.p_col_idx;
+    // Next row ptr to insert
+    size_type *next_row = a.p_row_ptr;
+    *next_row = 0;
+
+    // build every row
+    for (size_type i = 0; i < rows(); ++i) {
+        const size_type col_size = size_type(p_vals[i].size());
+        // We want the rows ordered by column indices, so copy them to a vector and sort them
+        std::vector<std::pair<size_type, T>> column;
+        column.reserve(col_size);
+        for (auto &it : p_vals[i]) {
+            column.push_back(std::make_pair(it.first, it.second));
+        }
+        std::sort(column.begin(), column.end(), [](auto a, auto b) { return a.first < b.first; });
+        // now, put the sorted values into the matrix
+        const size_type next_row_ptr = *next_row + col_size;
+        *(++next_row) = next_row_ptr;
+        for (auto &element : column) {
+            *(next_val++) = element.second;
+            *(next_idx++) = element.first;
+        }
+    }
+    LOG_DEBUG("Created sparse matrix from builder");
     return a;
 }
 
