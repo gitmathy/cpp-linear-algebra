@@ -79,6 +79,12 @@ public:
     sparse_matrix(const std::initializer_list<std::initializer_list<size_type>> &col_idx,
                   const std::initializer_list<T> &values, const size_type cols);
 
+    /// @brief Move a sparse matrix
+    explicit sparse_matrix(matrix<T> &&rhs) noexcept;
+
+    /// @brief Copy a sparse matrix
+    sparse_matrix(const sparse_matrix<T> &);
+
     /// @brief Move from a sparse matrix builder
     explicit sparse_matrix(sparse_matrix_builder<T> &&rhs) noexcept;
 
@@ -168,6 +174,12 @@ public:
     /// @brief Constant iterator to end of column indices of a row
     inline cidx_iterator end_col_idx(const size_type i) const;
 
+    /// @brief Assign another matrix
+    sparse_matrix<T> &operator=(const sparse_matrix<T> &rhs);
+
+    /// @brief Move assign a matrix
+    sparse_matrix<T> &operator=(sparse_matrix<T> &&rhs) noexcept;
+
     /// @brief Move assign from builder
     sparse_matrix<T> &operator=(sparse_matrix_builder<T> &&rhs) noexcept;
 
@@ -208,6 +220,20 @@ sparse_matrix<T>::sparse_matrix(
     LOG_DEBUG("Indices assigned (" << *next_row << "), now, assign values(" << non_zeros() << ")");
     SHAPE_ASSERT(*next_row == non_zeros(), "column indices do not match number of values");
     std::copy(values.begin(), values.end(), p_vals);
+}
+
+template <typename T>
+sparse_matrix<T>::sparse_matrix(matrix<T> &&rhs) noexcept
+    : p_vals(nullptr), p_col_idx(nullptr), p_row_ptr(nullptr), p_rows(0), p_cols(0), p_num_vals(0)
+{
+    *this = std::move(rhs);
+}
+
+template <typename T>
+sparse_matrix<T>::sparse_matrix(const sparse_matrix<T> &rhs)
+    : p_vals(nullptr), p_col_idx(nullptr), p_row_ptr(nullptr), p_rows(0), p_cols(0), p_num_vals(0)
+{
+    *this = rhs;
 }
 
 template <typename T>
@@ -352,6 +378,49 @@ inline sparse_matrix<T>::cidx_iterator sparse_matrix<T>::end_col_idx(const size_
 {
     BOUNDARY_ASSERT(i <= rows(), "sparse_matrix: end_col_idx index out of bound");
     return p_col_idx + p_row_ptr[i + 1];
+}
+
+template <typename T>
+sparse_matrix<T> &sparse_matrix<T>::operator=(const sparse_matrix<T> &rhs)
+{
+    if (&rhs == this) {
+        return *this;
+    }
+    allocate(rhs.rows(), rhs.cols(), rhs.non_zeros());
+#ifdef PARALLEL
+    std::copy(execution::par_unseq, rhs.p_vals, rhs.p_vals + rhs.non_zeros(), p_vals);
+    std::copy(execution::par_unseq, rhs.p_col_idx, rhs.p_col_idx + rhs.non_zeros(), p_col_idx);
+    std::copy(execution::par_unseq, rhs.p_row_ptr, rhs.p_row_ptr + rhs.rows() + 1, p_row_ptr);
+#else
+    std::copy(rhs.p_vals, rhs.p_vals + rhs.non_zeros(), p_vals);
+    std::copy(rhs.p_col_idx, rhs.p_col_idx + rhs.non_zeros(), p_col_idx);
+    std::copy(rhs.p_row_ptr, rhs.p_row_ptr + rhs.rows() + 1, p_row_ptr);
+#endif
+    return *this;
+}
+
+template <typename T>
+sparse_matrix<T> &sparse_matrix<T>::operator=(sparse_matrix<T> &&rhs) noexcept
+{
+    if (this == &rhs) {
+        return *this;
+    }
+    util::deallocate_aligned(p_vals);
+    util::deallocate_aligned(p_col_idx);
+    util::deallocate_aligned(p_row_ptr);
+    p_vals = nullptr;
+    p_col_idx = nullptr;
+    p_row_ptr = nullptr;
+    p_rows = 0;
+    p_cols = 0;
+    p_num_vals = 0;
+    std::swap(p_vals, rhs.p_vals);
+    std::swap(p_col_idx, rhs.p_col_idx);
+    std::swap(p_row_ptr, rhs.p_row_ptr);
+    std::swap(p_rows, rhs.p_rows);
+    std::swap(p_cols, rhs.p_cols);
+    std::swap(p_num_vals, rhs.p_num_vals);
+    return *this;
 }
 
 template <typename T>
