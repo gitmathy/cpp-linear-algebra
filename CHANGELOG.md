@@ -1,3 +1,19 @@
+# [1.17.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.16.0...v1.17.0) (2026-03-08)
+
+
+### Bug Fixes
+
+* Comment for LAYOUT_CHECK ([a5e4eca](https://github.com/gitmathy/cpp-linear-algebra/commit/a5e4ecabc1cd3b1e2a6521a43481ee717e20a7e4))
+* correct assert in row_idx_begin ([7573e37](https://github.com/gitmathy/cpp-linear-algebra/commit/7573e37c6a64e4d04064c6f8ba1965c909b9d83f))
+* num_vals to non_zeros ([f5f46f3](https://github.com/gitmathy/cpp-linear-algebra/commit/f5f46f39a44adcfbaec442b8a2a547bafd6dcc8d))
+* Provide header from move assign with builder ([dc01c83](https://github.com/gitmathy/cpp-linear-algebra/commit/dc01c838e824bb7b96e774d254ff6f93ee7732c1))
+* syntax error ([349f87b](https://github.com/gitmathy/cpp-linear-algebra/commit/349f87b17d19cd3a0fe91e864b702bb62320a386))
+
+
+### Features
+
+* Include some information on vectors (num_zeros, density) ([92b74d2](https://github.com/gitmathy/cpp-linear-algebra/commit/92b74d245c2740dd6facd21b1e23ff489dd7e05c))
+
 # [1.16.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.15.0...v1.16.0) (2026-03-08)
 
 
