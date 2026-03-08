@@ -1,3 +1,16 @@
+# [1.15.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.14.1...v1.15.0) (2026-03-08)
+
+
+### Features
+
+* Add traits for sparse matrix ([553e0af](https://github.com/gitmathy/cpp-linear-algebra/commit/553e0afef4def7c1c62c6098aa18620b44f18b7f))
+* Align matrix with sparse matrix ([b279e37](https://github.com/gitmathy/cpp-linear-algebra/commit/b279e37605d0da0b93c6d2e919388d38ba6faab5))
+* Features used for multiplications ([70618c4](https://github.com/gitmathy/cpp-linear-algebra/commit/70618c482aff3e1dab49a52114435217e8881814))
+* Include construct from initializer list ([478fa31](https://github.com/gitmathy/cpp-linear-algebra/commit/478fa31916563945be16a074b891a978150212a5))
+* Include operations for sparse ([a7a88d5](https://github.com/gitmathy/cpp-linear-algebra/commit/a7a88d575612515e2e819b5dd64a3ff83efd550e))
+* include row_idx_begin, col_idx, dense ([2bc48ff](https://github.com/gitmathy/cpp-linear-algebra/commit/2bc48ffa337bb156084641a5ddcbe4a42809645f))
+* Include some sparse matrix multiplications ([e972f0e](https://github.com/gitmathy/cpp-linear-algebra/commit/e972f0e13bc0ba8aaf05054466e774dadab49d82))
+
 ## [1.14.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.14.0...v1.14.1) (2026-03-07)
 
 
