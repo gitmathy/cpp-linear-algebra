@@ -45,7 +45,10 @@ public:
     /// public variable members
 
     /// @brief Dimension of a matrix
-    const static size_type dimension = size_type(1);
+    constexpr static size_type dimension = size_type(1);
+
+    /// @brief A static_vector is dense
+    constexpr static bool dense = false;
 
 public:
     /// @brief fill with values.
@@ -72,6 +75,12 @@ public:
 
     /// @brief Destructing a vector
     ~static_vector() = default;
+
+    /// @brief Get number of rows
+    inline size_type rows() const { return N; }
+
+    /// @brief Number of non-zeros
+    inline size_type non_zeros() const { return N; }
 
     /// @brief Assign another vector
     static_vector<T, N> &operator=(const static_vector<T, N> &rhs);
@@ -112,9 +121,6 @@ public:
     /// @brief subtract from another expression
     template <typename ExpressionT>
     static_vector<T, N> &operator-=(const expressions::operant<ExpressionT> &exp);
-
-    /// @brief Get number of rows
-    inline size_type rows() const { return N; }
 
     /// @brief Get i'th element for reading
     inline const T &operator()(const size_type i) const;

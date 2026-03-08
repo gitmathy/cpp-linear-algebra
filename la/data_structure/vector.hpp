@@ -47,7 +47,10 @@ public:
     /// public variable members
 
     /// @brief Dimension of a matrix
-    const static size_type dimension = size_type(1);
+    constexpr static size_type dimension = size_type(1);
+
+    /// @brief A vector is dense
+    constexpr static bool dense = false;
 
 public:
     /// @brief Construct a vector of zero size
@@ -93,7 +96,10 @@ public:
     inline size_type rows() const { return p_size; }
 
     /// @brief Vectors only have one column
-    inline size_type cols() const { return 1; }
+    constexpr inline size_type cols() const { return 1; }
+
+    /// @brief Number of non-zeros
+    inline size_type non_zeros() const { return p_size; }
 
     /// @brief Get i'th element for reading
     inline const T &operator()(const size_type i) const;
