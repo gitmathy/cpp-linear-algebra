@@ -66,10 +66,10 @@ public:
     /// public variable members
 
     /// @brief Dimension of a matrix
-    const static size_type dimension = size_type(2);
+    constexpr static size_type dimension = size_type(2);
 
     /// @brief This matrix is dense
-    const static bool dense = false;
+    constexpr static bool dense = false;
 
 public:
     /// @brief Construct an empty matrix
