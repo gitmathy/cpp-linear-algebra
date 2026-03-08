@@ -31,27 +31,18 @@ public:
 };
 
 /// @brief Test resize a matrix (free memory, allocate memory, and assign default value)
-template <storage_type StorageT>
 class matrix_resize : public performance_test
 {
 protected:
     /// @brief Execute a single test
     /// We resize to one larger than the normal size, to enforce resizing and resetting when tearing
     /// down the test
-    inline void run_single_test() override
-    {
-        if constexpr (StorageT == ROW_WISE) {
-            p_A_row.resize(p_A_row.rows() + 1, p_A_row.cols() + 1);
-        } else {
-            p_A_col.resize(p_A_col.rows() + 1, p_A_col.cols() + 1);
-        }
-    }
+    inline void run_single_test() override { p_A.resize(p_A.rows() + 1, p_A.cols() + 1); }
 
 public:
     /// @brief Set me up
     matrix_resize(const size_type runs)
-        : performance_test(std::string("matrix_resize ") + (StorageT == ROW_WISE ? "row" : "col"),
-                           "Testing A.resize()", runs)
+        : performance_test("matrix_resize", "Testing A.resize()", runs)
     {}
 };
 

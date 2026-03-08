@@ -38,70 +38,26 @@ int main()
     tests.transfer("vector", std::make_unique<vector_multiple_add>(RUNS));
     tests.transfer("vector", std::make_unique<vector_mixed_add_sub>(RUNS));
     tests.transfer("vector", std::make_unique<vector_add_vectors>(RUNS));
-    tests.transfer("row_matrix", std::make_unique<matrix_add<ROW_WISE>>(RUNS));
-    tests.transfer("row_matrix", std::make_unique<matrix_multiple_add<ROW_WISE>>(RUNS));
-    tests.transfer("row_matrix", std::make_unique<matrix_mixed_add_sub<ROW_WISE>>(RUNS));
-    tests.transfer("col_matrix", std::make_unique<matrix_add<COLUMN_WISE>>(RUNS));
-    tests.transfer("col_matrix", std::make_unique<matrix_multiple_add<COLUMN_WISE>>(RUNS));
-    tests.transfer("col_matrix", std::make_unique<matrix_mixed_add_sub<COLUMN_WISE>>(RUNS));
-    tests.transfer("mixed_matrix", std::make_unique<matrix_add_sub_mixed_storage>(RUNS));
+    tests.transfer("matrix", std::make_unique<matrix_add>(RUNS));
+    tests.transfer("matrix", std::make_unique<matrix_multiple_add>(RUNS));
+    tests.transfer("matrix", std::make_unique<matrix_mixed_add_sub>(RUNS));
 
     // Resizing
     tests.transfer("vector", std::make_unique<vector_resize>(RUNS));
-    tests.transfer("row_matrix", std::make_unique<matrix_resize<ROW_WISE>>(RUNS));
-    tests.transfer("col_matrix", std::make_unique<matrix_resize<COLUMN_WISE>>(RUNS));
+    tests.transfer("matrix", std::make_unique<matrix_resize>(RUNS));
 
     // Assigning
     tests.transfer("vector", std::make_unique<vector_assign>(RUNS));
     tests.transfer("vector", std::make_unique<vector_add_assign>(RUNS));
     tests.transfer("vector", std::make_unique<vector_sum_add_assign>(RUNS));
-    tests.transfer("row_matrix", std::make_unique<matrix_assign<ROW_WISE>>(RUNS));
-    tests.transfer("row_matrix", std::make_unique<matrix_assign_add<ROW_WISE>>(RUNS));
-    tests.transfer("row_matrix", std::make_unique<matrix_assign_add_sum<ROW_WISE>>(RUNS));
-    tests.transfer("row_matrix",
-                   std::make_unique<vector_assign_matrix_vector_mult<ROW_WISE>>(RUNS));
-    tests.transfer("col_matrix", std::make_unique<matrix_assign<COLUMN_WISE>>(RUNS));
-    tests.transfer("col_matrix", std::make_unique<matrix_assign_add<COLUMN_WISE>>(RUNS));
-    tests.transfer("col_matrix", std::make_unique<matrix_assign_add_sum<COLUMN_WISE>>(RUNS));
-    tests.transfer("cols_matrix",
-                   std::make_unique<vector_assign_matrix_vector_mult<COLUMN_WISE>>(RUNS));
-    tests.transfer("mixed_matrix", std::make_unique<matrix_assign_storage_mismatch>(RUNS));
+    tests.transfer("matrix", std::make_unique<matrix_assign>(RUNS));
+    tests.transfer("matrix", std::make_unique<matrix_assign_add>(RUNS));
+    tests.transfer("matrix", std::make_unique<matrix_assign_add_sum>(RUNS));
+    tests.transfer("matrix", std::make_unique<vector_assign_matrix_vector_mult>(RUNS));
 
-    tests.transfer("row_algorithms",
-                   std::make_unique<decompose_solve_lu<ROW_WISE, ROW_WISE>>(RUNS, MATRIX_SOLVE));
-    tests.transfer("col_algorithms", std::make_unique<decompose_solve_lu<COLUMN_WISE, COLUMN_WISE>>(
-                                         RUNS, MATRIX_SOLVE));
-
-    tests.transfer("row_algorithms",
-                   std::make_unique<lu_decompose<ROW_WISE, ROW_WISE>>(RUNS, MATRIX_SOLVE));
-    tests.transfer("col_algorithms",
-                   std::make_unique<lu_decompose<COLUMN_WISE, COLUMN_WISE>>(RUNS, MATRIX_SOLVE));
-
-    tests.transfer(
-        "matrix_mult_blocked",
-        std::make_unique<matrix_multiply_blocked_row<ROW_WISE, ROW_WISE>>(RUNS, MATRIX_MULTIPLY));
-    tests.transfer("matrix_mult_blocked",
-                   std::make_unique<matrix_multiply_blocked_row<ROW_WISE, COLUMN_WISE>>(
-                       RUNS, MATRIX_MULTIPLY));
-    tests.transfer("matrix_mult_blocked",
-                   std::make_unique<matrix_multiply_blocked_row<COLUMN_WISE, ROW_WISE>>(
-                       RUNS, MATRIX_MULTIPLY));
-    tests.transfer("matrix_mult_blocked",
-                   std::make_unique<matrix_multiply_blocked_row<COLUMN_WISE, COLUMN_WISE>>(
-                       RUNS, MATRIX_MULTIPLY));
-
-    tests.transfer(
-        "matrix_mult_blocked",
-        std::make_unique<matrix_multiply_blocked_col<ROW_WISE, ROW_WISE>>(RUNS, MATRIX_MULTIPLY));
-    tests.transfer("matrix_mult_blocked",
-                   std::make_unique<matrix_multiply_blocked_col<ROW_WISE, COLUMN_WISE>>(
-                       RUNS, MATRIX_MULTIPLY));
-    tests.transfer("matrix_mult_blocked",
-                   std::make_unique<matrix_multiply_blocked_col<COLUMN_WISE, ROW_WISE>>(
-                       RUNS, MATRIX_MULTIPLY));
-    tests.transfer("matrix_mult_blocked",
-                   std::make_unique<matrix_multiply_blocked_col<COLUMN_WISE, COLUMN_WISE>>(
-                       RUNS, MATRIX_MULTIPLY));
+    tests.transfer("algorithms", std::make_unique<lu_decompose>(RUNS, MATRIX_SOLVE));
+    tests.transfer("algorithms", std::make_unique<decompose_solve_lu>(RUNS, MATRIX_SOLVE));
+    tests.transfer("algorithms", std::make_unique<matrix_multiply_blocked>(RUNS, MATRIX_MULTIPLY));
 
     std::cout << "Executing tests ..." << std::endl;
     int result = tests.run(std::set<std::string>());

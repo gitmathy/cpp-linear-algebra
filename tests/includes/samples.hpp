@@ -37,11 +37,8 @@ private:
     /// @brief Set of vectors used for testing
     std::deque<vector<T>> p_vectors;
 
-    /// @brief Set of row-wise stored matrices used for testing
-    std::deque<matrix<T, ROW_WISE>> p_row_matrices;
-
-    /// @brief Set of column-wise stored matrices used for testing
-    std::deque<matrix<T, COLUMN_WISE>> p_col_matrices;
+    /// @brief Set of dense matrices used for testing
+    std::deque<matrix<T>> p_matrices;
 
     /// @brief Default sizes of vectors and matrices
     size_type p_vec_rows, p_mat_rows, p_mat_cols;
@@ -79,14 +76,9 @@ public:
     inline vector<T> &vec(size_type i) { return p_vectors[i]; }
 
     /// @brief Get i'th row-wise stored matrix for reading
-    inline const matrix<T, ROW_WISE> &row_mat(size_type i) const { return p_row_matrices[i]; }
+    inline const matrix<T> &mat(size_type i) const { return p_matrices[i]; }
     /// @brief Get i'th row-wise stored matrix for writing
-    inline matrix<T, ROW_WISE> &row_mat(size_type i) { return p_row_matrices[i]; }
-
-    /// @brief Get i'th column-wise stored matrix for reading
-    inline const matrix<T, COLUMN_WISE> &col_mat(size_type i) const { return p_col_matrices[i]; }
-    /// @brief Get i'th column-wise stored matrix for writing
-    inline matrix<T, COLUMN_WISE> &col_mat(size_type i) { return p_col_matrices[i]; }
+    inline matrix<T> &mat(size_type i) { return p_matrices[i]; }
 };
 
 // ===============================================
@@ -123,9 +115,8 @@ get_default_samples(size_type vec_rows = VECTOR_SIZE, size_type mat_rows = MATRI
 template <typename T>
 sample_la_structures<T>::sample_la_structures(size_type vec_n, size_type mat_m, size_type mat_n,
                                               size_type samples)
-    : p_vectors(samples, vector<T>()), p_row_matrices(samples, matrix<T, ROW_WISE>()),
-      p_col_matrices(samples, matrix<T, COLUMN_WISE>()), p_vec_rows(vec_n), p_mat_rows(mat_m),
-      p_mat_cols(mat_n)
+    : p_vectors(samples, vector<T>()), p_matrices(samples, matrix<T>()), p_vec_rows(vec_n),
+      p_mat_rows(mat_m), p_mat_cols(mat_n)
 {
     reset();
 }
@@ -149,16 +140,7 @@ void sample_la_structures<T>::adjust(const size_type vec_n, const size_type mat_
             init(vec);
         }
     }
-    for (auto &mat : p_row_matrices) {
-        if (mat.rows() != mat_m || mat.cols() != mat_n) {
-            strs << "  * Resizing row matrices from (" << mat.rows() << " x " << mat.cols()
-                 << ") to (" << mat_m << " x " << mat_n << ")";
-            logger::get().log(strs, DEBUG);
-            mat.allocate(mat_m, mat_n);
-            init(mat);
-        }
-    }
-    for (auto &mat : p_col_matrices) {
+    for (auto &mat : p_matrices) {
         if (mat.rows() != mat_m || mat.cols() != mat_n) {
             strs << "  * Resizing row matrices from (" << mat.rows() << " x " << mat.cols()
                  << ") to (" << mat_m << " x " << mat_n << ")";

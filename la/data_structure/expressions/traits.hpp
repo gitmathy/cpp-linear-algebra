@@ -60,10 +60,10 @@ struct expression_traits<static_vector<T, N>>
 /// @brief Specialization for `matrix<T,StorageT>`: store as a reference in expression nodes
 /// This avoids copying large matrix objects into expression trees; operant/binary_expression
 /// will hold references to existing vectors while `operant` itself still owns temporaries.
-template <typename T, storage_type StorageT>
-struct expression_traits<matrix<T, StorageT>>
+template <typename T>
+struct expression_traits<matrix<T>>
 {
-    typedef const matrix<T, StorageT> &expression_type;
+    typedef const matrix<T> &expression_type;
     typedef T value_type;
     const static size_type dimension = size_type(2);
 };

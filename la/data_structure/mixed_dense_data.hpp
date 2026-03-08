@@ -58,17 +58,12 @@ static_vector<T, N> &static_vector<T, N>::operator=(const vector<T> &rhs)
 // Member of matrix
 // ----------------
 
-template <typename T, storage_type StorageT>
+template <typename T>
 template <typename MatTypeLeft, typename MatTypeRight>
-matrix<T, StorageT> &matrix<T, StorageT>::operator=(
-    const expressions::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult)
+matrix<T> &
+matrix<T>::operator=(const expressions::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult)
 {
-    matrix<T, StorageT> temp;
-    if constexpr (StorageT == ROW_WISE) {
-        temp = algorithm::matrix_multiplication_row<T>::multiply(mat_mult.left, mat_mult.right);
-    } else {
-        temp = algorithm::matrix_multiplication_col<T>::multiply(mat_mult.left, mat_mult.right);
-    }
+    matrix<T> temp = algorithm::matrix_multiplication<T>::multiply(mat_mult.left, mat_mult.right);
     *this = std::move(temp);
     return *this;
 }
