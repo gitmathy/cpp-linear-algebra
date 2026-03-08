@@ -118,9 +118,6 @@ public:
     /// @brief Evaluate sparse matrix at (i), means reading i'th non-zero
     inline const T &evaluate(const size_type i) const;
 
-    /// @brief Get position of first non-zeros of row i
-    inline size_type row_begin(const size_type i) const { return p_row_ptr[i]; }
-
     /// @brief Iterator to begin of values
     inline iterator begin() { return p_vals; }
     /// @brief Iterator to end of values
