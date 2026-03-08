@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.17.0...v1.18.0) (2026-03-08)
+
+
+### Features
+
+* dedicated files for unit tests and performance tests ([e0af02f](https://github.com/gitmathy/cpp-linear-algebra/commit/e0af02fa73964631fd35592209ec4fe8af6f66cc))
+
 # [1.17.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.16.0...v1.17.0) (2026-03-08)
 
 
