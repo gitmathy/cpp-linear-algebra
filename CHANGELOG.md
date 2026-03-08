@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.15.0...v1.16.0) (2026-03-08)
+
+
+### Features
+
+* Remove column wise storage for matrices ([62633a3](https://github.com/gitmathy/cpp-linear-algebra/commit/62633a316da6ba9ea4802e8e6cadbd202450c8fb))
+
 # [1.15.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.14.1...v1.15.0) (2026-03-08)
 
 
