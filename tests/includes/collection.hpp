@@ -68,43 +68,11 @@ public:
     int run(const std::set<std::string> &label_filter = std::set<std::string>());
 };
 
-/// @brief Dedicated class for collection of unit tests
-class unit_test_collection : public test_collection
-{
-private:
-    /// @brief Report all errors
-    void report(const std::set<std::string> &label_filter) override;
+// ===============================================
+// P U B L I C   F U N C T I O N S
+// ===============================================
 
-public:
-    /// @brief Constructor
-    unit_test_collection() : test_collection("unit tests") {}
-
-    /// @brief Default destructor
-    ~unit_test_collection() = default;
-};
-
-/// @brief Dedicated class for collection of performance tests
-class performance_test_collection : public test_collection
-{
-private:
-    /// @brief Sample matrices and vectors for the test
-    std::shared_ptr<sample_la_structures<double>> p_samples;
-
-    /// @brief Number of runs
-    size_type p_runs;
-
-    /// @brief Report all timings
-    void report(const std::set<std::string> &label_filter) override;
-
-public:
-    /// @brief Constructor using dependency injection for the samples
-    performance_test_collection(
-        const size_type runs,
-        std::shared_ptr<sample_la_structures<double>> samples = get_default_samples());
-
-    /// @brief Default destructor
-    ~performance_test_collection() = default;
-};
+bool label_in_filter(const std::string &label, const std::set<std::string> &label_filter);
 
 } // namespace test
 } // namespace la

@@ -9,7 +9,6 @@
 
 #include "tests/includes/unit_tests/test_vector.hpp"
 #include "la/dense"
-#include "tests/includes/collection.hpp"
 #include <memory>
 
 namespace la {

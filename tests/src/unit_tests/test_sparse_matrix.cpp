@@ -10,7 +10,6 @@
 #include "tests/includes/unit_tests/test_sparse_matrix.hpp"
 #include "la/sparse"
 #include "la/util/file_io.hpp"
-#include "tests/includes/collection.hpp"
 #include <memory>
 
 namespace la {
