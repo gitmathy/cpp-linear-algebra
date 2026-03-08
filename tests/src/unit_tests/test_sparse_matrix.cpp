@@ -72,12 +72,10 @@ int sparse_matrix_builder_assemble_test::execute()
     a_build(1, 1) += 1;
     a_build(2, 2) = 3;
 
-    const sparse_matrix<int> a(std::move(a_build));
-
+    const sparse_matrix<int> a = a_build.assemble();
     if (!(a(0, 0) == 1 || a(1, 1) == 2 || a(2, 2) == 3 || a(0, 1) == 0)) {
         report_error("Wrong element in matrix");
     }
-
     if (a.rows() != 3) {
         report_error("Wrong number of rows for sparse matrix build by builder");
     }
@@ -86,6 +84,23 @@ int sparse_matrix_builder_assemble_test::execute()
     }
     if (a.non_zeros() != 3) {
         report_error("Wrong number of non-zeros for sparse matrix build by builder");
+    }
+
+    const sparse_matrix<int> b(std::move(a_build));
+    if (!(b(0, 0) == 1 || b(1, 1) == 2 || b(2, 2) == 3 || b(0, 1) == 0)) {
+        report_error("Wrong element in matrix");
+    }
+    if (b.rows() != 3) {
+        report_error("Wrong number of rows for sparse matrix build by builder");
+    }
+    if (b.cols() != 3) {
+        report_error("Wrong number of rows for sparse matrix build by builder");
+    }
+    if (b.non_zeros() != 3) {
+        report_error("Wrong number of non-zeros for sparse matrix build by builder");
+    }
+    if (a_build.rows() != 0 || a_build.cols() != 0) {
+        report_error("Builder is not empty after moving to sparse matrix");
     }
 
     return (int)errors().size();
