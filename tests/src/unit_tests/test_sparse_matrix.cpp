@@ -50,6 +50,15 @@ int sparse_matrix_constructor_test::execute()
     if (!(a(0, 0) == 1 || a(0, 2) == 2 || a(1, 1) == 3 || a(2, 1) == 4 || a(2, 2) == 5)) {
         report_error("Wrong element in construct matrix by initializer");
     }
+    if (a.rows() != 3) {
+        report_error("Wrong number of rows for sparse matrix build by initializer list");
+    }
+    if (a.cols() != 3) {
+        report_error("Wrong number of rows for sparse matrix build by initializer list");
+    }
+    if (a.non_zeros() != 5) {
+        report_error("Wrong number of non-zeros for sparse matrix build by initializer list");
+    }
 
     return (int)errors().size();
 }
@@ -70,29 +79,47 @@ int sparse_matrix_builder_assemble_test::execute()
         report_error("Wrong element in matrix");
     }
 
+    if (a.rows() != 3) {
+        report_error("Wrong number of rows for sparse matrix build by builder");
+    }
+    if (a.cols() != 3) {
+        report_error("Wrong number of rows for sparse matrix build by builder");
+    }
+    if (a.non_zeros() != 3) {
+        report_error("Wrong number of non-zeros for sparse matrix build by builder");
+    }
+
     return (int)errors().size();
 }
 
 int sparse_matrix_iterator_test::execute()
 {
-    sparse_matrix_builder<int> a_build(3, 3);
-    a_build(0, 0) = 1;
-    a_build(1, 1) = 1;
-    a_build(2, 2) = 1;
-    a_build(1, 1) += 1;
-    a_build(2, 2) = 3;
-    const sparse_matrix<int> a(std::move(a_build));
+    const sparse_matrix<int> A({{0, 2}, {1}, {1, 2}}, {1, 2, 3, 4, 5}, 3);
 
-    if (size_type(std::distance(a.begin(), a.end())) != 3) {
-        report_error("Wrong number of non-zero values");
+    if (size_type(std::distance(A.begin(), A.end())) != 5) {
+        report_error("Wrong number of non-zero values covered by iterator");
     }
-    if (size_type(std::distance(a.begin_col_idx(), a.end_col_idx())) != 3) {
+    if (size_type(std::distance(A.begin_col_idx(), A.end_col_idx())) != 5) {
         report_error("Wrong number of non-zero column indices");
     }
-    if (size_type(std::distance(a.begin_row_ptr(), a.end_row_ptr())) != 4) {
-        LOG_ERROR("Number of row pointers " << std::distance(a.begin_row_ptr(), a.end_row_ptr())
-                                            << " not as expected 4");
+    if (size_type(std::distance(A.begin_row_ptr(), A.end_row_ptr())) != 4) {
         report_error("Wrong number of row pointers");
+    }
+    if (!(*A.row_begin(0) == 1 || *A.row_begin(1) == 3 || *A.row_begin(2) == 4)) {
+        report_error("Wrong value of beginning of row pointers");
+    }
+    if (!(*A.row_end(0) == 3 || *A.row_end(1) == 4)) {
+        report_error("Wrong value of end of row pointers");
+    }
+    if (!(A.row_idx_begin(0) == 0 || A.row_idx_begin(1) == 2 || A.row_idx_begin(2) == 3)) {
+        report_error("Wrong value of row_idx_begin");
+    }
+    if (!(*A.begin_col_idx(0) == 0 || *A.begin_col_idx(1) == 1 || *A.begin_col_idx(2) == 1)) {
+        report_error("Wrong value of begin_col_idx");
+    }
+    if (!(A.col_idx(0) == 0 || A.col_idx(1) == 2 || A.col_idx(2) == 1 || A.col_idx(3) == 1 ||
+          A.col_idx(4) == 2)) {
+        report_error("Wrong column of non-zero");
     }
 
     return (int)errors().size();
