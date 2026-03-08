@@ -345,28 +345,28 @@ inline const T &matrix<T>::evaluate(const size_type nz_idx) const
 template <typename T>
 typename matrix<T>::iterator matrix<T>::row_begin(const size_type i)
 {
-    BOUNDARY_ASSERT(i <= rows(), "matrix: row_begin index out of bound")
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_begin index out of bound");
     return p_vals + i * p_cols;
 }
 
 template <typename T>
 typename matrix<T>::iterator matrix<T>::row_end(const size_type i)
 {
-    BOUNDARY_ASSERT(i <= rows(), "matrix: row_end index out of bound")
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_end index out of bound");
     return p_vals + (i + 1) * p_cols;
 }
 
 template <typename T>
 typename matrix<T>::citerator matrix<T>::row_begin(const size_type i) const
 {
-    BOUNDARY_ASSERT(i <= rows(), "matrix: row_begin index out of bound")
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_begin index out of bound");
     return p_vals + i * p_cols;
 }
 
 template <typename T>
 typename matrix<T>::citerator matrix<T>::row_end(const size_type i) const
 {
-    BOUNDARY_ASSERT(i <= rows(), "matrix: row_end index out of bound")
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_end index out of bound");
     return p_vals + (i + 1) * p_cols;
 }
 
