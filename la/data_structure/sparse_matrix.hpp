@@ -168,6 +168,9 @@ public:
     /// @brief Constant iterator to end of column indices
     inline cidx_iterator end_col_idx(const size_type i) const;
 
+    /// @brief Move assign from builder
+    sparse_matrix<T> &operator=(sparse_matrix_builder<T> &&rhs) noexcept;
+
     /// @brief Write matrix to a file (default in binary mode)
     void to_file(const std::string &filename, const bool binary = true) const;
 
