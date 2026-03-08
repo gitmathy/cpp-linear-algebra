@@ -7,15 +7,13 @@
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#include "tests/includes/collection.hpp"
-#include <memory>
-#include <set>
-
-// Include the tests
 #include "tests/includes/performance_tests/assign.hpp"
 #include "tests/includes/performance_tests/basic_operations.hpp"
 #include "tests/includes/performance_tests/decompose.hpp"
+#include "tests/includes/performance_tests/performance_test_collection.hpp"
 #include "tests/includes/performance_tests/resize.hpp"
+#include <memory>
+#include <set>
 
 using namespace la;
 using namespace la::test;
