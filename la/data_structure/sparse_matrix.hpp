@@ -205,7 +205,7 @@ sparse_matrix<T>::sparse_matrix(
         BOUNDARY_ASSERT(next_row + 1 != end_row_ptr(), "Row pointer out of bound");
         *(++next_row) = next_row_ptr;
     }
-    LOG_DEBUG("Indices assigned (" << *next_row << "), now, assign values(" << num_vals() << ")");
+    LOG_DEBUG("Indices assigned (" << *next_row << "), now, assign values(" << non_zeros() << ")");
     SHAPE_ASSERT(*next_row == non_zeros(), "column indices do not match number of values");
     std::copy(values.begin(), values.end(), p_vals);
 }
