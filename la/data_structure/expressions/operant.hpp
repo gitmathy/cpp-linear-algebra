@@ -41,31 +41,23 @@ public:
 
     /// @brief Copying from another operant (possibly different expression type)
     template <typename ExpT>
-    operant(const operant<ExpT> &op) : p_expression(op.p_expression)
-    {}
+    operant(const operant<ExpT> &op);
 
     /// @brief Moving from another operant (possibly different expression type)
     template <typename ExpT>
-    operant(operant<ExpT> &&op) noexcept : p_expression(std::move(op.p_expression))
-    {}
+    operant(operant<ExpT> &&op) noexcept;
 
     /// @brief Evaluate operant
-    inline value_type evaluate(const size_type i) const { return p_expression.evaluate(i); }
+    inline value_type evaluate(const size_type i) const;
 
     /// @brief Evaluate operant (2d access)
-    inline value_type evaluate(const size_type i, const size_type j) const
-    {
-        return p_expression.evaluate(i, j);
-    }
+    inline value_type evaluate(const size_type i, const size_type j) const;
 
     /// @brief Get row_idx_begin
-    inline size_type row_idx_begin(const size_type i) const
-    {
-        return p_expression.row_idx_begin(i);
-    }
+    inline size_type row_idx_begin(const size_type i) const;
 
     /// @brief Get column index of non-zero index
-    inline size_type col_idx(const size_type nz_idx) const { return p_expression.col_idx(nz_idx); }
+    inline size_type col_idx(const size_type nz_idx) const;
 
     /// @brief Number of rows
     inline size_type rows() const { return p_expression.rows(); }
@@ -73,12 +65,63 @@ public:
     /// @brief Number of columns
     inline size_type cols() const { return p_expression.cols(); }
 
+    /// @brief Number of non-zeros
+    inline size_type non_zeros() const { return p_expression.non_zeros(); }
+
     /// @brief Dimension of the operant is defined by the expression
-    const static size_type dimension = ExpressionT::dimension;
+    constexpr static size_type dimension = ExpressionT::dimension;
 
     /// @brief Density is the same as for the expression
-    const static bool dense = ExpressionT::dense;
+    constexpr static bool dense = ExpressionT::dense;
 };
+
+// ===============================================
+// T E M P L A T E   I M P L E M E N T A T I O N S
+// ===============================================
+
+template <typename ExpressionT>
+template <typename ExpT>
+operant<ExpressionT>::operant(const operant<ExpT> &op) : p_expression(op.p_expression)
+{}
+
+template <typename ExpressionT>
+template <typename ExpT>
+operant<ExpressionT>::operant(operant<ExpT> &&op) noexcept
+    : p_expression(std::move(op.p_expression))
+{}
+
+template <typename ExpressionT>
+inline operant<ExpressionT>::value_type operant<ExpressionT>::evaluate(const size_type i) const
+{
+    LOG_TRACE("Operant evaluation at " << i);
+    BOUNDARY_ASSERT((ExpressionT::dimension < 2 && i < rows()) ||
+                        (ExpressionT::dimension == 2 && i < non_zeros()),
+                    "operant row_idx_begin: index out of bound");
+    return p_expression.evaluate(i);
+}
+
+template <typename ExpressionT>
+inline operant<ExpressionT>::value_type operant<ExpressionT>::evaluate(const size_type i,
+                                                                       const size_type j) const
+{
+    LOG_TRACE("Operant evaluation at " << i << " / " << rows() << ", " << j << " / " << cols());
+    BOUNDARY_ASSERT(i < rows() && j < cols(), "operant evaluate: index out of bound");
+    return p_expression.evaluate(i, j);
+}
+
+template <typename ExpressionT>
+inline size_type operant<ExpressionT>::row_idx_begin(const size_type i) const
+{
+    BOUNDARY_ASSERT(i <= rows(), "operant row_idx_begin: index out of bound");
+    return p_expression.row_idx_begin(i);
+}
+
+template <typename ExpressionT>
+inline size_type operant<ExpressionT>::col_idx(const size_type nz_idx) const
+{
+    BOUNDARY_ASSERT(nz_idx < non_zeros(), "operant col_idx: index out of bound");
+    return p_expression.col_idx(nz_idx);
+}
 
 } // namespace expressions
 } // namespace la
