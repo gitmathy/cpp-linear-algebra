@@ -158,14 +158,14 @@ public:
     /// @brief Constant iterator to end of column indices
     inline cidx_iterator end_col_idx() const { return p_col_idx + p_num_vals; }
 
-    /// @brief Iterator to begin of column indices
+    /// @brief Iterator to begin of column indices of a row
     inline idx_iterator begin_col_idx(const size_type i);
-    /// @brief Iterator to end of column indices
+    /// @brief Iterator to end of column indices of a row
     inline idx_iterator end_col_idx(const size_type i);
 
-    /// @brief Constant iterator to begin of column indices
+    /// @brief Constant iterator to begin of column indices of a row
     inline cidx_iterator begin_col_idx(const size_type i) const;
-    /// @brief Constant iterator to end of column indices
+    /// @brief Constant iterator to end of column indices of a row
     inline cidx_iterator end_col_idx(const size_type i) const;
 
     /// @brief Move assign from builder
