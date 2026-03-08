@@ -93,13 +93,6 @@ int matrix_add_sub_ops_test::execute()
         report_error("matrix sub operant (matrix - operant) produced wrong values");
     }
 
-    matrix<int, ROW_WISE> A(2, 3, 1);
-    matrix<int, COLUMN_WISE> B(2, 3, 2);
-    matrix<int, ROW_WISE> C = A + B;
-    if (!check_values(C, 3)) {
-        report_error("matrix add different storage produced wrong value");
-    }
-
     return (int)errors().size();
 }
 
@@ -147,16 +140,6 @@ int matrix_construct_test::execute()
         report_error("Matrix(row-wise) values set by initializer list are not correct");
     }
     delete mi;
-
-    matrix<int, COLUMN_WISE> *mi_col = new matrix<int, COLUMN_WISE>({{1, 2}, {3, 4}});
-    if (mi_col->rows() != 2 || mi_col->cols() != 2) {
-        report_error("Constructor by initializer lis set wrong size of matrix");
-    }
-    if (!((*mi_col)(0, 0) == 1 && (*mi_col)(0, 1) == 3 && (*mi_col)(1, 0) == 2 &&
-          (*mi_col)(1, 1) == 4)) {
-        report_error("Matrix(column-wise) values set by initializer list are not correct");
-    }
-    delete mi_col;
 
     return (int)errors().size();
 }
@@ -224,22 +207,6 @@ int matrix_iterator_test::execute()
     for (matrix<size_type>::citerator it = m.row_begin(1); it != m.row_end(1); ++it, ++pos)
         if (*it != pos + 1)
             report_error("Row iterator read incorrect value");
-
-    matrix<size_type, COLUMN_WISE> cm(2, 5);
-    cnt = 0;
-    for (size_type j = 0; j < m.cols(); ++j)
-        for (size_type i = 0; i < m.rows(); ++i)
-            cm(i, j) = ++cnt; // 1..10 column-major
-
-    pos = 0;
-    for (matrix<size_type, COLUMN_WISE>::citerator it = cm.begin(); it != cm.end(); ++it, ++pos)
-        if (*it != pos + 1)
-            report_error("Iterator over column-wise read incorrect value");
-
-    pos = 2;
-    for (matrix<size_type>::citerator it = cm.col_begin(1); it != cm.col_end(1); ++it, ++pos)
-        if (*it != pos + 1)
-            report_error("Column iterator read incorrect value");
 
     return (int)errors().size();
 }
@@ -333,26 +300,23 @@ int matrix_norms_test::execute()
 
 int matrix_read_write_test::execute()
 {
-    la::matrix<float, ROW_WISE> A_row({{1., 2., 3.}, {4., 5., 6.}});
+    la::matrix<float> A_row({{1., 2., 3.}, {4., 5., 6.}});
     std::string filename = "tmp_read_matrix_testing.tst";
 
     // Test binary write and read
     try {
         A_row.to_file(filename, true);
-        la::matrix<float, ROW_WISE> A_row_bin;
-        A_row_bin.from_file(filename, true);
-        if (!(A_row_bin.rows() == 2 && A_row_bin.cols() == 3)) {
+        la::matrix<float> A_bin;
+        A_bin.from_file(filename, true);
+        if (!(A_bin.rows() == 2 && A_bin.cols() == 3)) {
             report_error("Wrong size of read matrix");
         }
-        if (!(std::abs(A_row_bin(0, 0) - 1.) < util::EPS &&
-              std::abs(A_row_bin(0, 1) - 2.) < util::EPS &&
-              std::abs(A_row_bin(0, 2) - 3.) < util::EPS &&
-              std::abs(A_row_bin(1, 0) - 4.) < util::EPS &&
-              std::abs(A_row_bin(1, 1) - 5.) < util::EPS &&
-              std::abs(A_row_bin(1, 2) - 6.) < util::EPS)) {
+        if (!(std::abs(A_bin(0, 0) - 1.) < util::EPS && std::abs(A_bin(0, 1) - 2.) < util::EPS &&
+              std::abs(A_bin(0, 2) - 3.) < util::EPS && std::abs(A_bin(1, 0) - 4.) < util::EPS &&
+              std::abs(A_bin(1, 1) - 5.) < util::EPS && std::abs(A_bin(1, 2) - 6.) < util::EPS)) {
             report_error("Wrong elements read");
         }
-        A_row_bin.resize(0, 0);
+        A_bin.resize(0, 0);
     } catch (const util::error &) {
         report_error("Matrix binary ascii: Cannot write to or read from file");
     }
@@ -361,20 +325,17 @@ int matrix_read_write_test::execute()
     // Test ascii write and read
     try {
         A_row.to_file(filename, false);
-        la::matrix<float, ROW_WISE> A_row_txt;
-        A_row_txt.from_file(filename, false);
-        if (!(A_row_txt.rows() == 2 && A_row_txt.cols() == 3)) {
+        la::matrix<float> A_txt;
+        A_txt.from_file(filename, false);
+        if (!(A_txt.rows() == 2 && A_txt.cols() == 3)) {
             report_error("Wrong size of read matrix");
         }
-        if (!(std::abs(A_row_txt(0, 0) - 1.) < util::EPS &&
-              std::abs(A_row_txt(0, 1) - 2.) < util::EPS &&
-              std::abs(A_row_txt(0, 2) - 3.) < util::EPS &&
-              std::abs(A_row_txt(1, 0) - 4.) < util::EPS &&
-              std::abs(A_row_txt(1, 1) - 5.) < util::EPS &&
-              std::abs(A_row_txt(1, 2) - 6.) < util::EPS)) {
+        if (!(std::abs(A_txt(0, 0) - 1.) < util::EPS && std::abs(A_txt(0, 1) - 2.) < util::EPS &&
+              std::abs(A_txt(0, 2) - 3.) < util::EPS && std::abs(A_txt(1, 0) - 4.) < util::EPS &&
+              std::abs(A_txt(1, 1) - 5.) < util::EPS && std::abs(A_txt(1, 2) - 6.) < util::EPS)) {
             report_error("Wrong elements read");
         }
-        A_row_txt.resize(0, 0);
+        A_txt.resize(0, 0);
     } catch (const util::error &) {
         report_error("Matrix row ascii: Cannot write to or read from file");
     }

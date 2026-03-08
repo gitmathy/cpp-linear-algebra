@@ -27,8 +27,8 @@ template <typename T, size_type N>
 auto operator-(const static_vector<T, N> &right);
 
 /// @brief -matrix
-template <typename T, storage_type StorageT>
-auto operator-(const matrix<T, StorageT> &right);
+template <typename T>
+auto operator-(const matrix<T> &right);
 
 /// @brief -operant
 template <typename ExpT>
@@ -58,11 +58,10 @@ auto operator-(const static_vector<T, N> &right)
 }
 
 /// @brief -matrix
-template <typename T, storage_type StorageT>
-auto operator-(const matrix<T, StorageT> &right)
+template <typename T>
+auto operator-(const matrix<T> &right)
 {
-    typedef expressions::unary_expression<matrix<T, StorageT>,
-                                          expressions::minus_operation<matrix<T, StorageT>>>
+    typedef expressions::unary_expression<matrix<T>, expressions::minus_operation<matrix<T>>>
         new_bin_exp_type;
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(right));
 }

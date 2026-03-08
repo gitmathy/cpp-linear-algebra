@@ -79,24 +79,24 @@ auto operator+(const expressions::operant<ExpT> &left, const T &right);
 // matrix
 
 /// @brief matrix + matrix
-template <typename T, storage_type StorageLeft, storage_type StorageRight>
-auto operator+(const matrix<T, StorageLeft> &left, const matrix<T, StorageRight> &right);
+template <typename T>
+auto operator+(const matrix<T> &left, const matrix<T> &right);
 
 /// @brief matrix + operant
-template <typename T, storage_type StorageLeft, typename ExpT>
-auto operator+(const matrix<T, StorageLeft> &left, const expressions::operant<ExpT> &right);
+template <typename T, typename ExpT>
+auto operator+(const matrix<T> &left, const expressions::operant<ExpT> &right);
 
 /// @brief operant + matrix
-template <typename T, storage_type StorageRight, typename ExpT>
-auto operator+(const expressions::operant<ExpT> &left, const matrix<T, StorageRight> &right);
+template <typename T, typename ExpT>
+auto operator+(const expressions::operant<ExpT> &left, const matrix<T> &right);
 
 /// @brief matrix + scalar
-template <typename T, storage_type StorageLeft>
-auto operator+(const matrix<T, StorageLeft> &left, const T &right);
+template <typename T>
+auto operator+(const matrix<T> &left, const T &right);
 
 /// @brief scalar + matrix
-template <typename T, storage_type StorageRight>
-auto operator+(const T &left, const matrix<T, StorageRight> &right);
+template <typename T>
+auto operator+(const T &left, const matrix<T> &right);
 
 // ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
@@ -253,56 +253,55 @@ auto operator+(const expressions::operant<ExpT> &left, const T &right)
 // matrix
 
 /// @brief matrix + matrix
-template <typename T, storage_type StorageLeft, storage_type StorageRight>
-auto operator+(const matrix<T, StorageLeft> &left, const matrix<T, StorageRight> &right)
+template <typename T>
+auto operator+(const matrix<T> &left, const matrix<T> &right)
 {
-    typedef expressions::binary_expression<
-        matrix<T, StorageLeft>, matrix<T, StorageRight>,
-        expressions::add_operation<matrix<T, StorageLeft>, matrix<T, StorageRight>>>
+    typedef expressions::binary_expression<matrix<T>, matrix<T>,
+                                           expressions::add_operation<matrix<T>, matrix<T>>>
         new_bin_exp_type;
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }
 
 /// @brief matrix + operant
-template <typename T, storage_type StorageLeft, typename ExpT>
-auto operator+(const matrix<T, StorageLeft> &left, const expressions::operant<ExpT> &right)
+template <typename T, typename ExpT>
+auto operator+(const matrix<T> &left, const expressions::operant<ExpT> &right)
 {
     typedef expressions::binary_expression<
-        matrix<T, StorageLeft>, expressions::operant<ExpT>,
-        expressions::add_operation<matrix<T, StorageLeft>, expressions::operant<ExpT>>>
+        matrix<T>, expressions::operant<ExpT>,
+        expressions::add_operation<matrix<T>, expressions::operant<ExpT>>>
         new_bin_exp_type;
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }
 
 /// @brief operant + matrix
-template <typename T, storage_type StorageRight, typename ExpT>
-auto operator+(const expressions::operant<ExpT> &left, const matrix<T, StorageRight> &right)
+template <typename T, typename ExpT>
+auto operator+(const expressions::operant<ExpT> &left, const matrix<T> &right)
 {
     typedef expressions::binary_expression<
-        expressions::operant<ExpT>, matrix<T, StorageRight>,
-        expressions::add_operation<expressions::operant<ExpT>, matrix<T, StorageRight>>>
+        expressions::operant<ExpT>, matrix<T>,
+        expressions::add_operation<expressions::operant<ExpT>, matrix<T>>>
         new_bin_exp_type;
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }
 
 /// @brief matrix + scalar
-template <typename T, storage_type StorageLeft>
-auto operator+(const matrix<T, StorageLeft> &left, const T &right)
+template <typename T>
+auto operator+(const matrix<T> &left, const T &right)
 {
     typedef expressions::binary_expression<
-        matrix<T, StorageLeft>, expressions::literal<T>,
-        expressions::add_operation<matrix<T, StorageLeft>, expressions::literal<T>>>
+        matrix<T>, expressions::literal<T>,
+        expressions::add_operation<matrix<T>, expressions::literal<T>>>
         new_bin_exp_type;
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }
 
 /// @brief scalar + matrix
-template <typename T, storage_type StorageRight>
-auto operator+(const T &left, const matrix<T, StorageRight> &right)
+template <typename T>
+auto operator+(const T &left, const matrix<T> &right)
 {
     typedef expressions::binary_expression<
-        expressions::literal<T>, matrix<T, StorageRight>,
-        expressions::add_operation<expressions::literal<T>, matrix<T, StorageRight>>>
+        expressions::literal<T>, matrix<T>,
+        expressions::add_operation<expressions::literal<T>, matrix<T>>>
         new_bin_exp_type;
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }

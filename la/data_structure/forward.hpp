@@ -16,7 +16,7 @@ namespace la {
 
 // Forward declaration of dense matrix
 // see la/data_structure/matrix.hpp
-template <typename T, storage_type StorageT>
+template <typename T>
 class matrix;
 
 // Forward declaration of sparse matrix

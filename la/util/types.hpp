@@ -24,20 +24,11 @@ typedef std::size_t size_type;
 /// @brief Type used to index vectors and matrices backwards, i.e., check >=0
 typedef long int signed_size_type;
 
-/// @brief Storing matrix row- or column-wise
-enum storage_type { ROW_WISE, COLUMN_WISE };
-
 #ifdef PARALLEL
 namespace execution = std::execution;
 #else
 enum class execution { seq, unseq, par_unseq, par };
 #endif
-
-inline std::ostream &operator<<(std::ostream &os, const storage_type st)
-{
-    os << (st == ROW_WISE ? "ROW" : "COL");
-    return os;
-}
 
 } // namespace la
 #endif

@@ -52,11 +52,8 @@ protected:
     /// @brief Reference to default vectors taking from samples
     vector<double> &p_a_vec, &p_b_vec, &p_c_vec;
 
-    /// @brief Reference to row-wise matrices
-    matrix<double, ROW_WISE> &p_A_row, &p_B_row, &p_C_row;
-
-    /// @brief References to column-wise matrices
-    matrix<double, COLUMN_WISE> &p_A_col, &p_B_col, &p_C_col;
+    /// @brief Reference to matrices
+    matrix<double> &p_A, &p_B, &p_C;
 
     /// @brief Run a single test
     virtual void run_single_test() = 0;
