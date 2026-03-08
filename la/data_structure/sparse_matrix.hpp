@@ -66,10 +66,10 @@ public:
     /// public variable members
 
     /// @brief Dimension of a matrix
-    const static size_type dimension = size_type(2);
+    constexpr static size_type dimension = size_type(2);
 
     /// @brief This matrix is dense
-    const static bool dense = false;
+    constexpr static bool dense = false;
 
 public:
     /// @brief Construct an empty matrix
@@ -113,13 +113,10 @@ public:
     inline const T &operator()(const size_type i) const;
 
     /// @brief Evaluate matrix at (i,j), i.e., read element (i,j)
-    inline const T evaluate(size_type i, size_type j) const;
+    inline const T evaluate(const size_type i, const size_type j) const;
 
     /// @brief Evaluate sparse matrix at (i), means reading i'th non-zero
-    inline const T &evaluate(size_type i) const;
-
-    /// @brief Get position of first non-zeros of row i
-    inline size_type row_begin(const size_type i) const { return p_row_ptr[i]; }
+    inline const T &evaluate(const size_type i) const;
 
     /// @brief Iterator to begin of values
     inline iterator begin() { return p_vals; }
@@ -131,15 +128,15 @@ public:
     /// @brief Constant iterator to end of values
     inline citerator end() const { return p_vals + p_num_vals; }
 
-    /// @brief Iterator to begin of values
-    inline iterator begin_vals(const size_type i) { return p_vals + p_row_ptr[i]; }
-    /// @brief Iterator to end of values
-    inline iterator end_vals(const size_type i) { return p_vals + p_row_ptr[i + 1]; }
+    /// @brief Iterator to begin of values in a row
+    inline iterator row_begin(const size_type i);
+    /// @brief Iterator to end of values in a row
+    inline iterator row_end(const size_type i);
 
-    /// @brief Constant iterator to begin of values
-    inline citerator begin_vals(const size_type i) const { return p_vals + p_row_ptr[i]; }
-    /// @brief Constant iterator to end of values
-    inline citerator end_vals(const size_type i) const { return p_vals + p_row_ptr[i + 1]; }
+    /// @brief Constant iterator to begin of values in a row
+    inline citerator row_begin(const size_type i) const;
+    /// @brief Constant iterator to end of values in a row
+    inline citerator row_end(const size_type i) const;
 
     /// @brief Iterator to begin of row pointer
     inline idx_iterator begin_row_ptr() { return p_row_ptr; }
@@ -161,20 +158,17 @@ public:
     /// @brief Constant iterator to end of column indices
     inline cidx_iterator end_col_idx() const { return p_col_idx + p_num_vals; }
 
-    /// @brief Iterator to begin of column indices
-    inline idx_iterator begin_col_idx(const size_type i) { return p_col_idx + p_row_ptr[i]; }
-    /// @brief Iterator to end of column indices
-    inline idx_iterator end_col_idx(const size_type i) { return p_col_idx + p_row_ptr[i + 1]; }
+    /// @brief Iterator to begin of column indices of a row
+    inline idx_iterator begin_col_idx(const size_type i);
+    /// @brief Iterator to end of column indices of a row
+    inline idx_iterator end_col_idx(const size_type i);
 
-    /// @brief Constant iterator to begin of column indices
-    inline cidx_iterator begin_col_idx(const size_type i) const { return p_col_idx + p_row_ptr[i]; }
-    /// @brief Constant iterator to end of column indices
-    inline cidx_iterator end_col_idx(const size_type i) const
-    {
-        return p_col_idx + p_row_ptr[i + 1];
-    }
+    /// @brief Constant iterator to begin of column indices of a row
+    inline cidx_iterator begin_col_idx(const size_type i) const;
+    /// @brief Constant iterator to end of column indices of a row
+    inline cidx_iterator end_col_idx(const size_type i) const;
 
-    /// @brief Move assign a sparse matrix
+    /// @brief Move assign from builder
     sparse_matrix<T> &operator=(sparse_matrix_builder<T> &&rhs) noexcept;
 
     /// @brief Write matrix to a file (default in binary mode)
@@ -211,7 +205,7 @@ sparse_matrix<T>::sparse_matrix(
         BOUNDARY_ASSERT(next_row + 1 != end_row_ptr(), "Row pointer out of bound");
         *(++next_row) = next_row_ptr;
     }
-    LOG_DEBUG("Indices assigned (" << *next_row << "), now, assign values(" << num_vals() << ")");
+    LOG_DEBUG("Indices assigned (" << *next_row << "), now, assign values(" << non_zeros() << ")");
     SHAPE_ASSERT(*next_row == non_zeros(), "column indices do not match number of values");
     std::copy(values.begin(), values.end(), p_vals);
 }
@@ -292,17 +286,72 @@ inline const T &sparse_matrix<T>::operator()(const size_type i) const
 }
 
 template <typename T>
-inline const T sparse_matrix<T>::evaluate(size_type i, size_type j) const
+inline const T sparse_matrix<T>::evaluate(const size_type i, const size_type j) const
 {
     LOG_TRACE("Evaluating matrix at position " << i << ", " << j);
     return (*this)(i, j);
 }
 
 template <typename T>
-inline const T &sparse_matrix<T>::evaluate(size_type i) const
+inline const T &sparse_matrix<T>::evaluate(const size_type i) const
 {
     LOG_TRACE("Evaluating matrix at " << i << "'th non-zero");
     return (*this)(i);
+}
+
+template <typename T>
+inline sparse_matrix<T>::iterator sparse_matrix<T>::row_begin(const size_type i)
+{
+    BOUNDARY_ASSERT(i <= rows(), "sparse_matrix: row_begin index out of bound");
+    return p_vals + p_row_ptr[i];
+}
+
+template <typename T>
+inline sparse_matrix<T>::iterator sparse_matrix<T>::row_end(const size_type i)
+{
+    BOUNDARY_ASSERT(i <= rows(), "sparse_matrix: row_end index out of bound");
+    return p_vals + p_row_ptr[i + 1];
+}
+
+template <typename T>
+inline sparse_matrix<T>::citerator sparse_matrix<T>::row_begin(const size_type i) const
+{
+    BOUNDARY_ASSERT(i <= rows(), "sparse_matrix: row_begin index out of bound");
+    return p_vals + p_row_ptr[i];
+}
+
+template <typename T>
+inline sparse_matrix<T>::citerator sparse_matrix<T>::row_end(const size_type i) const
+{
+    BOUNDARY_ASSERT(i <= rows(), "sparse_matrix: row_end index out of bound");
+    return p_vals + p_row_ptr[i + 1];
+}
+
+template <typename T>
+inline sparse_matrix<T>::idx_iterator sparse_matrix<T>::begin_col_idx(const size_type i)
+{
+    BOUNDARY_ASSERT(i <= rows(), "sparse_matrix: begin_col_idx index out of bound");
+    return p_col_idx + p_row_ptr[i];
+}
+template <typename T>
+inline sparse_matrix<T>::idx_iterator sparse_matrix<T>::end_col_idx(const size_type i)
+{
+    BOUNDARY_ASSERT(i <= rows(), "sparse_matrix: end_col_idx index out of bound");
+    return p_col_idx + p_row_ptr[i + 1];
+}
+
+template <typename T>
+inline sparse_matrix<T>::cidx_iterator sparse_matrix<T>::begin_col_idx(const size_type i) const
+{
+    BOUNDARY_ASSERT(i <= rows(), "sparse_matrix: begin_col_idx index out of bound");
+    return p_col_idx + p_row_ptr[i];
+}
+
+template <typename T>
+inline sparse_matrix<T>::cidx_iterator sparse_matrix<T>::end_col_idx(const size_type i) const
+{
+    BOUNDARY_ASSERT(i <= rows(), "sparse_matrix: end_col_idx index out of bound");
+    return p_col_idx + p_row_ptr[i + 1];
 }
 
 template <typename T>

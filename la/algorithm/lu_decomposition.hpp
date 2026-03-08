@@ -55,9 +55,9 @@ public:
     vector<T> solve(const vector<T> &rhs) const;
 };
 
-/// ===============================================
-/// T E M P L A T E   I M P L E M E N T A T I O N S
-/// ===============================================
+// ===============================================
+// T E M P L A T E   I M P L E M E N T A T I O N S
+// ===============================================
 
 template <typename T>
 lu_decomposition<T>::lu_decomposition(const matrix<T> &A) : p_lu(0, 0), p_p(0)

@@ -134,7 +134,7 @@ inline void assert__(AssertionT assertion, const std::string &message, const std
 #define BOUNDARY_ASSERT(a, b) ((void)0)
 #endif
 
-/// @brief Asserting boundaries while accessing arrays
+/// @brief Asserting special layouts
 #if LA_CHECK & LA_CHECK_LAYOUT_C
 #define LAYOUT_ASSERT(a, b) (la::util::assert__((a), (b), ("layout_check")))
 #else

@@ -208,6 +208,16 @@ int matrix_iterator_test::execute()
         if (*it != pos + 1)
             report_error("Row iterator read incorrect value");
 
+    if (!(m(m.row_idx_begin(0)) == 0 || m.row_idx_begin(1) == 5)) {
+        report_error("Row index begin wrong value");
+    }
+
+    if (!(m.col_idx(0) == 0 || m.col_idx(1) == 1 || m.col_idx(2) == 3 || m.col_idx(3) == 3 ||
+          m.col_idx(4) == 4 || m.col_idx(5) == 0 || m.col_idx(6) == 1 || m.col_idx(7) == 3 ||
+          m.col_idx(8) == 3 || m.col_idx(9) == 4)) {
+        report_error("Column index gave wrong column for a non-zero");
+    }
+
     return (int)errors().size();
 }
 

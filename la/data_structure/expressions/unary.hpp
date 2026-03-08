@@ -18,20 +18,20 @@ namespace expressions {
 
 /// @brief Representing an unary expression consisting one "operants" and an operation, e.g.,
 /// (vector, minus)
-/// @tparam ExpT type of expression
+/// @tparam ExpressionT type of expression
 /// @tparam OpsT type of unary operation
-template <typename ExpT, typename OpsT>
+template <typename ExpressionT, typename OpsT>
 class unary_expression
 {
 public:
     /// @brief Value type
-    typedef typename expression_traits<ExpT>::value_type value_type;
+    typedef typename expression_traits<ExpressionT>::value_type value_type;
 
     /// @brief Type of expression
-    typedef typename expression_traits<ExpT>::expression_type expression_type;
+    typedef typename expression_traits<ExpressionT>::expression_type expression_type;
 
 private:
-    /// @brief The left expression
+    /// @brief The expression
     expression_type p_expression;
 
 public:
@@ -45,18 +45,13 @@ public:
     unary_expression(const unary_expression &unary) : p_expression(unary.p_expression) {}
 
     /// @brief Moving an unary_expression
-    unary_expression(unary_expression &&unary) noexcept
-        : p_expression(std::move(unary.p_expression))
-    {}
+    unary_expression(unary_expression &&unary) noexcept;
 
     /// @brief Evaluate unary
-    inline value_type evaluate(const size_type i) const { return OpsT::evaluate(p_expression, i); }
+    inline value_type evaluate(const size_type i) const;
 
     /// @brief Evaluate binary_expression (2d access)
-    inline value_type evaluate(const size_type i, const size_type j) const
-    {
-        return OpsT::evaluate(p_expression, i, j);
-    }
+    inline value_type evaluate(const size_type i, const size_type j) const;
 
     /// @brief Get the rows of the result
     inline size_type rows() const { return p_expression.rows(); }
@@ -64,12 +59,47 @@ public:
     /// @brief Get the columns of the result
     inline size_type cols() const { return p_expression.cols(); }
 
+    /// @brief Number of non-zeros
+    inline size_type non_zeros() const { return p_expression.non_zeros(); }
+
     /// @brief Get dimension of result
-    const static size_type dimension = ExpT::dimension;
+    constexpr static size_type dimension = ExpressionT::dimension;
+
+    /// @brief Density is the same as for the expression
+    constexpr static bool dense = ExpressionT::dense;
 };
 
-} // namespace expressions
+// ===============================================
+// T E M P L A T E   I M P L E M E N T A T I O N S
+// ===============================================
 
+template <typename ExpressionT, typename OpsT>
+unary_expression<ExpressionT, OpsT>::unary_expression(unary_expression &&unary) noexcept
+    : p_expression(std::move(unary.p_expression))
+{}
+
+template <typename ExpressionT, typename OpsT>
+inline unary_expression<ExpressionT, OpsT>::value_type
+unary_expression<ExpressionT, OpsT>::evaluate(const size_type i) const
+{
+    LOG_TRACE("unary_expression evaluation at " << i);
+    BOUNDARY_ASSERT((ExpressionT::dimension < 2 && i < rows()) ||
+                        (ExpressionT::dimension == 2 && i < non_zeros()),
+                    "unary_expression row_idx_begin: index out of bound");
+    return OpsT::evaluate(p_expression, i);
+}
+
+template <typename ExpressionT, typename OpsT>
+inline unary_expression<ExpressionT, OpsT>::value_type
+unary_expression<ExpressionT, OpsT>::evaluate(const size_type i, const size_type j) const
+{
+    LOG_TRACE("unary_expression evaluation at " << i << " / " << rows() << ", " << j << " / "
+                                                << cols());
+    BOUNDARY_ASSERT(i < rows() && j < cols(), "unary_expression evaluate: index out of bound");
+    return OpsT::evaluate(p_expression, i, j);
+}
+
+} // namespace expressions
 } // namespace la
 
 #endif

@@ -50,10 +50,10 @@ public:
     /// public variable members
 
     /// @brief Dimension of a matrix
-    const static size_type dimension = size_type(2);
+    constexpr static size_type dimension = size_type(2);
 
     /// @brief This matrix is dense
-    const static bool dense = true;
+    constexpr static bool dense = true;
 
 public:
     /// @brief Default constructor creates an empty matrix
@@ -142,14 +142,14 @@ public:
     inline citerator end() const { return p_vals + p_rows * p_cols; }
 
     /// @brief Iterator to row begin
-    inline iterator row_begin(size_type i);
+    inline iterator row_begin(const size_type i);
     /// @brief Iterator to row end
-    inline iterator row_end(size_type i);
+    inline iterator row_end(const size_type i);
 
     /// @brief Constant iterator to row begin
-    inline citerator row_begin(size_type i) const;
+    inline citerator row_begin(const size_type i) const;
     /// @brief Constant iterator to row end
-    inline citerator row_end(size_type i) const;
+    inline citerator row_end(const size_type i) const;
 
     /// @brief Direct access to the memory. Use with caution
     inline T *vals() { return p_vals; }
@@ -290,7 +290,7 @@ void matrix<T>::resize(const size_type m, const size_type n, const T &val)
 template <typename T>
 inline size_type matrix<T>::row_idx_begin(const size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "matrix: row_idx_begin only valid for row_wise");
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_idx_begin index out of bound");
     return i * p_cols;
 }
 
@@ -335,7 +335,7 @@ inline const T &matrix<T>::evaluate(const size_type i, const size_type j) const
 template <typename T>
 inline const T &matrix<T>::evaluate(const size_type nz_idx) const
 {
-    LOG_TRACE("Evaluating matrix at position " << i);
+    LOG_TRACE("Evaluating matrix at position " << nz_idx);
     return (*this)(nz_idx);
 }
 
@@ -343,30 +343,30 @@ inline const T &matrix<T>::evaluate(const size_type nz_idx) const
 // ---------
 
 template <typename T>
-typename matrix<T>::iterator matrix<T>::row_begin(size_type i)
+typename matrix<T>::iterator matrix<T>::row_begin(const size_type i)
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_begin");
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_begin index out of bound");
     return p_vals + i * p_cols;
 }
 
 template <typename T>
-typename matrix<T>::iterator matrix<T>::row_end(size_type i)
+typename matrix<T>::iterator matrix<T>::row_end(const size_type i)
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_end");
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_end index out of bound");
     return p_vals + (i + 1) * p_cols;
 }
 
 template <typename T>
-typename matrix<T>::citerator matrix<T>::row_begin(size_type i) const
+typename matrix<T>::citerator matrix<T>::row_begin(const size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_begin const");
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_begin index out of bound");
     return p_vals + i * p_cols;
 }
 
 template <typename T>
-typename matrix<T>::citerator matrix<T>::row_end(size_type i) const
+typename matrix<T>::citerator matrix<T>::row_end(const size_type i) const
 {
-    LAYOUT_ASSERT(StorageT == ROW_WISE, "Invalid layout for matrix::row_end const");
+    BOUNDARY_ASSERT(i <= rows(), "matrix: row_end index out of bound");
     return p_vals + (i + 1) * p_cols;
 }
 
