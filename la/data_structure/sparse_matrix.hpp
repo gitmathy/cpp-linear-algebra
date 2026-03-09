@@ -300,7 +300,7 @@ inline const T sparse_matrix<T>::operator()(const size_type i, const size_type j
     if (it == last || *it != j) {
         return T(0);
     }
-    return *it;
+    return p_vals[*it];
 }
 
 template <typename T>
