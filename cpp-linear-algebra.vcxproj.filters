@@ -1,0 +1,257 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\la">
+      <UniqueIdentifier>{e036459b-06c1-4a9d-932f-0e1735095815}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\la\operation">
+      <UniqueIdentifier>{8524433c-d222-4381-ba9d-7e415cf7e00c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\la\data_structure">
+      <UniqueIdentifier>{a71d0467-941a-4f03-8402-d9b858dcfe05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\la\data_structure\expressions">
+      <UniqueIdentifier>{e6b7b109-14dd-407e-b94f-98c5fa24033b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\la\util">
+      <UniqueIdentifier>{07f34632-a4dd-46c1-8525-76f09ab3ebaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tests">
+      <UniqueIdentifier>{3d5efc6f-a104-441f-8d99-ca1fed6a9d33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tests">
+      <UniqueIdentifier>{3f4fe23f-de0f-4b40-b39a-5f1650bbed6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tests\unit_tests">
+      <UniqueIdentifier>{6ef12a06-c9a8-40dd-94e0-104fbf4e00fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tests\performance_tests">
+      <UniqueIdentifier>{28aa60e9-1cde-4c39-b87e-b49c522b6e8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tests\unit_tests">
+      <UniqueIdentifier>{57c55b8e-5b86-40a1-8b4c-d60a0876dc95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tests\performance_tests">
+      <UniqueIdentifier>{c425ff02-3d24-4940-8aa7-28e4ad1fd133}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\performance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\unit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\collection.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\log.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\performance_test.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\samples.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\timing.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\unit_test.cpp">
+      <Filter>Source Files\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\unit_tests\test_dense_algorithm.cpp">
+      <Filter>Source Files\tests\unit_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\unit_tests\test_dense_matrix.cpp">
+      <Filter>Source Files\tests\unit_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\unit_tests\test_sparse_matrix.cpp">
+      <Filter>Source Files\tests\unit_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\unit_tests\test_static.cpp">
+      <Filter>Source Files\tests\unit_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\unit_tests\test_vector.cpp">
+      <Filter>Source Files\tests\unit_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\unit_tests\unit_test_collection.cpp">
+      <Filter>Source Files\tests\unit_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\src\performance_tests\performance_test_collection.cpp">
+      <Filter>Source Files\tests\performance_tests</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="la\algorithms">
+      <Filter>Header Files\la</Filter>
+    </None>
+    <None Include="la\dense">
+      <Filter>Header Files\la</Filter>
+    </None>
+    <None Include="la\ops">
+      <Filter>Header Files\la</Filter>
+    </None>
+    <None Include="la\sparse">
+      <Filter>Header Files\la</Filter>
+    </None>
+    <None Include="la\static">
+      <Filter>Header Files\la</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="la\util\block_helper.hpp">
+      <Filter>Header Files\la\util</Filter>
+    </ClInclude>
+    <ClInclude Include="la\util\constants.hpp">
+      <Filter>Header Files\la\util</Filter>
+    </ClInclude>
+    <ClInclude Include="la\util\error.hpp">
+      <Filter>Header Files\la\util</Filter>
+    </ClInclude>
+    <ClInclude Include="la\util\file_io.hpp">
+      <Filter>Header Files\la\util</Filter>
+    </ClInclude>
+    <ClInclude Include="la\util\macros.hpp">
+      <Filter>Header Files\la\util</Filter>
+    </ClInclude>
+    <ClInclude Include="la\util\memory.hpp">
+      <Filter>Header Files\la\util</Filter>
+    </ClInclude>
+    <ClInclude Include="la\util\types.hpp">
+      <Filter>Header Files\la\util</Filter>
+    </ClInclude>
+    <ClInclude Include="la\operation\addition.hpp">
+      <Filter>Header Files\la\operation</Filter>
+    </ClInclude>
+    <ClInclude Include="la\operation\inner_product.hpp">
+      <Filter>Header Files\la\operation</Filter>
+    </ClInclude>
+    <ClInclude Include="la\operation\multiplication.hpp">
+      <Filter>Header Files\la\operation</Filter>
+    </ClInclude>
+    <ClInclude Include="la\operation\norm.hpp">
+      <Filter>Header Files\la\operation</Filter>
+    </ClInclude>
+    <ClInclude Include="la\operation\prefix.hpp">
+      <Filter>Header Files\la\operation</Filter>
+    </ClInclude>
+    <ClInclude Include="la\operation\substraction.hpp">
+      <Filter>Header Files\la\operation</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\forward.hpp">
+      <Filter>Header Files\la\data_structure</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\matrix.hpp">
+      <Filter>Header Files\la\data_structure</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\mixed_dense_data.hpp">
+      <Filter>Header Files\la\data_structure</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\mixed_sparse_data.hpp">
+      <Filter>Header Files\la\data_structure</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\sparse_matrix.hpp">
+      <Filter>Header Files\la\data_structure</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\sparse_matrix_builder.hpp">
+      <Filter>Header Files\la\data_structure</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\static_vector.hpp">
+      <Filter>Header Files\la\data_structure</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\vector.hpp">
+      <Filter>Header Files\la\data_structure</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\expressions\binary.hpp">
+      <Filter>Header Files\la\data_structure\expressions</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\expressions\forward.hpp">
+      <Filter>Header Files\la\data_structure\expressions</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\expressions\literal.hpp">
+      <Filter>Header Files\la\data_structure\expressions</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\expressions\operant.hpp">
+      <Filter>Header Files\la\data_structure\expressions</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\expressions\operations.hpp">
+      <Filter>Header Files\la\data_structure\expressions</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\expressions\traits.hpp">
+      <Filter>Header Files\la\data_structure\expressions</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\expressions\unary.hpp">
+      <Filter>Header Files\la\data_structure\expressions</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\base_test.hpp">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\collection.hpp">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\log.hpp">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\performance_test.hpp">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\samples.hpp">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\timing.hpp">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\unit_test.hpp">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\unit_tests\test_dense_algorithm.hpp">
+      <Filter>Header Files\tests\unit_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\unit_tests\test_dense_matrix.hpp">
+      <Filter>Header Files\tests\unit_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\unit_tests\test_sparse_matrix.hpp">
+      <Filter>Header Files\tests\unit_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\unit_tests\test_static.hpp">
+      <Filter>Header Files\tests\unit_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\unit_tests\test_vector.hpp">
+      <Filter>Header Files\tests\unit_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\unit_tests\unit_test_collection.hpp">
+      <Filter>Header Files\tests\unit_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\performance_tests\assign.hpp">
+      <Filter>Header Files\tests\performance_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\performance_tests\basic_operations.hpp">
+      <Filter>Header Files\tests\performance_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\performance_tests\decompose.hpp">
+      <Filter>Header Files\tests\performance_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\performance_tests\performance_test_collection.hpp">
+      <Filter>Header Files\tests\performance_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="tests\includes\performance_tests\resize.hpp">
+      <Filter>Header Files\tests\performance_tests</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,4 +1,4 @@
-name: Makefile CI
+name: Linux build and unit tests (Makefile) 👷
 description: Build the executable by g++
 
 on:
@@ -19,10 +19,10 @@ jobs:
     - name: Version of g++
       shell: bash
       run: g++ -v
-    - name: Building executables
+    - name: ⚒️ Building executables
       shell: bash
       run: make -j 4 all
-    - name: Run unit tests
+    - name: 🧪 Run unit tests
       shell: bash
       run: make run-unit
 

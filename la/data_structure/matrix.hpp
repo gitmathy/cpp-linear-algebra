@@ -271,6 +271,7 @@ matrix<T>::matrix(const expressions::operant<ExpressionT> &exp) : p_vals(nullptr
 template <typename T>
 template <typename MatTypeLeft, typename MatTypeRight>
 matrix<T>::matrix(const expressions::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult)
+    : p_vals(nullptr), p_rows(0)
 {
     *this = mat_mult;
 }

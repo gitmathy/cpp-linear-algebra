@@ -54,3 +54,5 @@ out/*
 # Node.js
 node_modules
 package-lock.json
+
+cpp-linear-algebra.vcxproj.user
