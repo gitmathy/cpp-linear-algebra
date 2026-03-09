@@ -63,8 +63,7 @@ template <typename MatTypeLeft, typename MatTypeRight>
 matrix<T> &
 matrix<T>::operator=(const expressions::matrix_multiply_op<MatTypeLeft, MatTypeRight> &mat_mult)
 {
-    matrix<T> temp = algorithm::matrix_multiplication<T>::multiply(mat_mult.left, mat_mult.right);
-    *this = std::move(temp);
+    *this = algorithm::matrix_multiplication<T>::multiply(mat_mult.left, mat_mult.right);
     return *this;
 }
 
