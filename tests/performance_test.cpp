@@ -39,6 +39,8 @@ int main()
     tests.transfer("matrix", std::make_unique<matrix_add>(RUNS));
     tests.transfer("matrix", std::make_unique<matrix_multiple_add>(RUNS));
     tests.transfer("matrix", std::make_unique<matrix_mixed_add_sub>(RUNS));
+    tests.transfer("sparse_matrix", std::make_unique<sparse_matrix_build>(RUNS));
+    tests.transfer("sparse_matrix", std::make_unique<sparse_matrix_mult>(RUNS));
 
     // Resizing
     tests.transfer("vector", std::make_unique<vector_resize>(RUNS));
@@ -58,7 +60,7 @@ int main()
     tests.transfer("algorithms", std::make_unique<matrix_multiply_blocked>(RUNS, MATRIX_MULTIPLY));
 
     std::cout << "Executing tests ..." << std::endl;
-    int result = tests.run(std::set<std::string>());
+    int result = tests.run(std::set<std::string>({}));
 
     return result > 0 ? 1 : 0;
 }

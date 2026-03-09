@@ -24,10 +24,12 @@ void performance_test_collection::report(const std::set<std::string> &label_filt
     std::stringstream strs;
     strs << '\n' << std::string(80, '=') << '\n';
     strs << "       REPORT: " << p_name << "\n\n";
-    strs << "   # runs:              " << p_runs << '\n'
-         << "   default vector size: " << p_samples->vec_rows() << '\n'
-         << "   default matrix rows: " << p_samples->mat_rows() << '\n'
-         << "   default matrix cols: " << p_samples->vec_rows() << '\n';
+    strs << "   # runs:                    " << p_runs << '\n'
+         << "   default vector size:       " << p_samples->vec_rows() << '\n'
+         << "   default matrix rows:       " << p_samples->mat_rows() << '\n'
+         << "   default matrix cols:       " << p_samples->vec_rows() << '\n'
+         << "   default sparse matrix dim: " << p_samples->sparse_mat().rows() << '\n'
+         << "   default sparse matrix nnz: " << p_samples->sparse_mat().non_zeros() << '\n';
     strs << std::string(80, '=') << '\n';
     this->log(strs, INFO);
 

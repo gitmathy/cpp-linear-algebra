@@ -55,6 +55,9 @@ protected:
     /// @brief Reference to matrices
     matrix<double> &p_A, &p_B, &p_C;
 
+    /// @brief A sparse matrix
+    sparse_matrix<double> &p_A_sparse;
+
     /// @brief Run a single test
     virtual void run_single_test() = 0;
 
