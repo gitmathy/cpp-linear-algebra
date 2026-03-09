@@ -1,3 +1,11 @@
+## [1.19.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.19.0...v1.19.1) (2026-03-09)
+
+
+### Bug Fixes
+
+* matrix-matrix multiplication ([b896ca3](https://github.com/gitmathy/cpp-linear-algebra/commit/b896ca3d7181b9184b5142e800719b2bb1d7aeb0))
+* read issue ([38def8d](https://github.com/gitmathy/cpp-linear-algebra/commit/38def8d7e4d1df8be862bd00c60768f9dd7b97f3))
+
 # [1.19.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.18.0...v1.19.0) (2026-03-09)
 
 
