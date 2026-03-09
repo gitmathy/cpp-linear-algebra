@@ -1,3 +1,12 @@
+# [1.19.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.18.0...v1.19.0) (2026-03-09)
+
+
+### Features
+
+* Assemble sparse matrix ([a295087](https://github.com/gitmathy/cpp-linear-algebra/commit/a2950877acf66f0f8e62a1385d3412b6e29b4946))
+* Copy and move of sparse matrix ([853d53a](https://github.com/gitmathy/cpp-linear-algebra/commit/853d53aebf635aa0b381180e063b490673e2c24f))
+* Include sparse matrix performance ([4f8d32a](https://github.com/gitmathy/cpp-linear-algebra/commit/4f8d32a6e40b62fe293fc859be5e907150e81814))
+
 # [1.18.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.17.0...v1.18.0) (2026-03-08)
 
 
