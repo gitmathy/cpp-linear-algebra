@@ -15,8 +15,8 @@ BUILD_DIR := builds
 PERF_BUILD := $(BUILD_DIR)/perf
 UNIT_BUILD := $(BUILD_DIR)/unit
 
-PERF_MAIN := tests/performance_test.cpp
-UNIT_MAIN := tests/unit_tests.cpp
+PERF_MAIN := tests/performance.cpp
+UNIT_MAIN := tests/unit.cpp
 
 # Source lists
 COMMON_SRCS := $(wildcard $(SRC_DIR)/*.cpp)
