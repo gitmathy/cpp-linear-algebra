@@ -11,7 +11,9 @@
 #define LA_TEST_INCLUDES_PERFORMANCE_TESTS_BASIC_OPERATIONS_HPP
 
 #include "la/dense"
+#include "la/sparse"
 #include "tests/includes/performance_test.hpp"
+#include <random>
 
 namespace la {
 namespace test {
@@ -145,7 +147,66 @@ public:
         : performance_test("matrix_multiply_blocked", "Testing  C = A*B", runs), p_size(size)
     {}
 
-    void setup() override { p_samples->adjust(p_size, p_size, p_size); }
+    inline void setup() override { p_samples->adjust(p_size, p_size, p_size); }
+};
+
+// ===============================================
+// S P A R S E   M A T R I C E S
+// ===============================================
+
+class sparse_matrix_build : public performance_test
+{
+private:
+    sparse_matrix_builder<double> p_a_build;
+
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override
+    {
+        sparse_matrix<double> a = std::move(p_a_build.assemble());
+    }
+
+public:
+    /// @brief Set me up
+    sparse_matrix_build(const size_type runs)
+        : performance_test("sparse_matrix_build", "Assemble sparse matrix", runs),
+          p_a_build(SPARSE_SIZE, SPARSE_SIZE)
+    {}
+
+    inline void setup() override
+    {
+        std::mt19937 gen(42);
+        std::uniform_int_distribution<size_type> rand_nnz_row(1, SPARSE_MAX_NNZ_ROW);
+        std::uniform_int_distribution<size_type> rand_col_idx(1, SPARSE_SIZE);
+        for (size_type i = 0; i < p_a_build.rows(); ++i) {
+            for (size_type nnz = 0; nnz < rand_nnz_row(gen); ++nnz) {
+                p_a_build(i, rand_col_idx(gen)) = get_random<double>();
+            }
+        }
+    }
+};
+
+class sparse_matrix_mult : public performance_test
+{
+private:
+    vector<double> p_x;
+
+protected:
+    /// @brief Execute a single test
+    inline void run_single_test() override { p_A_sparse *p_x; }
+
+public:
+    /// @brief Set me up
+    sparse_matrix_mult(const size_type runs)
+        : performance_test("sparse_matrix_mult", "Multiply with a sparse matrix", runs),
+          p_x(SPARSE_SIZE)
+    {}
+
+    inline void setup() override
+    {
+        p_x.resize(p_A_sparse.cols());
+        init(p_x);
+    }
 };
 
 } // namespace test
