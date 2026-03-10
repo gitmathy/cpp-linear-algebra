@@ -1,3 +1,11 @@
+## [1.19.2](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.19.1...v1.19.2) (2026-03-10)
+
+
+### Bug Fixes
+
+* Include pch.h ([093c52a](https://github.com/gitmathy/cpp-linear-algebra/commit/093c52a9bd0662d1a61be46c3b4ba4d12dd8b1c4))
+* Make sure, pch.h is included first ([cee1151](https://github.com/gitmathy/cpp-linear-algebra/commit/cee11516d23612173d2845410a430c57f14ed292))
+
 ## [1.19.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.19.0...v1.19.1) (2026-03-09)
 
 
