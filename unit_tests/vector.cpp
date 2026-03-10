@@ -220,7 +220,8 @@ TEST(vector, add_assign_vector)
 /// @brief Testing += expression
 TEST(vector, add_assign_expr)
 {
-    expressions::operant<expressions::literal<int>> expr(1);
+    vector<size_type> v(2, 1);
+    expressions::operant<vector<size_type>> expr(v);
     vector<size_type> w({1, 2});
     w += expr;
     EXPECT_EQ(w.rows(), 2);
@@ -251,7 +252,8 @@ TEST(vector, mult_assign_vector)
 /// @brief Testing *= expression
 TEST(vector, mult_assign_expr)
 {
-    expressions::operant<expressions::literal<int>> expr(4);
+    vector<size_type> v(2, 4);
+    expressions::operant<vector<size_type>> expr(v);
     vector<size_type> w({1, 2});
     w *= expr;
     EXPECT_EQ(w.rows(), 2);
@@ -272,7 +274,8 @@ TEST(vector, sub_assign_vector)
 /// @brief Testing -= expression
 TEST(vector, sub_assign_expr)
 {
-    expressions::operant<expressions::literal<int>> expr(1);
+    vector<size_type> v(2, 1);
+    expressions::operant<vector<size_type>> expr(v);
     vector<size_type> w({1, 2});
     w -= expr;
     EXPECT_EQ(w.rows(), 2);
