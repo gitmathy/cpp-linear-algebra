@@ -25,6 +25,8 @@ TEST(vector, default_constructor)
     EXPECT_EQ(v_int.rows(), 0);
     vector<double> v_double;
     EXPECT_EQ(v_double.rows(), 0);
+    EXPECT_THROW(v_int(1), util::error);
+    EXPECT_THROW(v_double(1), util::error);
 }
 
 /// @brief Testing the constructor with a given size
@@ -169,6 +171,7 @@ TEST(vector, evaluate)
         EXPECT_EQ(v.evaluate(i), i);
         EXPECT_EQ(v.evaluate(i, i), i);
     }
+    EXPECT_THROW(v(6), util::error);
 }
 
 /// @brief Testing constant iterators
@@ -215,6 +218,7 @@ TEST(vector, add_assign_vector)
     EXPECT_EQ(w.rows(), 2);
     EXPECT_EQ(w(0), 4);
     EXPECT_EQ(w(1), 6);
+    EXPECT_THROW(v += vector<size_type>(6), util::error);
 }
 
 /// @brief Testing += expression
@@ -247,6 +251,7 @@ TEST(vector, mult_assign_vector)
     EXPECT_EQ(w.rows(), 2);
     EXPECT_EQ(w(0), 3);
     EXPECT_EQ(w(1), 2);
+    EXPECT_THROW(v += vector<int>(6), util::error);
 }
 
 /// @brief Testing *= expression
@@ -269,6 +274,7 @@ TEST(vector, sub_assign_vector)
     EXPECT_EQ(w.rows(), 2);
     EXPECT_EQ(w(0), 2);
     EXPECT_EQ(w(1), -1);
+    EXPECT_THROW(v -= vector<int>(6), util::error);
 }
 
 /// @brief Testing -= expression
@@ -304,6 +310,7 @@ TEST(vector, read_write_bin)
     EXPECT_DOUBLE_EQ(v(0), 3.14);
     EXPECT_DOUBLE_EQ(v(1), 2.718);
     util::delete_file(filename);
+    EXPECT_THROW(v.to_file("/no_exist/dummy", true), util::error);
 }
 
 /// @brief Testing read and write to text file
@@ -317,6 +324,7 @@ TEST(vector, read_wite_txt)
     EXPECT_DOUBLE_EQ(v(0), 3.14);
     EXPECT_DOUBLE_EQ(v(1), 2.718);
     util::delete_file(filename);
+    EXPECT_THROW(v.to_file("/no_exist/dummy", false), util::error);
 }
 
 } // namespace la
