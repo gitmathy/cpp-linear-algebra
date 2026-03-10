@@ -65,3 +65,4 @@ cpp-line.*
 packages/*
 unit_test/unit_tests.vcxproj.user
 unit_test/x64/*
+/unit_tests/x64/Debug
