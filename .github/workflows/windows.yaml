@@ -18,28 +18,30 @@ jobs:
       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8    # v6.0.1
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@323ab0502cd38fdc493335025a96c8fdb0edc71f # v2.0.1
+    - name: Restore NuGet Packages
+      run: nuget restore cpp-linear-algebra.slnx
     # - name: Install Intel Thread Building Block (TBB)
     #   shell: bash
     #   run: |
     #     sudo apt update
     #     sudo apt install libtbb-dev
-    - name: Build Solution
+    - name: ⚒️ Build Solution
       run: |
         msbuild cpp-linear-algebra.slnx `
         /p:Configuration=${{ matrix.configuration }} `
         /p:Platform=x64 `
         /p:PlatformToolset=v143 `
         /m
+    - name: 🧪 Run Google Tests
+      shell: pwsh
+      run: |
+        # Use vswhere to find the latest VSTest path
+        $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+        $vstest = Join-Path $vsPath "Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
 
-
-  test:
-    runs-on: windows-latest
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8    # v6.0.1
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2
-    - name: Build Unit Tests
-      run: msbuild cpp-linear-algebra.slnx /p:Configuration=unit /p:Platform=x64 /p:PlatformToolset=v143
-    - name: Run Unit Tests
-      run: .\x64\unit\cpp-linear-algebra.exe
+        # Execute the tests
+        & $vstest `
+          " D:\a\cpp-linear-algebra\cpp-linear-algebra\x64\${{ matrix.configuration }}\unit_tests.exe" `
+          /TestAdapterPath:"packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.8\build\native"

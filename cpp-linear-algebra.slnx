@@ -6,5 +6,12 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="cpp-linear-algebra.vcxproj" />
+  <Project Path="cpp-linear-algebra.vcxproj" Id="1c9cce1a-44a0-4c41-8e2a-31312b80f193">
+    <Build Solution="*|x86" Project="false" />
+  </Project>
+  <Project Path="unit_tests/unit_tests.vcxproj" Id="ba992e9c-c3a8-4e55-a407-8a016f4b0aca">
+    <BuildType Solution="unit|x64" Project="Debug" />
+    <BuildType Solution="unit|x86" Project="Release" />
+    <Build Solution="*|x86" Project="false" />
+  </Project>
 </Solution>
