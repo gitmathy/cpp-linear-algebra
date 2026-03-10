@@ -1,5 +1,6 @@
-#include "la/data_structure/vector.hpp"
 #include "pch.h"
+
+#include "la/data_structure/vector.hpp"
 #include <gtest/gtest.h>
 
 namespace la {

@@ -1,5 +1,7 @@
-#include "la/data_structure/matrix.hpp"
+
 #include "pch.h"
+
+#include "la/data_structure/matrix.hpp"
 #include <gtest/gtest.h>
 
 namespace la {
