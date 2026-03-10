@@ -23,6 +23,7 @@ add_executable(
     pch.cpp
     vector.cpp
     matrix.cpp
+    sparse_matrix.cpp
 )
 
 # Link against Google Test
