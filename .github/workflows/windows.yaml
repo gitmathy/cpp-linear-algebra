@@ -37,15 +37,11 @@ jobs:
     - name: 🧪 Run Google Tests
       shell: pwsh
       run: |
+        # Use vswhere to find the latest VSTest path
         $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
         $vstest = Join-Path $vsPath "Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
 
-        # Dynamically find the .exe file
-        $testExe = Get-ChildItem -Path **\unit_tests.exe | Select-Object -First 1 -ExpandProperty FullName
-        Write-Host "Found Test Executable at: $testExe"
-
-        if (-not $testExe) { throw "Could not find unit_tests.exe!" }
-
+        # Execute the tests
         & $vstest `
-          "$testExe" `
+          " D:\a\cpp-linear-algebra\cpp-linear-algebra\x64\${{ matrix.configuration }}\unit_tests.exe" `
           /TestAdapterPath:"packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.8\build\native"
