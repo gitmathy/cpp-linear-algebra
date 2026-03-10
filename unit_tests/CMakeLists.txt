@@ -3,7 +3,7 @@ project(unit_tests)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
+add_compile_options(-Wall -Wextra -Wpedantic)
 
 # Include the main project's headers
 include_directories(../)

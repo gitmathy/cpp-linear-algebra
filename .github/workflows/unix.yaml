@@ -26,3 +26,21 @@ jobs:
       shell: bash
       run: make run-unit
 
+  run_unit_tests:
+    name: 🧪 Unit tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8    # v6.0.1
+    - name: ⚒️ Building
+      shell: bash
+      run: |
+        mkdir build
+        cd build || false
+        cmake ../unit_tests
+        cmake --build .
+    - name: 🧪 Run unit tests
+      shell: bash
+      run: |
+        cd build || false
+        ./run_unit_tests
+
