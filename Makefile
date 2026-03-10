@@ -92,6 +92,7 @@ deps: $(DEPS)
 # Clean everything
 clean:
 	rm -rf $(BUILD_DIR)
+	rm -rf build
 
 # Doxygen
 doxygen:
