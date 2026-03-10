@@ -113,6 +113,9 @@
     <None Include="la\static">
       <Filter>Header Files\la</Filter>
     </None>
+    <None Include=".gitignore">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="la\util\block_helper.hpp">
