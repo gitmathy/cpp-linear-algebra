@@ -24,40 +24,6 @@ A modern C++20 library for high-performance linear algebra.
 *   **Git**.
 *   (Optional) **Intel Threading Building Blocks (TBB)** for parallel execution support.
 
-## Building the Project
-
-The project uses CMake to build tests and examples.
-
-### Debug Build (for development and running unit tests)
-
-```bash
-mkdir build-debug
-cd build-debug
-cmake -DCMAKE_BUILD_TYPE=Debug ..
-make
-```
-
-You can then run the unit tests and a debug executable:
-```bash
-./unit/unit_tests
-./debug/debug_test
-```
-
-### Release Build (for performance testing)
-
-For performance-critical builds, use the Release configuration. This enables optimizations and parallel execution (if TBB is found).
-
-```bash
-mkdir build-release
-cd build-release
-cmake -DCMAKE_BUILD_TYPE=Release ..
-make
-```
-
-You can then run the performance benchmarks:
-```bash
-./perf/performance_test
-```
 
 ## Usage
 
@@ -93,6 +59,20 @@ int main() {
     return 0;
 }
 ```
+
+## Building and executing the unit tests
+
+We are utilizing [GoogleTest](https://github.com/google/googletest) for implementing the unit tests. To execute the unit tests, run the following tests. Alternatively, you can run the unit tests in Visual Studio.
+
+```bash
+mkdir build
+cd build
+cmake ../unit_tests
+cmake --build .
+./run_unit_tests
+```
+
+You may want to put the googletest includes in [googletest](./googletest/) for your VSCode setup.
 
 ## Contributing
 

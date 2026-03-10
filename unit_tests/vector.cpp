@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "la/data_structure/vector.hpp"
 #include <gtest/gtest.h>
-#include <la/data_structure/vector.hpp>
 
 namespace la {
+
 TEST(vector, default_constructor)
 {
     vector<int> v;
