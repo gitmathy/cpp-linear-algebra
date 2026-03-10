@@ -55,4 +55,10 @@ out/*
 node_modules
 package-lock.json
 
+# Visual Studio
+x64/*
 cpp-linear-algebra.vcxproj.user
+cpp-line.*
+packages/*
+unit_test/unit_tests.vcxproj.user
+unit_test/x64/*
