@@ -1,3 +1,15 @@
+# [1.20.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.19.2...v1.20.0) (2026-03-12)
+
+
+### Bug Fixes
+
+* testing assign +, -, * with expressions ([9fc7ddf](https://github.com/gitmathy/cpp-linear-algebra/commit/9fc7ddf9f4bcb67c608bf2d7b1aa4c5132063a80))
+
+
+### Features
+
+* LA_CHECK defined by compiler ([da6990f](https://github.com/gitmathy/cpp-linear-algebra/commit/da6990f05563de0c2ebbc0e71040395a5bbfdec8))
+
 ## [1.19.2](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.19.1...v1.19.2) (2026-03-10)
 
 
