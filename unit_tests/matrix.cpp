@@ -100,7 +100,7 @@ TEST(matrix, constructor_mat_mult)
     matrix<int> dst(mult);
     EXPECT_EQ(dst.rows(), 1);
     EXPECT_EQ(dst.cols(), 1);
-    EXPECT_FLOAT_EQ(dst(0, 0), 3);
+    EXPECT_EQ(dst(0, 0), 3);
 }
 /// @brief Test constructor from matrix-matrix multiplication with invalid dimension
 TEST(matrix, constructor_mat_mult_invalid_dim)
