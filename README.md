@@ -10,18 +10,15 @@ A modern C++20 library for high-performance linear algebra.
 
 ## Features
 
-*   **Matrix and Vector classes:** Easy-to-use, generic `la::matrix` and `la::vector` classes.
+*   **Matrix and Vector classes:** Easy-to-use, generic `la::matrix` and `la::vector` classes. There is a class for dense matrices `matrix` and sparse matrices `sparse_matrix`.
 *   **Template Expressions:** Operations like addition, subtraction, and multiplication are implemented using expression templates, which result in highly optimized, loop-fused code at compile time.
-*   **Flexible Storage:** Matrices can be configured for row-wise or column-wise storage for optimal performance in different scenarios.
 *   **Parallel Execution:** Can be accelerated using Intel TBB for parallel execution of expensive operations.
 *   **Algorithms:** Includes common linear algebra algorithms, such as LU decomposition for solving systems of linear equations.
 *   **Header-Only Option:** Can be used as a simple header-only library if no performance acceleration is needed.
 
 ## Requirements
 
-*   **C++20** compatible compiler (e.g., GCC 12+, Clang 14+, MSVC v19.29+).
-*   **CMake** (version 3.22 or newer).
-*   **Git**.
+*   **C++20** compatible compiler (e.g., GCC 12+, MSVC v19.29+).
 *   (Optional) **Intel Threading Building Blocks (TBB)** for parallel execution support.
 
 
