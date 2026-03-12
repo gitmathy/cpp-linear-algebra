@@ -47,6 +47,7 @@ public:
 template <typename T>
 matrix<T> matrix_multiplication<T>::multiply(const matrix<T> &A, const matrix<T> &B)
 {
+    SHAPE_ASSERT(A.cols() == B.rows(), "matrix_multiplication: invalid dimension");
     LOG_INFO("Matrix multiplication.");
     LOG_DEBUG("Input (" << A.rows() << " x " << A.cols() << ") times (" << B.rows() << " x "
                         << B.cols() << ')');
