@@ -9,16 +9,11 @@
 
 #include "pch.h"
 
+#include "la/dense"
 #include <algorithm>
 #include <gtest/gtest.h>
+#include <memory>
 #include <string>
-#include <la/data_structure/expressions/literal.hpp>
-#include <la/data_structure/expressions/operant.hpp>
-#include <la/data_structure/static_vector.hpp>
-#include <la/data_structure/vector.hpp>
-#include <la/util/error.hpp>
-#include <la/util/file_io.hpp>
-#include <la/util/types.hpp>
 #include <utility>
 
 namespace la {
@@ -70,7 +65,7 @@ TEST(vector, constructor_from_static)
 /// @brief Testing the constructor from initializer list
 TEST(vector, constructor_from_initializer)
 {
-    vector<float> v({ 3.14f, 2.72f });
+    vector<float> v({3.14f, 2.72f});
     EXPECT_EQ(v.rows(), 2);
     EXPECT_FLOAT_EQ(v(0), 3.14f);
     EXPECT_FLOAT_EQ(v(1), 2.72f);
@@ -79,7 +74,7 @@ TEST(vector, constructor_from_initializer)
 /// @brief Testing the move constructor
 TEST(vector, constructor_move)
 {
-    vector<size_type> v({ 3, 2 });
+    vector<size_type> v({3, 2});
     vector<size_type> v_dest(std::move(v));
     EXPECT_EQ(v_dest.rows(), 2);
     EXPECT_EQ(v_dest(0), 3);
@@ -91,7 +86,7 @@ TEST(vector, constructor_move)
 /// @brief Testing the copy constructor
 TEST(vector, constructor_copy)
 {
-    vector<size_type> v({ 3, 2 });
+    vector<size_type> v({3, 2});
     vector<size_type> v_dest(v);
     EXPECT_EQ(v_dest.rows(), 2);
     EXPECT_EQ(v.rows(), 2);
@@ -113,14 +108,14 @@ TEST(vector, constructor_expression)
 /// @brief Testing the destructor
 TEST(vector, destructor)
 {
-    vector<int>* v = new vector<int>(3);
+    vector<int> *v = new vector<int>(3);
     delete v;
 }
 
 /// @brief Testing allocate
 TEST(vector, allocate)
 {
-    vector<long int> v({ 3, 2 });
+    vector<long int> v({3, 2});
     v.allocate(3);
     EXPECT_EQ(v.rows(), 3);
 }
@@ -128,7 +123,7 @@ TEST(vector, allocate)
 /// @brief Testing resize
 TEST(vector, resize)
 {
-    vector<size_type> v({ 3, 2 });
+    vector<size_type> v({3, 2});
     v.resize(1, 1);
     EXPECT_EQ(v.rows(), 1);
     EXPECT_EQ(v(0), 1);
@@ -182,9 +177,9 @@ TEST(vector, evaluate)
 /// @brief Testing constant iterators
 TEST(vector, constant_iterators)
 {
-    const vector<size_type> v({ 0, 1, 2, 3, 4, 5 });
+    const vector<size_type> v({0, 1, 2, 3, 4, 5});
     size_type i = 0;
-    size_type const* val_ptr = v.vals();
+    size_type const *val_ptr = v.vals();
     for (vector<size_type>::citerator it = v.begin(); it != v.end(); ++it, ++i, ++val_ptr) {
         EXPECT_EQ(*val_ptr, i);
         EXPECT_EQ(*it, i);
@@ -218,7 +213,7 @@ TEST(vector, move_assign)
 /// @brief Testing += vector
 TEST(vector, add_assign_vector)
 {
-    vector<size_type> v({ 1, 2 }), w({ 3, 4 });
+    vector<size_type> v({1, 2}), w({3, 4});
     w += v;
     EXPECT_EQ(w.rows(), 2);
     EXPECT_EQ(w(0), 4);
@@ -231,7 +226,7 @@ TEST(vector, add_assign_expr)
 {
     vector<size_type> v(2, 1);
     expressions::operant<vector<size_type>> expr(v);
-    vector<size_type> w({ 1, 2 });
+    vector<size_type> w({1, 2});
     w += expr;
     EXPECT_EQ(w.rows(), 2);
     EXPECT_EQ(w(0), 2);
@@ -241,7 +236,7 @@ TEST(vector, add_assign_expr)
 /// @brief Testing *= scalar
 TEST(vector, mult_assign_scalar)
 {
-    vector<int> w({ 3, 1 });
+    vector<int> w({3, 1});
     w *= -3;
     EXPECT_EQ(w.rows(), 2);
     EXPECT_EQ(w(0), -9);
@@ -251,7 +246,7 @@ TEST(vector, mult_assign_scalar)
 /// @brief Testing *= vector
 TEST(vector, mult_assign_vector)
 {
-    vector<int> v({ 1, 2 }), w({ 3, 1 });
+    vector<int> v({1, 2}), w({3, 1});
     w *= v;
     EXPECT_EQ(w.rows(), 2);
     EXPECT_EQ(w(0), 3);
@@ -264,7 +259,7 @@ TEST(vector, mult_assign_expr)
 {
     vector<size_type> v(2, 4);
     expressions::operant<vector<size_type>> expr(v);
-    vector<size_type> w({ 1, 2 });
+    vector<size_type> w({1, 2});
     w *= expr;
     EXPECT_EQ(w.rows(), 2);
     EXPECT_EQ(w(0), 4);
@@ -274,7 +269,7 @@ TEST(vector, mult_assign_expr)
 /// @brief Testing -= vector
 TEST(vector, sub_assign_vector)
 {
-    vector<int> v({ 1, 2 }), w({ 3, 1 });
+    vector<int> v({1, 2}), w({3, 1});
     w -= v;
     EXPECT_EQ(w.rows(), 2);
     EXPECT_EQ(w(0), 2);
@@ -287,7 +282,7 @@ TEST(vector, sub_assign_expr)
 {
     vector<size_type> v(2, 1);
     expressions::operant<vector<size_type>> expr(v);
-    vector<size_type> w({ 1, 2 });
+    vector<size_type> w({1, 2});
     w -= expr;
     EXPECT_EQ(w.rows(), 2);
     EXPECT_EQ(w(0), 0);
@@ -297,7 +292,7 @@ TEST(vector, sub_assign_expr)
 /// @brief Testing apply func
 TEST(vector, apply_func)
 {
-    vector<size_type> w({ 4, 5 });
+    vector<size_type> w({4, 5});
     w.apply_func([](auto x) { return x * x; });
     EXPECT_EQ(w.rows(), 2);
     EXPECT_EQ(w(0), 16);
@@ -308,7 +303,7 @@ TEST(vector, apply_func)
 TEST(vector, read_write_bin)
 {
     const std::string filename = "tmp_read_bin_vector.tst";
-    vector<double> w({ 3.14, 2.718 }), v;
+    vector<double> w({3.14, 2.718}), v;
     w.to_file(filename, true);
     v.from_file(filename, true);
     EXPECT_EQ(v.rows(), 2);
@@ -322,7 +317,7 @@ TEST(vector, read_write_bin)
 TEST(vector, read_wite_txt)
 {
     const std::string filename = "tmp_read_txt_vector.tst";
-    vector<double> w({ 3.14, 2.718 }), v;
+    vector<double> w({3.14, 2.718}), v;
     w.to_file(filename, false);
     v.from_file(filename, false);
     EXPECT_EQ(v.rows(), 2);
