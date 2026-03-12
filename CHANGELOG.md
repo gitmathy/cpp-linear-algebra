@@ -1,3 +1,12 @@
+## [1.20.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.20.0...v1.20.1) (2026-03-12)
+
+
+### Bug Fixes
+
+* boundary check in row_begin ([c4f9f86](https://github.com/gitmathy/cpp-linear-algebra/commit/c4f9f86ea0e675e9d859e35acbff27147df09618))
+* Correct check ([94410bb](https://github.com/gitmathy/cpp-linear-algebra/commit/94410bb8036cdac205034c6f38b45995a94a9488))
+* Raise error on invalid shapes for matrix * matrix ([b30e199](https://github.com/gitmathy/cpp-linear-algebra/commit/b30e199513253877413535a6517e9de56b6f2e84))
+
 # [1.20.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.19.2...v1.20.0) (2026-03-12)
 
 
