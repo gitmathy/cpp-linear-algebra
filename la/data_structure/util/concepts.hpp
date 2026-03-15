@@ -45,6 +45,11 @@ concept has_vals_access = requires(T &t) {
     { t.vals() };
 };
 
+template <typename T, typename VecT>
+concept has_solve = requires(T &t, VecT &b, VecT &x) {
+    { t.solve(b, x) };
+};
+
 } // namespace util
 } // namespace la
 #endif

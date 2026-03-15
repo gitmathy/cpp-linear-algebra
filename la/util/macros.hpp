@@ -17,12 +17,12 @@ namespace la {
 
 /// @brief Check shapes
 #define LA_CHECK_SHAPE_C 1
-
 /// @brief Check boundaries. This has a big impact on performance
 #define LA_CHECK_BOUNDARY_C 2
-
 /// @brief Layout check
 #define LA_CHECK_LAYOUT_C 4
+/// @brief Check for zero on denominator
+#define LA_CHECK_ZERO 8
 
 /// @brief No logs are written
 #define LA_DEBUG_SILENT_C 0
@@ -127,6 +127,13 @@ inline void assert__(AssertionT assertion, const std::string &message, const std
 #define LAYOUT_ASSERT(a, b) (la::util::assert__((a), (b), ("layout_check")))
 #else
 #define LAYOUT_ASSERT(a, b) ((void)0)
+#endif
+
+/// @brief Asserting special layouts
+#if LA_CHECK & LA_CHECK_ZERO
+#define NON_ZERO_ASSERT(a, b) (la::util::assert__(std::abs(a) < 1e-12, (b), ("non_zero_check")))
+#else
+#define NON_ZERO_ASSERT(a, b) ((void)0)
 #endif
 
 } // namespace la
