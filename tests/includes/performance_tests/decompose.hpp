@@ -25,7 +25,10 @@ private:
 
 protected:
     /// @brief Execute a single test
-    void run_single_test() override { la::algorithm::lu_decomposition<double> decomposition(p_A); }
+    void run_single_test() override
+    {
+        la::algorithm::lu_decomposition<matrix<double>, vector<double>> decomposition(p_A);
+    }
 
 public:
     /// @brief Set me up
@@ -48,7 +51,7 @@ protected:
     /// @brief Execute a single test
     void run_single_test() override
     {
-        la::algorithm::lu_decomposition<double> decomposition(p_A);
+        la::algorithm::lu_decomposition<matrix<double>, vector<double>> decomposition(p_A);
         decomposition.solve(p_b_vec);
     }
 

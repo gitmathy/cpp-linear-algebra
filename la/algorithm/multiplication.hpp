@@ -62,12 +62,12 @@ matrix<T> matrix_multiplication<T>::multiply(const matrix<T> &A, const matrix<T>
     const T *__restrict b_ptr = B.vals();
     T *__restrict c_ptr = C.vals();
 
-    const size_type block_size = util::BLOCK_SIZE;
-    static_assert(util::BLOCK_SIZE <= 256, "util::BLOCK_SIZE too large for stack buffer");
+    const size_type block_size = la::util::BLOCK_SIZE;
+    static_assert(la::util::BLOCK_SIZE <= 256, "util::BLOCK_SIZE too large for stack buffer");
 
     // Parallelize over the row blocks of the result matrix C
     // execution::par_unseq allows both multi-threading and SIMD vectorization
-    auto i_blocks = util::create_block_indices(0, M, block_size);
+    auto i_blocks = la::util::create_block_indices(0, M, block_size);
 #ifdef PARALLEL
     std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(), [&](size_type i_block) {
 #else
