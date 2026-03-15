@@ -1,3 +1,18 @@
+# [1.21.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.20.1...v1.21.0) (2026-03-15)
+
+
+### Bug Fixes
+
+* namespace ([2406add](https://github.com/gitmathy/cpp-linear-algebra/commit/2406add30d9262bfd8a8c2c7f8e6f13e1327e629))
+
+
+### Features
+
+* Defining base solver classes ([83db7ec](https://github.com/gitmathy/cpp-linear-algebra/commit/83db7ec145532be425592de59d0fa41182441729))
+* introducing concepts ([8823043](https://github.com/gitmathy/cpp-linear-algebra/commit/88230430dfd63a77d97f0ffd6d63d1774a1996e1))
+* lu decomposition is first dense solver ([11e8ef2](https://github.com/gitmathy/cpp-linear-algebra/commit/11e8ef2106814f442f8622dca642a80ffafe4062))
+* Testing lu decomposition ([92f52ed](https://github.com/gitmathy/cpp-linear-algebra/commit/92f52edc79f4ee11a27983472167f6a4ae19eaed))
+
 ## [1.20.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.20.0...v1.20.1) (2026-03-12)
 
 
