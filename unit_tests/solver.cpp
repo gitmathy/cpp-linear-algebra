@@ -14,14 +14,13 @@
 #include <gtest/gtest.h>
 
 namespace la {
-namespace algorithm {
 
 /// @brief Test lu decomposition
 TEST(solver, lu_decomposition)
 {
     matrix<double> A({{0, 2, 1}, {1, 1, 2}, {2, 1, 1}});
     const vector<double> b({4, 6, 7});
-    la::algorithm::lu_decomposition<matrix<double>, vector<double>> lu(A);
+    algorithm::lu_decomposition<matrix<double>, vector<double>> lu(A);
     const vector<double> x = lu.solve(b);
     EXPECT_EQ(x.rows(), 3);
     EXPECT_DOUBLE_EQ(x(0), 2.2);
@@ -36,7 +35,7 @@ TEST(solver, lu_decomposition_w_x)
     matrix<double> A({{0, 2, 1}, {1, 1, 2}, {2, 1, 1}});
     const vector<double> b({4, 6, 7});
     vector<double> x(3);
-    la::algorithm::lu_decomposition<matrix<double>, vector<double>> lu(A);
+    algorithm::lu_decomposition<matrix<double>, vector<double>> lu(A);
     lu.solve(b, x);
     EXPECT_EQ(x.rows(), 3);
     EXPECT_DOUBLE_EQ(x(0), 2.2);
@@ -61,7 +60,7 @@ TEST(solver, cg_un_pred)
     }
     sparse_matrix<double> A = std::move(A_build.assemble());
     const vector<double> b(n, 2.0);
-    cg_solver<sparse_matrix<double>, vector<double>> cg(A, 1e-5, n);
+    algorithm::cg_solver<sparse_matrix<double>, vector<double>> cg(A, 1e-5, n);
     // Act
     // Assert
     const vector<double> x = cg.solve(b);
@@ -88,7 +87,7 @@ TEST(solver, cg_un_pred_with_x)
     }
     sparse_matrix<double> A = std::move(A_build.assemble());
     const vector<double> b(n, 2.0);
-    cg_solver<sparse_matrix<double>, vector<double>> cg(A, 1e-5, n);
+    algorithm::cg_solver<sparse_matrix<double>, vector<double>> cg(A, 1e-5, n);
     vector<double> x(n);
     // Act
     const bool result = cg.solve(b, x);
@@ -100,6 +99,7 @@ TEST(solver, cg_un_pred_with_x)
     ASSERT_LE(cg.iter(), n);
     ASSERT_LE(cg.res(), 1e-5);
     ASSERT_LE(error_norm, 1e-4);
+    std::cout << "Solved by CG in " << cg.iter() << " steps" << std::endl;
 }
 
 /// @brief Test un-preconditioned CG solver
@@ -117,7 +117,7 @@ TEST(solver, cg_un_pred_fail)
     }
     sparse_matrix<double> A = std::move(A_build.assemble());
     const vector<double> b(n, 2.0);
-    cg_solver<sparse_matrix<double>, vector<double>> cg(A, 1e-5, n);
+    algorithm::cg_solver<sparse_matrix<double>, vector<double>> cg(A, 1e-5, n);
     // Act
     // Assert
     const vector<double> x = cg.solve(b);
@@ -129,5 +129,34 @@ TEST(solver, cg_un_pred_fail)
     ASSERT_GE(error_norm, 1e-4);
 }
 
-} // namespace algorithm
+/// @brief Test Jacobi preconditioned CG solver
+TEST(solver, pcg_jacobi)
+{
+    // Arange
+    const size_type n = 100;
+    sparse_matrix_builder<double> A_build(n, n);
+    for (size_type i = 0; i < n; ++i) {
+        A_build(i, i) = 2;
+        if (i > 0) {
+            A_build(i - 1, i) = -1;
+            A_build(i, i - 1) = -1;
+        }
+    }
+    sparse_matrix<double> A = std::move(A_build.assemble());
+    const vector<double> b(n, 2.0);
+    algorithm::pcg_solver<sparse_matrix<double>, vector<double>,
+                          algorithm::jacobi_pc<sparse_matrix<double>, vector<double>>>
+        pcg(A, 1e-10, n, 1.0);
+    // Act
+    const vector<double> x = pcg.solve(b);
+    // Assert
+    const vector<double> error = A * x - b;
+    const double error_norm = norm<2>(error);
+    ASSERT_TRUE(pcg.solved());
+    ASSERT_LE(pcg.iter(), n);
+    ASSERT_LE(pcg.res(), 1e-5);
+    ASSERT_LE(error_norm, 1e-4);
+    std::cout << "Solved by PCG in " << pcg.iter() << " steps" << std::endl;
+}
+
 } // namespace la
