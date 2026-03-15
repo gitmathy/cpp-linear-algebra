@@ -25,7 +25,7 @@ int lu_decomposition_test::execute()
     matrix<double> A({{0, 2, 1}, {1, 1, 2}, {2, 1, 1}});
     const vector<double> b({4, 6, 7});
 
-    la::algorithm::lu_decomposition<double> lu(A);
+    la::algorithm::lu_decomposition<matrix<double>, vector<double>> lu(A);
     vector<double> x = lu.solve(b);
 
     if (x.rows() != 3) {
