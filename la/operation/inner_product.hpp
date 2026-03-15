@@ -12,6 +12,8 @@
 
 #include "la/data_structure/forward.hpp"
 #include "la/util/macros.hpp"
+#include "la/util/types.hpp"
+#include <algorithm>
 #include <numeric>
 
 namespace la {
@@ -34,7 +36,17 @@ template <typename T>
 T inner_product(const vector<T> &left, const vector<T> &right)
 {
     SHAPE_ASSERT(left.rows() == right.rows(), "vectors for inner product not of same length");
-    return std::inner_product(left.begin(), left.end(), right.begin(), T(0));
+#ifdef PARALLEL
+    return std::transform_reduce(execution::par, left.begin(), left.end(), right.begin(), T(0),
+                                 std::plus<>(),      // Reduction (sum)
+                                 std::multiplies<>() // Transformation (product)
+    );
+#else
+    return std::transform_reduce(left.begin(), left.end(), right.begin(), T(0),
+                                 std::plus<>(),      // Reduction (sum)
+                                 std::multiplies<>() // Transformation (product)
+    );
+#endif
 }
 
 template <typename T, size_type N>
