@@ -45,7 +45,7 @@ public:
     /// @brief Solve the system with given rhs
     /// @param x A^-1*rhs
     /// @param rhs right hand side
-    void solve(const VecT &b, VecT &x) const override;
+    bool solve(const VecT &b, VecT &x) const override;
 
     /// @brief As we use the function name "solve" for both versions, we need to provide this
     using dense_solver<MatT, VecT>::solve;
@@ -178,7 +178,7 @@ void lu_decomposition<MatT, VecT>::decompose()
 }
 
 template <typename MatT, typename VecT>
-void lu_decomposition<MatT, VecT>::solve(const VecT &b, VecT &x) const
+bool lu_decomposition<MatT, VecT>::solve(const VecT &b, VecT &x) const
 {
     LOG_DEBUG("Solving linear equation system by LU decomposition");
     SHAPE_ASSERT(b.rows() == this->p_A.rows() && x.rows() == this->p_A.cols(),
@@ -221,6 +221,7 @@ void lu_decomposition<MatT, VecT>::solve(const VecT &b, VecT &x) const
         // Final value: (y_i - sum) / U(i,i)
         x_ptr[i] = (x_ptr[i] - sum) / row_i[i];
     }
+    return true;
 }
 
 } // namespace algorithm

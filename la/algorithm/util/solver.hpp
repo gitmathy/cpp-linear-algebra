@@ -55,7 +55,7 @@ public:
     /// @brief Solve the system with given rhs
     /// @param x A^-1*rhs
     /// @param rhs right hand side
-    virtual void solve(const VecT &b, VecT &x) const = 0;
+    virtual bool solve(const VecT &b, VecT &x) const = 0;
 
     /// @brief Solve the system with rhs (constructs a vector for solution)
     /// @param rhs right hand side
@@ -87,15 +87,21 @@ public:
 template <typename MatT, typename VecT>
 class iterative_solver : public solver<MatT, VecT>
 {
-private:
+protected:
     /// @brief Residuum
     double p_res;
 
     /// @brief Maximal number of iterations
     size_type p_max_iter;
 
-    /// @brief Error of last solve
-    double p_error;
+    /// @brief Residuum of last solve
+    mutable double p_last_res;
+
+    /// @brief Last number of iterations
+    mutable size_type p_last_iter;
+
+    /// @brief Last time solved?
+    mutable bool p_last_solved;
 
 public:
     /// @brief Constructor with given residuum and maximum number of iterations
@@ -103,6 +109,15 @@ public:
 
     /// @brief Destructor
     ~iterative_solver() = default;
+
+    /// @brief Residuum of last solve
+    double res() const { return p_last_res; }
+
+    /// @brief Number of iterations of last solve
+    size_type iter() { return p_last_iter; }
+
+    /// @brief Last time solved?
+    bool solved() { return p_last_solved; }
 };
 
 // ===============================================
@@ -117,7 +132,10 @@ VecT solver<MatT, VecT>::solve(const VecT &b)
 {
     SHAPE_ASSERT(p_A.rows() == b.rows(), "Invalid dimension for solving a linear system");
     VecT x(p_A.cols());
-    solve(b, x);
+    bool solved = solve(b, x);
+    if (!solved) {
+        LOG_WARNING("System has not been solved");
+    }
     return x;
 }
 

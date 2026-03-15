@@ -5,8 +5,8 @@
 CXX ?= g++-12
 
 # Compiler flags (exactly as requested)
-PERF_CXXFLAGS := -Wall -Wextra -pedantic -std=c++20  -Ofast -march=native -flto -fstrict-aliasing  -I. -MMD -MP -DPARALLEL
-UNIT_CXXFLAGS := -Wall -Wextra -pedantic -std=c++20 -g -DLA_CHECK=7 -I. -MMD -MP
+PERF_CXXFLAGS := -Wall -Wextra -pedantic -std=c++20  -Ofast -march=native -flto -fstrict-aliasing -DLA_DEBUG_LEVEL=2 -I. -MMD -MP -DPARALLEL
+UNIT_CXXFLAGS := -Wall -Wextra -pedantic -std=c++20 -g -DLA_CHECK=7 -DLA_DEBUG_LEVEL=6 -I. -MMD -MP
 
 SRC_DIR := tests/src
 PERF_TEST_DIR := $(SRC_DIR)/performance_tests

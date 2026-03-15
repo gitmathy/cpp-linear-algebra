@@ -57,6 +57,19 @@ int main() {
 }
 ```
 
+### Checks and logging
+
+Checks during runtime are controlled by the compile time variable `LA_CHECK`, see [macros.hpp](./la/util/macros.hpp). Since some checks have a big impact on the performance, consider using them for development but not for production. The `LA_CHECK` is read "bit-wise". That is, `LA_CHECK` is a bit-wise setting of:
+*  1 - `LA_CHECK_SHAPE_C`: Check dimensions
+*  2 - `LA_CHECK_BOUNDARY_C`: Check boundaries before access (big impact on performance)
+*  3 - `LA_CHECK_LAYOUT_C`: Checking layouts.
+
+If you want, e.g., check for boundaries and shapes, you set `LA_CHECK=3` during compilation.
+
+For logging, we have different levels of logging, see [macros.hpp](./la/util/macros.hpp). Control the logging via the compile time variable `LA_DEBUG_LEVEL`. Those vary from no logging, (`LA_DEBUG_LEVEL=0`) up to tracing, i.e., `LA_DEBUG_LEVEL=10`.
+
+
+
 ## Building and executing the unit tests
 
 We are utilizing [GoogleTest](https://github.com/google/googletest) for implementing the unit tests. To execute the unit tests, run the following tests. Alternatively, you can run the unit tests in Visual Studio.
