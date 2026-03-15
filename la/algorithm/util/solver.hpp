@@ -61,7 +61,7 @@ public:
     /// @brief Solve the system with rhs (constructs a vector for solution)
     /// @param rhs right hand side
     /// @return A^-1*rhs
-    VecT solve(const VecT &b);
+    VecT solve(const VecT &b) const;
 };
 
 /// @brief Class for solvers of dense linear equation systems
@@ -108,6 +108,9 @@ public:
     /// @brief Constructor with given residuum and maximum number of iterations
     iterative_solver(const MatT &A, const double res, const size_type max_iter);
 
+    /// @brief Copy constructor
+    iterative_solver(const iterative_solver<MatT, VecT> &solver);
+
     /// @brief Destructor
     ~iterative_solver() = default;
 
@@ -129,7 +132,7 @@ public:
 // ------
 
 template <typename MatT, typename VecT>
-VecT solver<MatT, VecT>::solve(const VecT &b)
+VecT solver<MatT, VecT>::solve(const VecT &b) const
 {
     SHAPE_ASSERT(p_A.rows() == b.rows(), "Invalid dimension for solving a linear system");
     VecT x(p_A.cols());
@@ -147,6 +150,11 @@ template <typename MatT, typename VecT>
 iterative_solver<MatT, VecT>::iterative_solver(const MatT &A, const double res,
                                                const size_type max_iter)
     : solver<MatT, VecT>(A), p_res(res), p_max_iter(max_iter)
+{}
+
+template <typename MatT, typename VecT>
+iterative_solver<MatT, VecT>::iterative_solver(const iterative_solver<MatT, VecT> &solver)
+    : solver<MatT, VecT>(solver.p_A), p_res(solver.p_res), p_max_iter(solver.p_max_iter)
 {}
 
 } // namespace util
