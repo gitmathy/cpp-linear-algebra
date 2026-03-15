@@ -144,9 +144,7 @@ TEST(solver, pcg_jacobi)
     }
     sparse_matrix<double> A = std::move(A_build.assemble());
     const vector<double> b(n, 2.0);
-    algorithm::pcg_solver<sparse_matrix<double>, vector<double>,
-                          algorithm::jacobi_pc<sparse_matrix<double>, vector<double>>>
-        pcg(A, 1e-10, n, 1.0);
+    pcg_jacobi pcg(A, 1e-10, n, 1.0);
     // Act
     const vector<double> x = pcg.solve(b);
     // Assert
