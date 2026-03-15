@@ -19,7 +19,7 @@ namespace la {
 namespace algorithm {
 
 template <typename MatT, typename VecT>
-class cg_solver : public iterative_solver<MatT, VecT>
+class cg_solver : public util::iterative_solver<MatT, VecT>
 {
 public:
     cg_solver(const MatT &A, const double res, const size_type max_iter);
@@ -30,7 +30,7 @@ public:
     bool solve(const VecT &b, VecT &x) const override;
 
     /// @brief As we use the function name "solve" for both versions, we need to provide this
-    using iterative_solver<MatT, VecT>::solve;
+    using util::iterative_solver<MatT, VecT>::solve;
 };
 
 // ===============================================
@@ -39,7 +39,7 @@ public:
 
 template <typename MatT, typename VecT>
 cg_solver<MatT, VecT>::cg_solver(const MatT &A, const double res, const size_type max_iter)
-    : iterative_solver<MatT, VecT>(A, res, max_iter)
+    : util::iterative_solver<MatT, VecT>(A, res, max_iter)
 {}
 
 template <typename MatT, typename VecT>
@@ -48,7 +48,7 @@ bool cg_solver<MatT, VecT>::solve(const VecT &b, VecT &x) const
     SHAPE_ASSERT(b.rows() == this->p_A.rows() && x.rows() == this->p_A.cols(),
                  "Invalid dimension for LU solve");
     LOG_INFO("Solving linear equation system (" << b.rows() << ") with un-preconditioned CG");
-    typedef typename iterative_solver<MatT, VecT>::value_type T;
+    typedef typename util::iterative_solver<MatT, VecT>::value_type T;
 
     // references to members of base class to avoid "virtual lookups"
     const MatT &A = this->p_A;

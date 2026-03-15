@@ -17,6 +17,7 @@
 
 namespace la {
 namespace algorithm {
+namespace util {
 
 /// @brief All solvers operates on matrix- and vector-like types and provide a function to solve
 /// linear equation systems
@@ -148,6 +149,7 @@ iterative_solver<MatT, VecT>::iterative_solver(const MatT &A, const double res,
     : solver<MatT, VecT>(A), p_res(res), p_max_iter(max_iter)
 {}
 
+} // namespace util
 } // namespace algorithm
 } // namespace la
 #endif
