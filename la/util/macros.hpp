@@ -21,7 +21,7 @@ namespace la {
 /// @brief Check boundaries. This has a big impact on performance
 #define LA_CHECK_BOUNDARY_C 2
 
-/// @brief Layout check, i.e., matrix row-wise or column-wise
+/// @brief Layout check
 #define LA_CHECK_LAYOUT_C 4
 
 /// @brief No logs are written
@@ -36,12 +36,6 @@ namespace la {
 #define LA_DEBUG_DEBUG_C 8
 /// @brief Write logs of severity trace
 #define LA_DEBUG_TRACE_C 10
-
-/// @brief Log everything
-// #define LA_DEBUG_LEVEL 10
-
-// /// @brief Default: Log errors
-#define LA_DEBUG_LEVEL 2
 
 /// @brief Where to write errors and logs
 #define LA_LOG_STREAM std::cout
