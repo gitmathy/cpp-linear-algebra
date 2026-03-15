@@ -1,82 +1,80 @@
 /// Part of the project "cpp-linear-algebra"
 ///
-/// @file la/algorithm/lu_decomposition.hpp
-/// @brief Definition and declaration decomposition algorithms
+/// @file la/algorithm/dense_solver.hpp
+/// @brief Definition and declaration of solvers for dense linear equation systems
 /// @author Gitmathy, https://github.com/gitmathy
 ///
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
-#ifndef LA_ALGORITHM_LU_DECOMPOSITION_HPP
-#define LA_ALGORITHM_LU_DECOMPOSITION_HPP
+#ifndef LA_ALGORITHM_DENSE_SOLVER_HPP
+#define LA_ALGORITHM_DENSE_SOLVER_HPP
 
-#include "la/data_structure/matrix.hpp"
+#include "la/algorithm/util/solver.hpp"
+#include "la/data_structure/util/concepts.hpp"
 #include "la/data_structure/vector.hpp"
 #include "la/util/block_helper.hpp"
 #include "la/util/constants.hpp"
-#include "la/util/error.hpp"
 #include "la/util/macros.hpp"
 #include "la/util/types.hpp"
-#include <algorithm>
-#include <ranges>
+#include <cstddef>
 
 namespace la {
 namespace algorithm {
 
 /// @brief LU decomposition of a matrix
 /// @tparam T value type of every element
-template <typename T>
-class lu_decomposition
+template <typename MatT, typename VecT>
+class lu_decomposition : public dense_solver<MatT, VecT>
 {
 private:
     /// @brief Decomposed matrix
-    matrix<T> p_lu;
+    MatT p_lu;
 
     /// @brief Permutation
     vector<size_type> p_p;
 
-public:
-    /// @brief Decompose the matrix A
-    /// @param A to be decomposed
-    explicit lu_decomposition(const matrix<T> &A);
-
     /// @brief (Re)-Decompose a matrix
     /// @param A The matrix to be decomposed
-    void decompose(const matrix<T> &A);
+    void decompose();
+
+public:
+    /// @brief Decompose the matrix A
+    explicit lu_decomposition(const MatT &A);
 
     /// @brief Solve the system with given rhs
     /// @param x A^-1*rhs
     /// @param rhs right hand side
-    void solve(vector<T> &x, const vector<T> &rhs) const;
+    void solve(const VecT &b, VecT &x) const override;
 
-    /// @brief Solve the system with rhs
-    /// @param rhs right hand side
-    /// @return A^-1*rhs
-    vector<T> solve(const vector<T> &rhs) const;
+    /// @brief As we use the function name "solve" for both versions, we need to provide this
+    using dense_solver<MatT, VecT>::solve;
 };
 
 // ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
 // ===============================================
 
-template <typename T>
-lu_decomposition<T>::lu_decomposition(const matrix<T> &A) : p_lu(0, 0), p_p(0)
+template <typename MatT, typename VecT>
+lu_decomposition<MatT, VecT>::lu_decomposition(const MatT &A)
+    : dense_solver<MatT, VecT>(A), p_lu(0, 0), p_p(0)
 {
-    LOG_INFO("Decompose matrix of size (" << A.rows() << " x " << A.cols() << ')');
-    decompose(A);
+    LOG_DEBUG("Setting up LU solver class");
+    decompose();
 }
 
-template <typename T>
-void lu_decomposition<T>::decompose(const matrix<T> &A)
+template <typename MatT, typename VecT>
+void lu_decomposition<MatT, VecT>::decompose()
 {
-    LOG_DEBUG("Decompose matrix");
-    const size_type M = A.rows();
-    const size_type N = A.cols();
+    LOG_INFO("Decompose matrix");
+    typedef typename dense_solver<MatT, VecT>::value_type T;
+    const size_type M = this->p_A.rows();
+    const size_type N = this->p_A.cols();
     const size_type min_dim = std::min(M, N);
-    const size_type block_size = util::BLOCK_SIZE;
+    const size_type block_size = la::util::BLOCK_SIZE;
 
     // Initialize LU decomposition
-    p_lu = A;
+    p_lu = this->p_A;
     T *__restrict lu_ptr = p_lu.vals();
     p_p.allocate(min_dim);
     for (size_type i = 0; i < min_dim; ++i) {
@@ -98,8 +96,8 @@ void lu_decomposition<T>::decompose(const matrix<T> &A)
                     i_pivot = i;
                 }
             }
-            if (max_val < util::EPS) {
-                throw util::error("Irregular matrix", "algorithm:lup");
+            if (max_val < la::util::EPS) {
+                throw la::util::error("Irregular matrix", "algorithm:lup");
             }
             p_p(k) = i_pivot;
             if (i_pivot != k) {
@@ -128,7 +126,7 @@ void lu_decomposition<T>::decompose(const matrix<T> &A)
         if (b_limit < N) {
             // STEP A: TRSM (Solve L * U_top = A_top)
             // Parallelize over rows of the top block
-            auto i_top_indices = util::create_range_indices(k_block, b_limit);
+            auto i_top_indices = la::util::create_range_indices(k_block, b_limit);
 #ifdef PARALLEL
             std::for_each(std::execution::par_unseq, i_top_indices.begin(), i_top_indices.end(),
 #else
@@ -144,7 +142,7 @@ void lu_decomposition<T>::decompose(const matrix<T> &A)
                           });
 
             // STEP B: GEMM (Schur Complement Update)
-            auto i_blocks = util::create_block_indices(b_limit, M, block_size);
+            auto i_blocks = la::util::create_block_indices(b_limit, M, block_size);
 #ifdef PARALLEL
             std::for_each(execution::par_unseq, i_blocks.begin(), i_blocks.end(),
 #else
@@ -179,14 +177,19 @@ void lu_decomposition<T>::decompose(const matrix<T> &A)
     }
 }
 
-template <typename T>
-void lu_decomposition<T>::solve(vector<T> &x, const vector<T> &rhs) const
+template <typename MatT, typename VecT>
+void lu_decomposition<MatT, VecT>::solve(const VecT &b, VecT &x) const
 {
     LOG_DEBUG("Solving linear equation system by LU decomposition");
+    SHAPE_ASSERT(b.rows() == this->p_A.rows() && x.rows() == this->p_A.cols(),
+                 "Invalid dimension for LU solve");
+
+    typedef typename dense_solver<MatT, VecT>::value_type T;
+
     const size_type N = p_lu.rows();
 
     // Initialize x
-    x = rhs;
+    x = b;
     // Get raw pointers for the LU decomposition and vectors
     const T *__restrict lu_ptr = p_lu.vals();
     T *__restrict x_ptr = x.vals();
@@ -220,15 +223,6 @@ void lu_decomposition<T>::solve(vector<T> &x, const vector<T> &rhs) const
     }
 }
 
-template <typename T>
-vector<T> lu_decomposition<T>::solve(const vector<T> &rhs) const
-{
-    vector<T> x(0);
-    solve(x, rhs);
-    return x;
-}
-
 } // namespace algorithm
 } // namespace la
-
 #endif
