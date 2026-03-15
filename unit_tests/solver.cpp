@@ -10,12 +10,13 @@
 #include "pch.h"
 
 #include "la/dense"
+#include "la/sparse"
 #include <gtest/gtest.h>
 
 namespace la {
 namespace algorithm {
 
-/// @brief Test default constructor for dense matrix
+/// @brief Test lu decomposition
 TEST(solver, lu_decomposition)
 {
     matrix<double> A({{0, 2, 1}, {1, 1, 2}, {2, 1, 1}});
@@ -29,6 +30,7 @@ TEST(solver, lu_decomposition)
     EXPECT_THROW(lu.solve(vector<double>(4)), util::error);
 }
 
+/// @brief Test lu decomposition with given memory for solution
 TEST(solver, lu_decomposition_w_x)
 {
     matrix<double> A({{0, 2, 1}, {1, 1, 2}, {2, 1, 1}});
@@ -42,6 +44,89 @@ TEST(solver, lu_decomposition_w_x)
     EXPECT_DOUBLE_EQ(x(2), 1.2);
     vector<double> x_wrong(4);
     EXPECT_THROW(lu.solve(b, x_wrong), util::error);
+}
+
+/// @brief Test un-preconditioned CG solver
+TEST(solver, cg_un_pred)
+{
+    // Arange
+    const size_type n = 100;
+    sparse_matrix_builder<double> A_build(n, n);
+    for (size_type i = 0; i < n; ++i) {
+        A_build(i, i) = 2;
+        if (i > 0) {
+            A_build(i - 1, i) = -1;
+            A_build(i, i - 1) = -1;
+        }
+    }
+    sparse_matrix<double> A = std::move(A_build.assemble());
+    const vector<double> b(n, 2.0);
+    cg_solver<sparse_matrix<double>, vector<double>> cg(A, 1e-5, n);
+    // Act
+    // Assert
+    const vector<double> x = cg.solve(b);
+    const vector<double> error = A * x - b;
+    const double error_norm = norm<2>(error);
+    ASSERT_TRUE(cg.solved());
+    ASSERT_LE(cg.iter(), n);
+    ASSERT_LE(cg.res(), 1e-5);
+    ASSERT_LE(error_norm, 1e-4);
+}
+
+/// @brief Test un-preconditioned CG solver
+TEST(solver, cg_un_pred_with_x)
+{
+    // Arange
+    const size_type n = 100;
+    sparse_matrix_builder<double> A_build(n, n);
+    for (size_type i = 0; i < n; ++i) {
+        A_build(i, i) = 2;
+        if (i > 0) {
+            A_build(i - 1, i) = -1;
+            A_build(i, i - 1) = -1;
+        }
+    }
+    sparse_matrix<double> A = std::move(A_build.assemble());
+    const vector<double> b(n, 2.0);
+    cg_solver<sparse_matrix<double>, vector<double>> cg(A, 1e-5, n);
+    vector<double> x(n);
+    // Act
+    const bool result = cg.solve(b, x);
+    // Assert
+    const vector<double> error = A * x - b;
+    const double error_norm = norm<2>(error);
+    ASSERT_EQ(cg.solved(), result);
+    ASSERT_TRUE(cg.solved());
+    ASSERT_LE(cg.iter(), n);
+    ASSERT_LE(cg.res(), 1e-5);
+    ASSERT_LE(error_norm, 1e-4);
+}
+
+/// @brief Test un-preconditioned CG solver
+TEST(solver, cg_un_pred_fail)
+{
+    // Arange
+    const size_type n = 100;
+    // setup a matrix which is not s.p.d.
+    sparse_matrix_builder<double> A_build(n, n);
+    for (size_type i = 0; i < n; ++i) {
+        A_build(i, i) = 2;
+        if (i > 0) {
+            A_build(i - 1, i) = -1;
+        }
+    }
+    sparse_matrix<double> A = std::move(A_build.assemble());
+    const vector<double> b(n, 2.0);
+    cg_solver<sparse_matrix<double>, vector<double>> cg(A, 1e-5, n);
+    // Act
+    // Assert
+    const vector<double> x = cg.solve(b);
+    const vector<double> error = A * x - b;
+    const double error_norm = norm<2>(error);
+    ASSERT_FALSE(cg.solved());
+    ASSERT_EQ(cg.iter(), n);
+    ASSERT_GE(cg.res(), 1e-5);
+    ASSERT_GE(error_norm, 1e-4);
 }
 
 } // namespace algorithm
