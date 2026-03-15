@@ -11,7 +11,6 @@
 #define LA_ALGORITHM_SPARSE_SOLVER_HPP
 
 #include "la/algorithm/util/solver.hpp"
-#include "la/algorithm/util/preconditioner.hpp"
 #include "la/data_structure/util/concepts.hpp"
 #include "la/operation/inner_product.hpp"
 #include <cmath>

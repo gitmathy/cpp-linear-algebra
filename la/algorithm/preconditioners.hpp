@@ -10,7 +10,6 @@
 #ifndef LA_ALGORITHM_PRECONDITIONER_HPP
 #define LA_ALGORITHM_PRECONDITIONER_HPP
 
-#include "la/algorithm/util/preconditioner.hpp"
 #include "la/data_structure/vector.hpp"
 #include "la/util/types.hpp"
 #include <cstddef>
