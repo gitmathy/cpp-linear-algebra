@@ -9,3 +9,4 @@
 
 #include "la/algorithm/dense_solver.hpp"
 #include "la/algorithm/multiplication.hpp"
+#include "la/algorithm/sparse_solver.hpp"
