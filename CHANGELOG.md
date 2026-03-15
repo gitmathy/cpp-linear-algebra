@@ -1,3 +1,19 @@
+# [1.22.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.21.0...v1.22.0) (2026-03-15)
+
+
+### Bug Fixes
+
+* Include algorithms for sparse ([4702728](https://github.com/gitmathy/cpp-linear-algebra/commit/47027285bdb805e0d6f9ecdf27584567e7e4b457))
+
+
+### Features
+
+* debug level as compiler option ([329ed3a](https://github.com/gitmathy/cpp-linear-algebra/commit/329ed3a65a9b9f8a276d2d8418e5cd552df8a01b))
+* Include sparse solver for algorithms ([04b46a3](https://github.com/gitmathy/cpp-linear-algebra/commit/04b46a338c33941d4167386eed0b32858c328573))
+* Include un-preconditioned CG algorithm ([c3e2214](https://github.com/gitmathy/cpp-linear-algebra/commit/c3e22147bf353fb674f2f24c6c2f32448e7dc778))
+* more reporting of sparse solvers ([03ed9b6](https://github.com/gitmathy/cpp-linear-algebra/commit/03ed9b6e874d2fe272e21ba12906ddcdcd124408))
+* parallelize inner products ([fbf66bc](https://github.com/gitmathy/cpp-linear-algebra/commit/fbf66bc62bbabd2449fd8fa10017657638bb06ea))
+
 # [1.21.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.20.1...v1.21.0) (2026-03-15)
 
 
