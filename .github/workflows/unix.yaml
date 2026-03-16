@@ -52,6 +52,7 @@ jobs:
       shell: bash
       run: |
         set -e
+        cd unit_tests || false
         for cpp_file in *.cpp; do
           echo "Checking $cpp_file..."
           grep -q "\"${cpp_file}\"" unit_tests.vcxproj
@@ -65,7 +66,7 @@ jobs:
       shell: bash
       run: |
         set -e
-        for file in $(find la -type f);
+        for file in $(find la tests -type f);
           do win_file=$(echo ${file} | sed -re 's/\//\\\\/'g);
-          grep -e -q "\"${win_file}\"" cpp-linear-algebra.vcxproj;
+          grep -q -e "\"${win_file}\"" cpp-linear-algebra.vcxproj;
         done
