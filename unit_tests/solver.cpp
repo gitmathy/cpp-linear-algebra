@@ -154,7 +154,33 @@ TEST(solver, pcg_jacobi)
     ASSERT_LE(pcg.iter(), n);
     ASSERT_LE(pcg.res(), 1e-5);
     ASSERT_LE(error_norm, 1e-4);
-    std::cout << "Solved by PCG in " << pcg.iter() << " steps" << std::endl;
+}
+
+/// @brief Test symmetric gauss-seidel preconditioned CG solver
+TEST(solver, pcg_sgs)
+{
+    // Arange
+    const size_type n = 100;
+    sparse_matrix_builder<double> A_build(n, n);
+    for (size_type i = 0; i < n; ++i) {
+        A_build(i, i) = 2;
+        if (i > 0) {
+            A_build(i - 1, i) = -1;
+            A_build(i, i - 1) = -1;
+        }
+    }
+    sparse_matrix<double> A = std::move(A_build.assemble());
+    const vector<double> b(n, 2.0);
+    pcg_sgs pcg(A, 1e-10, n, 1.0);
+    // Act
+    const vector<double> x = pcg.solve(b);
+    // Assert
+    const vector<double> error = A * x - b;
+    const double error_norm = norm<2>(error);
+    ASSERT_TRUE(pcg.solved());
+    ASSERT_LE(pcg.iter(), n);
+    ASSERT_LE(pcg.res(), 1e-5);
+    ASSERT_LE(error_norm, 1e-4);
 }
 
 } // namespace la
