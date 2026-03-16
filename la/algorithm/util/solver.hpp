@@ -70,8 +70,7 @@ class dense_solver : public solver<MatT, VecT>
 {
 private:
     static_assert(la::util::has_vals_access<MatT>, "MatT must implement vals() access");
-    static_assert(la::util::has_row_element_access<VecT>,
-                  "VecT must implement operator()(size_type)");
+    static_assert(la::util::has_nnz_access<VecT>, "VecT must implement operator()(size_type)");
 
 public:
     /// @brief Set me up, basically, do type checks and store reference to the matrix

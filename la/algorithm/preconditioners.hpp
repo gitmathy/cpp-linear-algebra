@@ -10,6 +10,7 @@
 #ifndef LA_ALGORITHM_PRECONDITIONER_HPP
 #define LA_ALGORITHM_PRECONDITIONER_HPP
 
+#include "la/data_structure/util/concepts.hpp"
 #include "la/data_structure/vector.hpp"
 #include "la/util/types.hpp"
 #include <cstddef>
@@ -47,7 +48,9 @@ class symmetric_gauss_seidel_pc : public util::preconditioner<MatT, VecT>
 {
 private:
     /// @brief matrix type must define value_type
-    static_assert(la::util::has_row_begin_access<MatT>, "MatT additionally grant access to rows");
+    static_assert(la::util::has_row_idx_begin<MatT>, "MatT additionally grant access to rows");
+    static_assert(la::util::has_col_idx<MatT>, "MatT additionally grant access to column indices");
+    static_assert(la::util::has_nnz_access<MatT>, "MatT additionally grant access to non-zeros");
 
 public:
     /// @brief Type of every element
