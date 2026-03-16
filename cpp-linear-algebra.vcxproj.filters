@@ -46,6 +46,15 @@
     <Filter Include="Header Files\tests\performance_tests">
       <UniqueIdentifier>{c425ff02-3d24-4940-8aa7-28e4ad1fd133}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\la\algorithm">
+      <UniqueIdentifier>{cdd169ea-2d95-4d7f-841c-a51ca47a80b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\la\algorithm\util">
+      <UniqueIdentifier>{2b92ebce-30bd-45b5-9d59-ccd9f9282b90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\la\data_structure\util">
+      <UniqueIdentifier>{ca8e7bb3-d5f6-4d1a-ba2c-9088667fb944}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test.cpp">
@@ -252,6 +261,24 @@
     </ClInclude>
     <ClInclude Include="tests\includes\performance_tests\resize.hpp">
       <Filter>Header Files\tests\performance_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="la\algorithm\dense_solver.hpp">
+      <Filter>Header Files\la\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="la\algorithm\multiplication.hpp">
+      <Filter>Header Files\la\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="la\algorithm\preconditioners.hpp">
+      <Filter>Header Files\la\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="la\algorithm\sparse_solver.hpp">
+      <Filter>Header Files\la\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="la\algorithm\util\solver.hpp">
+      <Filter>Header Files\la\algorithm\util</Filter>
+    </ClInclude>
+    <ClInclude Include="la\data_structure\util\concepts.hpp">
+      <Filter>Header Files\la\data_structure\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
