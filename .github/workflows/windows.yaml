@@ -27,9 +27,9 @@ jobs:
     #   run: |
     #     sudo apt update
     #     sudo apt install libtbb-dev
-    - name: ⚒️ Build Solution
+    - name: ⚒️ Build unit tests
       run: |
-        msbuild cpp-linear-algebra.slnx `
+        msbuild unit_tests/unit_tests.vcxproj `
         /p:Configuration=${{ matrix.configuration }} `
         /p:Platform=x64 `
         /p:PlatformToolset=v143 `
