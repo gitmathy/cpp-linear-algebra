@@ -29,4 +29,9 @@ typedef la::sparse_matrix<double> sparse_dmatrix;
 typedef algorithm::pcg_solver<sparse_dmatrix, dvector,
                               algorithm::jacobi_pc<sparse_dmatrix, dvector>>
     pcg_jacobi;
+
+typedef algorithm::pcg_solver<sparse_dmatrix, dvector,
+                              algorithm::symmetric_gauss_seidel_pc<sparse_dmatrix, dvector>>
+    pcg_sgs;
+
 } // namespace la
