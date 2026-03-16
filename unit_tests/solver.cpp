@@ -58,7 +58,8 @@ TEST(solver, cg_un_pred)
             A_build(i, i - 1) = -1;
         }
     }
-    sparse_matrix<double> A = std::move(A_build.assemble());
+    sparse_matrix<double> A;
+    A_build.move(A);
     const vector<double> b(n, 2.0);
     algorithm::cg_solver<sparse_matrix<double>, vector<double>> cg(A, 1e-5, n);
     // Act
@@ -85,7 +86,8 @@ TEST(solver, cg_un_pred_with_x)
             A_build(i, i - 1) = -1;
         }
     }
-    sparse_matrix<double> A = std::move(A_build.assemble());
+    sparse_matrix<double> A;
+    A_build.move(A);
     const vector<double> b(n, 2.0);
     algorithm::cg_solver<sparse_matrix<double>, vector<double>> cg(A, 1e-5, n);
     vector<double> x(n);
@@ -115,7 +117,8 @@ TEST(solver, cg_un_pred_fail)
             A_build(i - 1, i) = -1;
         }
     }
-    sparse_matrix<double> A = std::move(A_build.assemble());
+    sparse_matrix<double> A;
+    A_build.move(A);
     const vector<double> b(n, 2.0);
     algorithm::cg_solver<sparse_matrix<double>, vector<double>> cg(A, 1e-5, n);
     // Act
@@ -142,7 +145,8 @@ TEST(solver, pcg_jacobi)
             A_build(i, i - 1) = -1;
         }
     }
-    sparse_matrix<double> A = std::move(A_build.assemble());
+    sparse_matrix<double> A;
+    A_build.move(A);
     const vector<double> b(n, 2.0);
     pcg_jacobi pcg(A, 1e-10, n, 1.0);
     // Act
@@ -169,7 +173,8 @@ TEST(solver, pcg_sgs)
             A_build(i, i - 1) = -1;
         }
     }
-    sparse_matrix<double> A = std::move(A_build.assemble());
+    sparse_matrix<double> A;
+    A_build.move(A);
     const vector<double> b(n, 2.0);
     pcg_sgs pcg(A, 1e-10, n, 1.0);
     // Act
