@@ -1,3 +1,31 @@
+# [1.23.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.22.0...v1.23.0) (2026-03-16)
+
+
+### Bug Fixes
+
+* Address compiler warnings ([3bb4c72](https://github.com/gitmathy/cpp-linear-algebra/commit/3bb4c7204be51e1d13cbc9a248a7c3d084e82407))
+* Addressing CI issues ([8cecb35](https://github.com/gitmathy/cpp-linear-algebra/commit/8cecb356977b361b9e1e0b9c22985456fae39027))
+* Building and executing unit tests on Windows ([a7c76f7](https://github.com/gitmathy/cpp-linear-algebra/commit/a7c76f7d7a8d52f2a3b6a6a9615e2272b1e0f719))
+* Check for member access ([31b5c88](https://github.com/gitmathy/cpp-linear-algebra/commit/31b5c88581ef142724a47952e46f05f61e5fbffd))
+* Try to address windows ci build and unit test errors ([f6aa360](https://github.com/gitmathy/cpp-linear-algebra/commit/f6aa36074c9c54638d75e7677f1c56a5b2959e3c))
+* Try to fix unit testing ([1efbeee](https://github.com/gitmathy/cpp-linear-algebra/commit/1efbeeec60c2da7d357f197f7b4b7ccb5c18d851))
+* type definition of value_type for pcg solver ([cffa496](https://github.com/gitmathy/cpp-linear-algebra/commit/cffa4961ba95e6416a22944169de39808dd4368f))
+
+
+### Features
+
+* check for has_row_element_access ([ff4d22c](https://github.com/gitmathy/cpp-linear-algebra/commit/ff4d22c741b6ea7d0e1bdf30b458bc2ff41eb6e1))
+* Include abbreviation for pcg with symmetric gauss seidel ([f1e7400](https://github.com/gitmathy/cpp-linear-algebra/commit/f1e7400d04a684560c1ac59f7fd76defd6794058))
+* Include assigning a scalar for vector ([3cda0ae](https://github.com/gitmathy/cpp-linear-algebra/commit/3cda0ae5247fc83510a051dafb0d7cf0d88ba055))
+* Include concepts for accessing row indices ([db2ce38](https://github.com/gitmathy/cpp-linear-algebra/commit/db2ce3897f6e45a11c54a2007e8dc33c1717b6cc))
+* Include Jacobi preconditioner ([6682076](https://github.com/gitmathy/cpp-linear-algebra/commit/668207639ce4cc16b37402098c9c7ee5bcbbf68c))
+* include preconditioned cg ([75bdf56](https://github.com/gitmathy/cpp-linear-algebra/commit/75bdf56197eb8c1939f795c3ef5b7665cfef365b))
+* Include preconditioner for sparse linear equation systems ([3948244](https://github.com/gitmathy/cpp-linear-algebra/commit/39482445733d7b404aaa526d4017b0738abb74e7))
+* Include symmetric gauss seidel ([a53cd7e](https://github.com/gitmathy/cpp-linear-algebra/commit/a53cd7e761817277574428005574577abe0ff853))
+* Make solve const ([d9d8e5c](https://github.com/gitmathy/cpp-linear-algebra/commit/d9d8e5c2e084c50edcee7a2149d4421b62dc9e72))
+* Test SGS preconditioned PCG ([bbb534e](https://github.com/gitmathy/cpp-linear-algebra/commit/bbb534e750d5a28274237b4b91554d0284f88c6f))
+* Type abbreviation ([56c3a56](https://github.com/gitmathy/cpp-linear-algebra/commit/56c3a569b9b0acacca1914f35ec579288b7c91d2))
+
 # [1.22.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.21.0...v1.22.0) (2026-03-15)
 
 
