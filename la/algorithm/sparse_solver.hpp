@@ -43,7 +43,7 @@ template <typename MatT, typename VecT, typename PreconditionerT>
 class pcg_solver : public util::preconditioned_iterative_solver<MatT, VecT, PreconditionerT>
 {
 public:
-    typename util::solver<MatT, VecT>::value_type value_type;
+    typedef typename util::solver<MatT, VecT>::value_type value_type;
 
 public:
     /// @brief Set up a preconditioned conjugate gradient solver
