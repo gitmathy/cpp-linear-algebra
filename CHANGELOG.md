@@ -1,3 +1,10 @@
+## [1.23.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.23.0...v1.23.1) (2026-03-16)
+
+
+### Bug Fixes
+
+* find files ([3c25ef1](https://github.com/gitmathy/cpp-linear-algebra/commit/3c25ef10968827070b956b80f1b5a1a12001204b))
+
 # [1.23.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.22.0...v1.23.0) (2026-03-16)
 
 
