@@ -86,6 +86,11 @@
     <None Include="la\static" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="la\algorithm\dense_solver.hpp" />
+    <ClInclude Include="la\algorithm\multiplication.hpp" />
+    <ClInclude Include="la\algorithm\preconditioners.hpp" />
+    <ClInclude Include="la\algorithm\sparse_solver.hpp" />
+    <ClInclude Include="la\algorithm\util\solver.hpp" />
     <ClInclude Include="la\data_structure\expressions\binary.hpp" />
     <ClInclude Include="la\data_structure\expressions\forward.hpp" />
     <ClInclude Include="la\data_structure\expressions\literal.hpp" />
@@ -100,6 +105,7 @@
     <ClInclude Include="la\data_structure\sparse_matrix.hpp" />
     <ClInclude Include="la\data_structure\sparse_matrix_builder.hpp" />
     <ClInclude Include="la\data_structure\static_vector.hpp" />
+    <ClInclude Include="la\data_structure\util\concepts.hpp" />
     <ClInclude Include="la\data_structure\vector.hpp" />
     <ClInclude Include="la\operation\addition.hpp" />
     <ClInclude Include="la\operation\inner_product.hpp" />
