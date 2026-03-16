@@ -91,11 +91,4 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.8\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.8\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets'))" />
   </Target>
-  <Target Name="CopyTestAdapter" AfterTargets="Build">
-    <ItemGroup>
-      <TestAdapterFiles Include="$(ProjectDir)..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.8\build\native\GoogleTestAdapter.dll" />
-      <TestAdapterFiles Include="$(ProjectDir)..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.8\build\native\GoogleTestAdapter.pdb" />
-    </ItemGroup>
-    <Copy SourceFiles="@(TestAdapterFiles)" DestinationFolder="$(OutDir)" />
-  </Target>
 </Project>

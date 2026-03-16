@@ -43,4 +43,5 @@ jobs:
 
         # Execute the tests
         & $vstest `
-          "unit_tests\x64\${{ matrix.configuration }}\unit_tests.exe"
+          "unit_tests\x64\${{ matrix.configuration }}\unit_tests.exe" `
+          /TestAdapterPath:"packages\GoogleTestAdapter.0.18.0\build\native"
