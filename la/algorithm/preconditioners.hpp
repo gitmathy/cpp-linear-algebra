@@ -42,9 +42,41 @@ public:
     using util::preconditioner<MatT, VecT>::solve;
 };
 
+template <typename MatT, typename VecT>
+class symmetric_gauss_seidel_pc : public util::preconditioner<MatT, VecT>
+{
+private:
+    /// @brief matrix type must define value_type
+    static_assert(la::util::has_row_begin_access<MatT>, "MatT additionally grant access to rows");
+
+public:
+    /// @brief Type of every element
+    typedef typename util::preconditioner<MatT, VecT>::value_type value_type;
+
+private:
+    /// @brief Scaled inverted diagonal elements of A (omega /a_ii)
+    VecT p_scaled_inv_diag;
+
+public:
+    /// @brief Set diagonal elements
+    symmetric_gauss_seidel_pc(const MatT &A, const value_type &omega);
+
+    /// @brief Copy constructor
+    symmetric_gauss_seidel_pc(const symmetric_gauss_seidel_pc<MatT, VecT> &jac);
+
+    /// @brief Apply the preconditioner
+    bool solve(const VecT &b, VecT &x) const;
+
+    /// @brief As we use the function name "solve" for both versions, we need to provide this
+    using util::preconditioner<MatT, VecT>::solve;
+};
+
 // ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
 // ===============================================
+
+// jacobi_pc
+// ---------
 
 template <typename MatT, typename VecT>
 jacobi_pc<MatT, VecT>::jacobi_pc(const MatT &A,
@@ -70,6 +102,73 @@ bool jacobi_pc<MatT, VecT>::solve(const VecT &b, VecT &x) const
     SHAPE_ASSERT(x.rows() == this->p_A.rows(), "Preconditioner, invalid dimension of result");
     SHAPE_ASSERT(b.rows() == this->p_A.rows(), "Preconditioner, invalid dimension of vector");
     x = b * p_scaled_inv_diag;
+    return true;
+}
+
+// symmetric_gauss_seidel_pc
+// ---------------
+
+template <typename MatT, typename VecT>
+symmetric_gauss_seidel_pc<MatT, VecT>::symmetric_gauss_seidel_pc(
+    const MatT &A, const typename symmetric_gauss_seidel_pc<MatT, VecT>::value_type &omega)
+    : util::preconditioner<MatT, VecT>(A, omega), p_scaled_inv_diag(A.rows())
+{
+    // set diagonal elements
+    for (size_type i = 0; i < A.rows(); ++i) {
+        p_scaled_inv_diag(i) = A(i, i);
+        NON_ZERO_ASSERT(p_scaled_inv_diag(i), "diagonal element of matrix is zero");
+    }
+}
+
+template <typename MatT, typename VecT>
+symmetric_gauss_seidel_pc<MatT, VecT>::symmetric_gauss_seidel_pc(
+    const symmetric_gauss_seidel_pc<MatT, VecT> &jac)
+    : util::preconditioner<MatT, VecT>(jac.p_A, jac.p_omega),
+      p_scaled_inv_diag(jac.p_scaled_inv_diag)
+{}
+
+template <typename MatT, typename VecT>
+bool symmetric_gauss_seidel_pc<MatT, VecT>::solve(const VecT &b, VecT &x) const
+{
+    SHAPE_ASSERT(x.rows() == this->p_A.rows(), "Preconditioner, invalid dimension of result");
+    SHAPE_ASSERT(b.rows() == this->p_A.rows(), "Preconditioner, invalid dimension of vector");
+    typedef typename symmetric_gauss_seidel_pc<MatT, VecT>::value_type T;
+    const MatT &A = this->p_A;
+
+    // initialize x
+    x = T(0);
+
+    size_type j = 0;
+    const size_type n = A.rows();
+    T a_ii = T(0);
+    T sigma = 0.0;
+    // Forward
+    for (size_type i = 0; i < n; ++i) {
+        sigma = 0;
+        for (size_type nz = A.row_idx_begin(i); nz < A.row_idx_begin(i + 1); ++nz) {
+            j = A.col_idx(nz);
+            if (j != i) {
+                sigma += A(nz) * x(j);
+            } else {
+                a_ii = A(nz);
+            }
+        }
+        x(i) = (b(i) - sigma) / a_ii;
+    }
+
+    // 2. Backward Sweep (to ensure symmetry)
+    for (int i = int(n) - 1; i >= 0; --i) {
+        sigma = 0.0;
+        for (size_type nz = A.row_idx_begin(i); nz < A.row_idx_begin(i); ++nz) {
+            j = A.col_idx(nz);
+            if (i != int(j)) {
+                sigma += A(nz) * x(j);
+            } else {
+                a_ii = A(nz);
+            }
+        }
+        x(i) = (b(i) - sigma) / a_ii;
+    }
     return true;
 }
 
