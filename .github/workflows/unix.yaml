@@ -4,14 +4,13 @@ description: Build the executable by g++
 on:
   pull_request:
     branches: [ "main" ]
-  push:
 
 jobs:
   compile_all_and_run_unit_test:
     name: Compile all and run unit tets
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8    # v6.0.1
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd    # v6.0.2
     - name: Install Intel Thread Building Block (TBB)
       shell: bash
       run: |
@@ -31,7 +30,7 @@ jobs:
     name: 🧪 Unit tests
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8    # v6.0.1
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd    # v6.0.2
     - name: ⚒️ Building
       shell: bash
       run: |
@@ -47,9 +46,10 @@ jobs:
 
   unit_tests_in_solution:
     runs-on: ubuntu-latest
+    name: 👀 Test unit tests in solution
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8    # v6.0.1
-    - name: 👀 Test if unit tests in solution
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd    # v6.0.2
+    - name: check if all unit tests are in solution
       shell: bash
       run: |
         set -e
@@ -61,9 +61,10 @@ jobs:
 
   all_files_in_solution:
     runs-on: ubuntu-latest
+    name: 👀 Test files in solution
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8    # v6.0.1
-    - name: 👀 all files in solution
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd    # v6.0.2
+    - name: check if all files are in the in solution
       shell: bash
       run: |
         set -e
