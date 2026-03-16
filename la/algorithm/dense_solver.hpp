@@ -25,7 +25,7 @@ namespace algorithm {
 /// @brief LU decomposition of a matrix
 /// @tparam T value type of every element
 template <typename MatT, typename VecT>
-class lu_decomposition : public dense_solver<MatT, VecT>
+class lu_decomposition : public util::dense_solver<MatT, VecT>
 {
 private:
     /// @brief Decomposed matrix
@@ -48,7 +48,7 @@ public:
     bool solve(const VecT &b, VecT &x) const override;
 
     /// @brief As we use the function name "solve" for both versions, we need to provide this
-    using dense_solver<MatT, VecT>::solve;
+    using util::dense_solver<MatT, VecT>::solve;
 };
 
 // ===============================================
@@ -57,7 +57,7 @@ public:
 
 template <typename MatT, typename VecT>
 lu_decomposition<MatT, VecT>::lu_decomposition(const MatT &A)
-    : dense_solver<MatT, VecT>(A), p_lu(0, 0), p_p(0)
+    : util::dense_solver<MatT, VecT>(A), p_lu(0, 0), p_p(0)
 {
     LOG_DEBUG("Setting up LU solver class");
     decompose();
@@ -67,7 +67,7 @@ template <typename MatT, typename VecT>
 void lu_decomposition<MatT, VecT>::decompose()
 {
     LOG_INFO("Decompose matrix");
-    typedef typename dense_solver<MatT, VecT>::value_type T;
+    typedef typename util::dense_solver<MatT, VecT>::value_type T;
     const size_type M = this->p_A.rows();
     const size_type N = this->p_A.cols();
     const size_type min_dim = std::min(M, N);
@@ -184,7 +184,7 @@ bool lu_decomposition<MatT, VecT>::solve(const VecT &b, VecT &x) const
     SHAPE_ASSERT(b.rows() == this->p_A.rows() && x.rows() == this->p_A.cols(),
                  "Invalid dimension for LU solve");
 
-    typedef typename dense_solver<MatT, VecT>::value_type T;
+    typedef typename util::dense_solver<MatT, VecT>::value_type T;
 
     const size_type N = p_lu.rows();
 

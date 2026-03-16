@@ -7,8 +7,31 @@
 /// @copyright Copyright (c) 2026. All rights reserved.
 /// Licensed under the MIT License (see LICENSE file in project root).
 
+#include "la/algorithm/preconditioners.hpp"
 #include "la/algorithms"
 #include "la/data_structure/mixed_sparse_data.hpp"
 #include "la/data_structure/sparse_matrix.hpp"
 #include "la/data_structure/sparse_matrix_builder.hpp"
 #include "la/ops"
+
+namespace la {
+
+/// @brief Type of a double matrix
+typedef la::matrix<double> dmatrix;
+
+/// @brief Type of a double vector
+typedef la::vector<double> dvector;
+
+/// @brief Type of a double sparse matrix
+typedef la::sparse_matrix<double> sparse_dmatrix;
+
+/// @brief Type of preconditioned CG method with Jacobi for double matrices and vectors
+typedef algorithm::pcg_solver<sparse_dmatrix, dvector,
+                              algorithm::jacobi_pc<sparse_dmatrix, dvector>>
+    pcg_jacobi;
+
+typedef algorithm::pcg_solver<sparse_dmatrix, dvector,
+                              algorithm::symmetric_gauss_seidel_pc<sparse_dmatrix, dvector>>
+    pcg_sgs;
+
+} // namespace la

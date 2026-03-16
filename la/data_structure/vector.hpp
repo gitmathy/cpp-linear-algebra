@@ -132,6 +132,9 @@ public:
     /// @brief Assign another vector
     vector<T> &operator=(const vector<T> &rhs);
 
+    /// @brief Assign a scalar to all elements of a vector
+    vector<T> &operator=(const T &rhs);
+
     /// @brief Assign another static_vector
     template <size_type N>
     vector<T> &operator=(const static_vector<T, N> &rhs);
@@ -289,6 +292,20 @@ vector<T> &vector<T>::operator=(vector<T> &&rhs) noexcept
     p_size = 0;
     std::swap(p_vals, rhs.p_vals);
     std::swap(p_size, rhs.p_size);
+    return *this;
+}
+
+template <typename T>
+vector<T> &vector<T>::operator=(const T &rhs)
+{
+    auto range = std::views::iota(size_type(0), p_size);
+#ifdef PARALLEL
+    std::for_each(execution::par_unseq, range.begin(), range.end(),
+                  [this, &rhs](size_type i) { this->p_vals[i] = rhs; });
+#else
+    std::for_each(range.begin(), range.end(), [this, &rhs](size_type i) { this->p_vals[i] = rhs; });
+#endif
+
     return *this;
 }
 

@@ -27,21 +27,12 @@ jobs:
     #   run: |
     #     sudo apt update
     #     sudo apt install libtbb-dev
-    - name: ⚒️ Build Solution
+    - name: ⚒️ Build unit tests
       run: |
-        msbuild cpp-linear-algebra.slnx `
+        msbuild unit_tests/unit_tests.vcxproj `
         /p:Configuration=${{ matrix.configuration }} `
         /p:Platform=x64 `
         /p:PlatformToolset=v143 `
         /m
     - name: 🧪 Run Google Tests
-      shell: pwsh
-      run: |
-        # Use vswhere to find the latest VSTest path
-        $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-        $vstest = Join-Path $vsPath "Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
-
-        # Execute the tests
-        & $vstest `
-          " D:\a\cpp-linear-algebra\cpp-linear-algebra\x64\${{ matrix.configuration }}\unit_tests.exe" `
-          /TestAdapterPath:"packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.8\build\native"
+      run: unit_tests\x64\${{ matrix.configuration }}\unit_tests.exe
