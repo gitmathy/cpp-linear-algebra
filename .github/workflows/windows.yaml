@@ -43,5 +43,4 @@ jobs:
 
         # Execute the tests
         & $vstest `
-          "unit_tests\x64\${{ matrix.configuration }}\unit_tests.exe" `
-          /TestAdapterPath:"packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.8\build\native"
+          "unit_tests\x64\${{ matrix.configuration }}\unit_tests.exe"
