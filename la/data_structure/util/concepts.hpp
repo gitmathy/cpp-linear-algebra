@@ -35,7 +35,7 @@ concept has_row_col_element_access = requires(T &m, size_type r, size_type c) {
 
 /// @brief Check if T can be accessed via a row index, i.e., (i)
 template <typename T>
-concept has_row_element_access = requires(T &v, size_type r) {
+concept has_nnz_access = requires(T &v, size_type r) {
     { v(r) };
 };
 
@@ -49,6 +49,11 @@ concept has_row_begin_access = requires(T &t, size_type r) {
 template <typename T>
 concept has_row_idx_begin = requires(T &t, size_type r) {
     { t.row_idx_begin(r) };
+};
+
+template <typename T>
+concept has_col_idx = requires(T &t, size_type r) {
+    { t.col_idx(r) };
 };
 
 /// @brief Check I provides access to values via vals()
