@@ -35,13 +35,4 @@ jobs:
         /p:PlatformToolset=v143 `
         /m
     - name: 🧪 Run Google Tests
-      shell: pwsh
-      run: |
-        # Use vswhere to find the latest VSTest path
-        $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-        $vstest = Join-Path $vsPath "Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
-
-        # Execute the tests
-        & $vstest `
-          "unit_tests\x64\${{ matrix.configuration }}\unit_tests.exe" `
-          /TestAdapterPath:"packages\GoogleTestAdapter.0.18.0\build\native"
+      run: unit_tests\x64\${{ matrix.configuration }}\unit_tests.exe
