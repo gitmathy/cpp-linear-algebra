@@ -39,6 +39,18 @@ concept has_row_element_access = requires(T &v, size_type r) {
     { v(r) };
 };
 
+/// @brief Check I provides access to values via row_begin()
+template <typename T>
+concept has_row_begin_access = requires(T &t, size_type r) {
+    { t.row_begin(r) };
+};
+
+/// @brief Check if T provides row_index_begin
+template <typename T>
+concept has_row_idx_begin = requires(T &t, size_type r) {
+    { t.row_idx_begin(r) };
+};
+
 /// @brief Check I provides access to values via vals()
 template <typename T>
 concept has_vals_access = requires(T &t) {
