@@ -210,6 +210,16 @@ TEST(vector, move_assign)
     EXPECT_EQ(v_dest(1), 1);
 }
 
+/// @brief Testing scalar value
+TEST(vector, scalar_assign)
+{
+    vector<int> v(2);
+    v = 2;
+    EXPECT_EQ(v.rows(), 2);
+    EXPECT_EQ(v(0), 2);
+    EXPECT_EQ(v(1), 2);
+}
+
 /// @brief Testing += vector
 TEST(vector, add_assign_vector)
 {
