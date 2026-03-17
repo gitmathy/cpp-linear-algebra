@@ -25,6 +25,9 @@ public:
     /// @brief Type of the expression
     typedef typename expression_traits<ExpressionT>::expression_type expression_type;
 
+    /// @brief Type of an iterator to constant indices
+    typedef const size_type *cidx_iterator;
+
 private:
     /// @brief Owned expression (store by value to keep temporaries alive)
     expression_type p_expression;
@@ -67,6 +70,12 @@ public:
 
     /// @brief Number of non-zeros
     inline size_type non_zeros() const { return p_expression.non_zeros(); }
+
+    /// @brief Constant iterator to begin of column indices
+    inline cidx_iterator begin_col_idx(const size_type i) const;
+
+    /// @brief Constant iterator to end of column indices
+    inline cidx_iterator end_col_idx(const size_type i) const;
 
     /// @brief Dimension of the operant is defined by the expression
     constexpr static size_type dimension = ExpressionT::dimension;
@@ -121,6 +130,22 @@ inline size_type operant<ExpressionT>::col_idx(const size_type nz_idx) const
 {
     BOUNDARY_ASSERT(nz_idx < non_zeros(), "operant col_idx: index out of bound");
     return p_expression.col_idx(nz_idx);
+}
+
+template <typename ExpressionT>
+inline operant<ExpressionT>::cidx_iterator
+operant<ExpressionT>::begin_col_idx(const size_type i) const
+{
+    BOUNDARY_ASSERT(i <= rows(), "operant begin_col_idx: index out of bound");
+    return p_expression.begin_col_idx(i);
+}
+
+template <typename ExpressionT>
+inline operant<ExpressionT>::cidx_iterator
+operant<ExpressionT>::end_col_idx(const size_type i) const
+{
+    BOUNDARY_ASSERT(i <= rows(), "operant end_col_idx: index out of bound");
+    return p_expression.end_col_idx(i);
 }
 
 } // namespace expressions
