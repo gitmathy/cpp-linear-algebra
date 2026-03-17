@@ -56,6 +56,9 @@ public:
     /// @brief Number of columns
     inline size_type cols() const { return p_cols; }
 
+    /// @brief Get number of non-zeros
+    inline size_type non_zeros() const { return p_num_values; }
+
     /// @brief Build the sparse matrix (moves all elements to the matrix)
     sparse_matrix<T> &move(sparse_matrix<T> &a);
 
@@ -89,7 +92,7 @@ inline const T sparse_matrix_builder<T>::operator()(const size_type i, const siz
 {
     LOG_TRACE("sparse_matrix_builder: Read access to element " << i << ", " << j);
     BOUNDARY_ASSERT(i < rows() && j < cols(), "sparse_matrix_builder: out of bound");
-    if (auto it = p_vals[i].find(2); it != p_vals[i].end()) {
+    if (auto it = p_vals[i].find(j); it != p_vals[i].end()) {
         // element has been inserted
         return it->second;
     }
