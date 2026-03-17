@@ -66,6 +66,7 @@
   <ItemGroup>
     <ClCompile Include="matrix.cpp" />
     <ClCompile Include="sparse_matrix.cpp" />
+    <ClCompile Include="sparse_matrix_builder.cpp" />
     <ClCompile Include="vector.cpp" />
     <ClCompile Include="solver.cpp" />
     <ClCompile Include="pch.cpp">
