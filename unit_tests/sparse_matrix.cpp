@@ -178,7 +178,7 @@ TEST(sparse_matrix, value_iterators)
     sparse_matrix<int> a({{0, 1}, {2}}, {3, 4, 5}, 3);
 
     for (sparse_matrix<int>::iterator it = a.begin(); it != a.end(); ++it) {
-        *(it) = 6 + std::distance(a.begin(), it);
+        *(it) = int(6 + std::distance(a.begin(), it));
     }
     int i = 6;
     for (sparse_matrix<int>::citerator it = a.begin(); it != a.end(); ++it, ++i) {
@@ -192,7 +192,7 @@ TEST(sparse_matrix, row_value_iterators)
     sparse_matrix<int> a({{0, 1}, {2}}, {3, 4, 5}, 3);
     for (size_type i = 0; i < a.rows(); ++i) {
         for (sparse_matrix<int>::iterator it = a.row_begin(i); it != a.row_end(i); ++it) {
-            *it = 7 + i;
+            *it = int(7 + i);
         }
     }
     for (size_type i = 0; i < a.rows(); ++i) {
