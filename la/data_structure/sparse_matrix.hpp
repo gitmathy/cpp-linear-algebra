@@ -80,7 +80,7 @@ public:
                   const std::initializer_list<T> &values, const size_type cols);
 
     /// @brief Move a sparse matrix
-    explicit sparse_matrix(matrix<T> &&rhs) noexcept;
+    explicit sparse_matrix(sparse_matrix<T> &&rhs) noexcept;
 
     /// @brief Copy a sparse matrix
     sparse_matrix(const sparse_matrix<T> &);
@@ -103,11 +103,14 @@ public:
     /// @brief Number of non-zeros
     inline size_type non_zeros() const { return p_num_vals; }
 
-    /// @brief Get first index in row i
+    /// @brief Get first index of non-zero in row i
     inline size_type row_idx_begin(const size_type i) const;
 
     /// @brief Get column index of non-zero index
     inline size_type col_idx(const size_type nz_idx) const;
+
+    /// @brief Get column index of non-zero index
+    inline size_type row_idx(const size_type nz_idx) const;
 
     /// @brief write access to an element
     inline T &operator()(const size_type i, const size_type j);
@@ -223,7 +226,7 @@ sparse_matrix<T>::sparse_matrix(
 }
 
 template <typename T>
-sparse_matrix<T>::sparse_matrix(matrix<T> &&rhs) noexcept
+sparse_matrix<T>::sparse_matrix(sparse_matrix<T> &&rhs) noexcept
     : p_vals(nullptr), p_col_idx(nullptr), p_row_ptr(nullptr), p_rows(0), p_cols(0), p_num_vals(0)
 {
     *this = std::move(rhs);
@@ -248,6 +251,7 @@ template <typename T>
 void sparse_matrix<T>::allocate(const size_type rows, const size_type cols,
                                 const size_type num_values)
 {
+    SHAPE_ASSERT(rows * cols >= num_values, "To many non-zeros for sparse matrix");
     LOG_DEBUG("Allocating memory for sparse matrix - rows: "
               << rows << ", values: " << num_values << ", memory: "
               << (num_values * (sizeof(T) + sizeof(size_type)) + rows * sizeof(size_type)) << " B");
@@ -275,6 +279,17 @@ inline size_type sparse_matrix<T>::col_idx(const size_type nz_idx) const
 {
     BOUNDARY_ASSERT(nz_idx < non_zeros(), "sparse_matrix: col_idx index out of bound");
     return p_col_idx[nz_idx];
+}
+
+template <typename T>
+inline size_type sparse_matrix<T>::row_idx(const size_type nz_idx) const
+{
+    BOUNDARY_ASSERT(nz_idx < non_zeros(), "sparse_matrix: row_idx index out of bound");
+    size_type *it = std::upper_bound(p_row_ptr, p_row_ptr + p_rows + 1, nz_idx);
+    BOUNDARY_ASSERT(it != p_row_ptr + p_rows + 1, "sparse_matrix: row_idx internal error");
+    const size_type result = size_type(std::distance(p_row_ptr, it)) - 1;
+    BOUNDARY_ASSERT(result < p_rows, "sparse_matrix: row_idx internal error");
+    return result;
 }
 
 template <typename T>

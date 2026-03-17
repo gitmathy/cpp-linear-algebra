@@ -85,6 +85,16 @@ run-debug: $(DEBUG_TARGET)
 	@echo "Running debug build..."
 	@$(DEBUG_TARGET)
 
+gunit:
+	@echo "Compiling unit tests"
+	mkdir -p build
+	cd build && cmake ../unit_tests && cmake --build .
+
+
+run-gunit: gunit
+	@echo "Running unit tests"
+	cd build &&  ./run_unit_tests
+
 # Build dependency files (will compile object files and thereby generate .d files)
 deps: $(DEPS)
 	@echo "Dependencies updated"

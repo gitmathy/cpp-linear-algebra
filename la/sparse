@@ -16,9 +16,6 @@
 
 namespace la {
 
-/// @brief Type of a double matrix
-typedef la::matrix<double> dmatrix;
-
 /// @brief Type of a double vector
 typedef la::vector<double> dvector;
 
