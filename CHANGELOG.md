@@ -1,3 +1,17 @@
+# [1.24.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.23.1...v1.24.0) (2026-03-17)
+
+
+### Bug Fixes
+
+* Includes for preconditioners ([7d6a453](https://github.com/gitmathy/cpp-linear-algebra/commit/7d6a4533fd8058b4209dcdde7de98cf462da6912))
+* Issues revealed by unit tests ([3f01eee](https://github.com/gitmathy/cpp-linear-algebra/commit/3f01eeed8660b88f583b865b2665233effc8ffe3))
+* type conversation warning ([83a3dd7](https://github.com/gitmathy/cpp-linear-algebra/commit/83a3dd7fb23359eaae927641480b3a62954f3c91))
+
+
+### Features
+
+* unit tests for sparse matrix ([ab80e30](https://github.com/gitmathy/cpp-linear-algebra/commit/ab80e308e762000f92b945e440f0887ec2ccd9af))
+
 ## [1.23.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.23.0...v1.23.1) (2026-03-16)
 
 
