@@ -1,3 +1,15 @@
+# [1.25.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.24.0...v1.25.0) (2026-03-17)
+
+
+### Bug Fixes
+
+* read operator ([c0f30f4](https://github.com/gitmathy/cpp-linear-algebra/commit/c0f30f4f0357e69f5875888aa16add0904c9778a))
+
+
+### Features
+
+* Testing sparse matrix builder ([391858a](https://github.com/gitmathy/cpp-linear-algebra/commit/391858a607ca4cfbe480eace085721788061b7a5))
+
 # [1.24.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.23.1...v1.24.0) (2026-03-17)
 
 
