@@ -51,6 +51,18 @@ concept has_row_idx_begin = requires(T &t, size_type r) {
     { t.row_idx_begin(r) };
 };
 
+/// @brief Check if T provides begin_col_idx
+template <typename T>
+concept has_begin_col_idx = requires(T &t, size_type r) {
+    { t.begin_col_idx(r) };
+};
+
+/// @brief Check if T provides end_col_idx
+template <typename T>
+concept has_end_col_idx = requires(T &t, size_type r) {
+    { t.end_col_idx(r) };
+};
+
 template <typename T>
 concept has_col_idx = requires(T &t, size_type r) {
     { t.col_idx(r) };
