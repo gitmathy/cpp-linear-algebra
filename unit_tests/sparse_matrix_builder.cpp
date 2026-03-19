@@ -17,6 +17,33 @@ TEST(sparse_matrix_builder, constructor)
     EXPECT_EQ(a.non_zeros(), 0);
 }
 
+/// @brief Test constructor for sparse matrix builder
+TEST(sparse_matrix_builder, constructor_from_expr)
+{
+    sparse_matrix<int> A({{0, 1}, {2}}, {3, 4, 5}, 3);
+    expressions::operant<sparse_matrix<int>> expr(A);
+    sparse_matrix_builder<int> a = expr;
+    EXPECT_EQ(A.rows(), 2);
+    EXPECT_EQ(A.cols(), 3);
+    EXPECT_EQ(A.non_zeros(), 3);
+    EXPECT_EQ(std::as_const(a)(0, 0), 3);
+    EXPECT_EQ(std::as_const(a)(0, 1), 4);
+    EXPECT_EQ(std::as_const(a)(0, 2), 0);
+    EXPECT_EQ(std::as_const(a)(1, 0), 0);
+    EXPECT_EQ(std::as_const(a)(1, 1), 0);
+    EXPECT_EQ(std::as_const(a)(1, 2), 5);
+}
+
+/// @brief Test allocate
+TEST(sparse_matrix_builder, allocate)
+{
+    sparse_matrix_builder<int> a(1, 1);
+    a.allocate(2, 3);
+    EXPECT_EQ(a.rows(), 2);
+    EXPECT_EQ(a.cols(), 3);
+    EXPECT_EQ(a.non_zeros(), 0);
+}
+
 // rows(), cols(), non_zeros() are tested in almost every test
 
 /// @brief Testing read and write elements

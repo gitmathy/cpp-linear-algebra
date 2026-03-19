@@ -10,6 +10,7 @@
 #ifndef LA_DATA_STRUCTURE_SPARSE_MATRIX_BUILDER_HPP
 #define LA_DATA_STRUCTURE_SPARSE_MATRIX_BUILDER_HPP
 
+#include "la/data_structure/expressions/forward.hpp"
 #include "la/data_structure/forward.hpp"
 #include "la/util/macros.hpp"
 #include "la/util/types.hpp"
@@ -44,6 +45,13 @@ public:
     /// @brief Construct the sparse matrix builder
     explicit sparse_matrix_builder(const size_type rows, const size_type cols);
 
+    /// @brief Construct from expression
+    template <typename ExpressionT>
+    sparse_matrix_builder(const expressions::operant<ExpressionT> &exp);
+
+    /// @brief Set dimensions (and clear everything)
+    void allocate(const size_type rows, const size_type cols);
+
     /// @brief write access to an element
     inline T &operator()(const size_type i, const size_type j);
 
@@ -58,6 +66,10 @@ public:
 
     /// @brief Get number of non-zeros
     inline size_type non_zeros() const { return p_num_values; }
+
+    /// @brief Assign from expression
+    template <typename ExpressionT>
+    sparse_matrix_builder<T> &operator=(const expressions::operant<ExpressionT> &exp);
 
     /// @brief Build the sparse matrix (moves all elements to the matrix)
     sparse_matrix<T> &move(sparse_matrix<T> &a);
@@ -74,6 +86,39 @@ template <typename T>
 sparse_matrix_builder<T>::sparse_matrix_builder(const size_type rows, const size_type cols)
     : p_vals(rows), p_cols(cols), p_num_values(0)
 {}
+
+template <typename T>
+template <typename ExpressionT>
+sparse_matrix_builder<T>::sparse_matrix_builder(const expressions::operant<ExpressionT> &exp)
+    : p_vals(0), p_cols(0), p_num_values(0)
+{
+    *this = exp;
+}
+
+template <typename T>
+void sparse_matrix_builder<T>::allocate(const size_type rows, const size_type cols)
+{
+    p_vals.resize(0);    // clean everything
+    p_vals.resize(rows); // resize to number of rows
+    p_cols = cols;
+    p_num_values = 0;
+}
+
+template <typename T>
+template <typename ExpressionT>
+sparse_matrix_builder<T> &
+sparse_matrix_builder<T>::operator=(const expressions::operant<ExpressionT> &exp)
+{
+    allocate(exp.rows(), exp.cols());
+    for (size_type i = 0; i < exp.rows(); ++i) {
+        for (auto it = exp.begin_col_idx(i); it != exp.end_col_idx(i); ++it) {
+            LOG_TRACE("Evaluating at position (" << i << ", " << *it
+                                                 << ") = " << exp.evaluate(i, *it) << '\n');
+            (*this)(i, *it) = exp.evaluate(i, *it);
+        }
+    }
+    return *this;
+}
 
 template <typename T>
 inline T &sparse_matrix_builder<T>::operator()(const size_type i, const size_type j)

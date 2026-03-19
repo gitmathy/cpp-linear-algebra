@@ -160,6 +160,28 @@ TEST(sparse_matrix, read_write_operator)
     EXPECT_THROW(a_const(3), util::error);
 }
 
+/// @brief Testing read and write elements
+TEST(sparse_matrix, read_write_operator_2)
+{
+    const sparse_matrix<int> b({{1}, {1}, {1, 3, 4}}, {3, 4, 5, 6, 7}, 5);
+    const sparse_matrix<int> a_const(b);
+    EXPECT_EQ(a_const(0, 0), 0);
+    EXPECT_EQ(a_const(0, 1), 3);
+    EXPECT_EQ(a_const(0, 2), 0);
+    EXPECT_EQ(a_const(0, 3), 0);
+    EXPECT_EQ(a_const(0, 4), 0);
+    EXPECT_EQ(a_const(1, 0), 0);
+    EXPECT_EQ(a_const(1, 1), 4);
+    EXPECT_EQ(a_const(1, 2), 0);
+    EXPECT_EQ(a_const(1, 3), 0);
+    EXPECT_EQ(a_const(1, 4), 0);
+    EXPECT_EQ(a_const(2, 0), 0);
+    EXPECT_EQ(a_const(2, 1), 5);
+    EXPECT_EQ(a_const(2, 2), 0);
+    EXPECT_EQ(a_const(2, 3), 6);
+    EXPECT_EQ(a_const(2, 4), 7);
+}
+
 /// @brief Testing evaluate
 TEST(sparse_matrix, evaluate)
 {

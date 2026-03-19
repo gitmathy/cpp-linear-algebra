@@ -26,6 +26,7 @@ add_executable(
     sparse_matrix.cpp
     solver.cpp
     sparse_matrix_builder.cpp
+    operations.cpp
 )
 
 # Link against Google Test

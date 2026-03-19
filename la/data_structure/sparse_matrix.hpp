@@ -299,10 +299,11 @@ inline T &sparse_matrix<T>::operator()(const size_type i, const size_type j)
     LOG_TRACE("sparse_matrix: Write access to element " << i << ", " << j);
     size_type *last = p_col_idx + p_row_ptr[i + 1];
     size_type *it = std::lower_bound(p_col_idx + p_row_ptr[i], last, j);
-    if (it == last || *it != j) {
-        throw util::error("sparse_matrix: Cannot write to a non-zero element");
+    if (it != last && *it == j) {
+        // element found!
+        return *(p_vals + std::distance(p_col_idx, it));
     }
-    return p_vals[*it];
+    throw util::error("sparse_matrix: Cannot write to a non-zero element");
 }
 
 template <typename T>
@@ -312,10 +313,11 @@ inline const T sparse_matrix<T>::operator()(const size_type i, const size_type j
     LOG_TRACE("sparse_matrix: Read access to element " << i << ", " << j);
     size_type *const last = p_col_idx + p_row_ptr[i + 1];
     size_type *const it = std::lower_bound(p_col_idx + p_row_ptr[i], last, j);
-    if (it == last || *it != j) {
-        return T(0);
+    if (it != last && *it == j) {
+        // element found!
+        return *(p_vals + std::distance(p_col_idx, it));
     }
-    return p_vals[*it];
+    return T(0);
 }
 
 template <typename T>
