@@ -112,6 +112,8 @@ sparse_matrix_builder<T>::operator=(const expressions::operant<ExpressionT> &exp
     allocate(exp.rows(), exp.cols());
     for (size_type i = 0; i < exp.rows(); ++i) {
         for (auto it = exp.begin_col_idx(i); it != exp.end_col_idx(i); ++it) {
+            LOG_TRACE("Evaluating at position (" << i << ", " << *it
+                                                 << ") = " << exp.evaluate(i, *it) << '\n');
             (*this)(i, *it) = exp.evaluate(i, *it);
         }
     }
