@@ -1,3 +1,21 @@
+# [1.26.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.25.0...v1.26.0) (2026-03-19)
+
+
+### Bug Fixes
+
+* read and write operator ([15f6a9d](https://github.com/gitmathy/cpp-linear-algebra/commit/15f6a9d8d47383b93e3a334639d547b69005592e))
+
+
+### Features
+
+* Add sparse matrix add ([116693d](https://github.com/gitmathy/cpp-linear-algebra/commit/116693df2176c30b364144cf08740f046624176f))
+* adding more concepts ([2261968](https://github.com/gitmathy/cpp-linear-algebra/commit/22619686b54dd62b663850ed24d96b82f5a7f524))
+* allocate and constructor from expression for sparse matrix builder ([66c6236](https://github.com/gitmathy/cpp-linear-algebra/commit/66c62368c69188d7c7e8f06a26fddabba9288ccd))
+* begin_col_idx and end_col_idx for operant ([592a64d](https://github.com/gitmathy/cpp-linear-algebra/commit/592a64d995e5b703a7b1bea479201f6f50e23af1))
+* Include begin_col_idx and end_col_idx ([900be50](https://github.com/gitmathy/cpp-linear-algebra/commit/900be500d81f96694811134da2aa26c9b388ed0d))
+* Include iterator to iterate over two column indices ([a68b9a2](https://github.com/gitmathy/cpp-linear-algebra/commit/a68b9a25fce2fb1d07ac90c758a5f7a358213a96))
+* Include testing of iterator ([2d7d6af](https://github.com/gitmathy/cpp-linear-algebra/commit/2d7d6afb33e7a681a06eb437694adbce439bbe44))
+
 # [1.25.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.24.0...v1.25.0) (2026-03-17)
 
 
