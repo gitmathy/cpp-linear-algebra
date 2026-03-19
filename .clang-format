@@ -5,6 +5,7 @@ UseTab: Never
 AccessModifierOffset: -4
 IndentCaseLabels: true
 AlwaysBreakTemplateDeclarations: Yes
+IndentPPDirectives: AfterHash
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterClass: true

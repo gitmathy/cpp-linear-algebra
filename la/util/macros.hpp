@@ -42,52 +42,52 @@ namespace la {
 
 // Logging errors
 #if LA_DEBUG_LEVEL >= LA_DEBUG_ERROR_C
-#define LOG_ERROR(...)                                                                             \
-    do {                                                                                           \
-        LA_LOG_STREAM << "LA ERROR: " << __VA_ARGS__ << std::endl;                                 \
-    } while (false)
+#    define LOG_ERROR(...)                                                                         \
+        do {                                                                                       \
+            LA_LOG_STREAM << "LA ERROR: " << __VA_ARGS__ << std::endl;                             \
+        } while (false)
 #else
-#define LOG_ERROR(a) ((void)0)
+#    define LOG_ERROR(a) ((void)0)
 #endif
 
 // Logging warnings
 #if LA_DEBUG_LEVEL >= LA_DEBUG_WARNING_C
-#define LOG_WARNING(...)                                                                           \
-    do {                                                                                           \
-        LA_LOG_STREAM << "LA WARNING: " << __VA_ARGS__ << std::endl;                               \
-    } while (false)
+#    define LOG_WARNING(...)                                                                       \
+        do {                                                                                       \
+            LA_LOG_STREAM << "LA WARNING: " << __VA_ARGS__ << std::endl;                           \
+        } while (false)
 #else
-#define LOG_WARNING(a) ((void)0)
+#    define LOG_WARNING(a) ((void)0)
 #endif
 
 // Logging infos
 #if LA_DEBUG_LEVEL >= LA_DEBUG_INFO_C
-#define LOG_INFO(...)                                                                              \
-    do {                                                                                           \
-        LA_LOG_STREAM << "LA INFO: " << __VA_ARGS__ << std::endl;                                  \
-    } while (false)
+#    define LOG_INFO(...)                                                                          \
+        do {                                                                                       \
+            LA_LOG_STREAM << "LA INFO: " << __VA_ARGS__ << std::endl;                              \
+        } while (false)
 #else
-#define LOG_INFO(a) ((void)0)
+#    define LOG_INFO(a) ((void)0)
 #endif
 
 // Logging debug information
 #if LA_DEBUG_LEVEL >= LA_DEBUG_DEBUG_C
-#define LOG_DEBUG(...)                                                                             \
-    do {                                                                                           \
-        LA_LOG_STREAM << "LA DEBUG: " << __VA_ARGS__ << std::endl;                                 \
-    } while (false)
+#    define LOG_DEBUG(...)                                                                         \
+        do {                                                                                       \
+            LA_LOG_STREAM << "LA DEBUG: " << __VA_ARGS__ << std::endl;                             \
+        } while (false)
 #else
-#define LOG_DEBUG(a) ((void)0)
+#    define LOG_DEBUG(a) ((void)0)
 #endif
 
 // Logging trace information
 #if LA_DEBUG_LEVEL >= LA_DEBUG_TRACE_C
-#define LOG_TRACE(...)                                                                             \
-    do {                                                                                           \
-        LA_LOG_STREAM << "LA TRACE: " << __VA_ARGS__ << std::endl;                                 \
-    } while (false)
+#    define LOG_TRACE(...)                                                                         \
+        do {                                                                                       \
+            LA_LOG_STREAM << "LA TRACE: " << __VA_ARGS__ << std::endl;                             \
+        } while (false)
 #else
-#define LOG_TRACE(a) ((void)0)
+#    define LOG_TRACE(a) ((void)0)
 #endif
 
 namespace util {
@@ -110,30 +110,30 @@ inline void assert__(AssertionT assertion, const std::string &message, const std
 
 /// @brief Asserting shapes
 #if LA_CHECK & LA_CHECK_SHAPE_C
-#define SHAPE_ASSERT(a, b) (la::util::assert__((a), (b), ("shape_check")))
+#    define SHAPE_ASSERT(a, b) (la::util::assert__((a), (b), ("shape_check")))
 #else
-#define SHAPE_ASSERT(a, b) ((void)0)
+#    define SHAPE_ASSERT(a, b) ((void)0)
 #endif
 
 /// @brief Asserting boundaries while accessing arrays
 #if LA_CHECK & LA_CHECK_BOUNDARY_C
-#define BOUNDARY_ASSERT(a, b) (la::util::assert__((a), (b), ("boundary_check")))
+#    define BOUNDARY_ASSERT(a, b) (la::util::assert__((a), (b), ("boundary_check")))
 #else
-#define BOUNDARY_ASSERT(a, b) ((void)0)
+#    define BOUNDARY_ASSERT(a, b) ((void)0)
 #endif
 
 /// @brief Asserting special layouts
 #if LA_CHECK & LA_CHECK_LAYOUT_C
-#define LAYOUT_ASSERT(a, b) (la::util::assert__((a), (b), ("layout_check")))
+#    define LAYOUT_ASSERT(a, b) (la::util::assert__((a), (b), ("layout_check")))
 #else
-#define LAYOUT_ASSERT(a, b) ((void)0)
+#    define LAYOUT_ASSERT(a, b) ((void)0)
 #endif
 
 /// @brief Asserting special layouts
 #if LA_CHECK & LA_CHECK_ZERO
-#define NON_ZERO_ASSERT(a, b) (la::util::assert__(std::abs(a) < 1e-12, (b), ("non_zero_check")))
+#    define NON_ZERO_ASSERT(a, b) (la::util::assert__(std::abs(a) < 1e-12, (b), ("non_zero_check")))
 #else
-#define NON_ZERO_ASSERT(a, b) ((void)0)
+#    define NON_ZERO_ASSERT(a, b) ((void)0)
 #endif
 
 } // namespace la
