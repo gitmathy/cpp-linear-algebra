@@ -93,6 +93,7 @@
     <ClInclude Include="la\algorithm\util\solver.hpp" />
     <ClInclude Include="la\data_structure\expressions\binary.hpp" />
     <ClInclude Include="la\data_structure\expressions\forward.hpp" />
+    <ClInclude Include="la\data_structure\expressions\iterator.hpp" />
     <ClInclude Include="la\data_structure\expressions\literal.hpp" />
     <ClInclude Include="la\data_structure\expressions\operant.hpp" />
     <ClInclude Include="la\data_structure\expressions\operations.hpp" />
