@@ -10,6 +10,7 @@
 #ifndef LA_DATA_STRUCTURES_EXPRESSIONS_BINARY_HPP
 #define LA_DATA_STRUCTURES_EXPRESSIONS_BINARY_HPP
 
+#include "la/data_structure/expressions/iterator.hpp"
 #include "la/data_structure/expressions/traits.hpp"
 #include "la/util/types.hpp"
 
@@ -65,6 +66,12 @@ public:
 
     /// @brief Get column index of non-zero index
     inline size_type col_idx(const size_type nz_idx) const;
+
+    /// @brief Constant iterator to begin of column indices
+    inline auto begin_col_idx(const size_type i) const;
+
+    /// @brief Constant iterator to end of column indices
+    inline auto end_col_idx(const size_type i) const;
 
     /// @brief Get the rows of the result
     inline size_type rows() const;
@@ -128,6 +135,22 @@ inline size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::col_idx(const siz
     SHAPE_ASSERT(ExpTLeft::dimension == 2 || ExpTRight::dimension == 2,
                  "binary_expression: col_idx one side needs to be a matrix");
     return ExpTLeft::dimension == 2 ? p_left.col_idx(nz_idx) : p_right.col_idx(nz_idx);
+}
+
+template <typename ExpTLeft, typename ExpTRight, typename OpsT>
+inline auto binary_expression<ExpTLeft, ExpTRight, OpsT>::begin_col_idx(const size_type i) const
+{
+    static_assert(std::is_same_v<ExpTLeft, ExpTRight>,
+                  "Types ExpTLeft and ExpTRight must be identical!");
+    return const_col_idx_iterator<ExpTLeft>(p_left, p_right, i);
+}
+
+template <typename ExpTLeft, typename ExpTRight, typename OpsT>
+inline auto binary_expression<ExpTLeft, ExpTRight, OpsT>::end_col_idx(const size_type i) const
+{
+    static_assert(std::is_same_v<ExpTLeft, ExpTRight>,
+                  "Types ExpTLeft and ExpTRight must be identical!");
+    return const_col_idx_iterator<ExpTLeft>(p_left, p_right, i).end();
 }
 
 template <typename ExpTLeft, typename ExpTRight, typename OpsT>

@@ -10,6 +10,9 @@
 #ifndef LA_DATA_STRUCTURES_EXPRESSIONS_OPERANT_HPP
 #define LA_DATA_STRUCTURES_EXPRESSIONS_OPERANT_HPP
 
+#include "la/util/types.hpp"
+#include <memory>
+
 namespace la {
 namespace expressions {
 
@@ -72,10 +75,10 @@ public:
     inline size_type non_zeros() const { return p_expression.non_zeros(); }
 
     /// @brief Constant iterator to begin of column indices
-    inline cidx_iterator begin_col_idx(const size_type i) const;
+    inline auto begin_col_idx(const size_type i) const;
 
     /// @brief Constant iterator to end of column indices
-    inline cidx_iterator end_col_idx(const size_type i) const;
+    inline auto end_col_idx(const size_type i) const;
 
     /// @brief Dimension of the operant is defined by the expression
     constexpr static size_type dimension = ExpressionT::dimension;
@@ -133,16 +136,14 @@ inline size_type operant<ExpressionT>::col_idx(const size_type nz_idx) const
 }
 
 template <typename ExpressionT>
-inline operant<ExpressionT>::cidx_iterator
-operant<ExpressionT>::begin_col_idx(const size_type i) const
+inline auto operant<ExpressionT>::begin_col_idx(const size_type i) const
 {
     BOUNDARY_ASSERT(i <= rows(), "operant begin_col_idx: index out of bound");
     return p_expression.begin_col_idx(i);
 }
 
 template <typename ExpressionT>
-inline operant<ExpressionT>::cidx_iterator
-operant<ExpressionT>::end_col_idx(const size_type i) const
+inline auto operant<ExpressionT>::end_col_idx(const size_type i) const
 {
     BOUNDARY_ASSERT(i <= rows(), "operant end_col_idx: index out of bound");
     return p_expression.end_col_idx(i);
