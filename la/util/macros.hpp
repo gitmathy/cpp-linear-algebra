@@ -98,40 +98,52 @@ namespace util {
 /// @param type Error code
 /// @param message Contend of the exception
 template <typename AssertionT>
-inline void assert__(AssertionT assertion, const std::string &message, const std::string &code)
+inline void la_assert(AssertionT assertion, const std::string &message,
+                      const std::string &function_name, const ErrorCode code)
 {
     if (!bool(assertion)) {
-        LOG_ERROR("Error detected: " << message);
-        throw error(message, code);
+        LOG_ERROR("Error detected (" << error_to_str(code) << ") in function " << function_name
+                                     << "\n  " << message);
+        error_factory(message, function_name, code);
     }
 }
 
 } // namespace util
 
+#ifndef __FUNCTION_NAME__
+#    ifdef _MSC_VER // WINDOWS
+#        define __FUNCTION_NAME__ __FUNCTION__
+#    else //*NIX
+#        define __FUNCTION_NAME__ __func__
+#    endif
+#endif
+
 /// @brief Asserting shapes
 #if LA_CHECK & LA_CHECK_SHAPE_C
-#    define SHAPE_ASSERT(a, b) (la::util::assert__((a), (b), ("shape_check")))
+#    define SHAPE_ASSERT(a, b) (la::util::la_assert((a), (b), __FUNCTION_NAME__, la::util::SHAPE))
 #else
 #    define SHAPE_ASSERT(a, b) ((void)0)
 #endif
 
 /// @brief Asserting boundaries while accessing arrays
 #if LA_CHECK & LA_CHECK_BOUNDARY_C
-#    define BOUNDARY_ASSERT(a, b) (la::util::assert__((a), (b), ("boundary_check")))
+#    define BOUNDARY_ASSERT(a, b)                                                                  \
+        (la::util::la_assert((a), (b), __FUNCTION_NAME__, la::util::BOUNDARY))
 #else
 #    define BOUNDARY_ASSERT(a, b) ((void)0)
 #endif
 
 /// @brief Asserting special layouts
 #if LA_CHECK & LA_CHECK_LAYOUT_C
-#    define LAYOUT_ASSERT(a, b) (la::util::assert__((a), (b), ("layout_check")))
+#    define LAYOUT_ASSERT(a, b) (la::util::la_assert((a), (b), __FUNCTION_NAME__, la::util::LAYOUT))
 #else
 #    define LAYOUT_ASSERT(a, b) ((void)0)
 #endif
 
 /// @brief Asserting special layouts
 #if LA_CHECK & LA_CHECK_ZERO
-#    define NON_ZERO_ASSERT(a, b) (la::util::assert__(std::abs(a) < 1e-12, (b), ("non_zero_check")))
+#    define NON_ZERO_ASSERT(a, b)                                                                  \
+        (la::util::la_assert(std::abs(a) < 1e-12, (b), __FUNCTION_NAME__, la::util::NON_ZERO))
 #else
 #    define NON_ZERO_ASSERT(a, b) ((void)0)
 #endif
