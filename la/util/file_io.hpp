@@ -96,7 +96,7 @@ inline file_writer::file_writer(const std::string &filename, const bool binary)
     LOG_DEBUG("Opened file '" << p_filename << "' for write");
     if (!p_ofs) {
         LOG_ERROR("Failed to open file '" << p_filename << "' for write");
-        throw util::error("Cannot open file for write.", "file_io");
+        util::error_factory("Cannot open file for write", __FUNCTION_NAME__, FILE_ERROR);
     }
 }
 
@@ -125,7 +125,7 @@ void file_writer::append(const T &what, const size_type size)
     }
     if (!p_ofs) {
         LOG_ERROR("Failed to write file '" << p_filename << "' for write");
-        throw util::error("Cannot write to write.", "file_io");
+        util::error_factory("Cannot open file for write", __FUNCTION_NAME__, FILE_ERROR);
     }
 }
 
@@ -136,7 +136,7 @@ inline file_reader::file_reader(const std::string &filename, const bool binary)
     LOG_DEBUG("Opened file '" << filename << "' for read");
     if (!p_ifs) {
         LOG_ERROR("Failed to open file '" << filename << "' for read");
-        throw util::error("Cannot open file for read.", "file_io");
+        util::error_factory("Cannot open file for read", __FUNCTION_NAME__, FILE_ERROR);
     }
 }
 
@@ -158,20 +158,20 @@ void file_reader::get(T &where, const size_type size)
             for (T it = where; it != where + size; ++it) {
                 if (!(p_ifs >> *it)) {
                     LOG_ERROR("Reading text file failed due to I/O error");
-                    throw util::error("Cannot read text data.", "file_io");
+                    util::error_factory("Cannot read text data.", __FUNCTION_NAME__, FILE_ERROR);
                 }
             }
         } else {
             // text mode: single element
             if (!(p_ifs >> where)) {
                 LOG_ERROR("Reading text file failed due to I/O error");
-                throw util::error("Cannot read text data.", "file_io");
+                util::error_factory("Cannot read text data.", __FUNCTION_NAME__, FILE_ERROR);
             }
         }
     }
     if (!p_ifs) {
         LOG_ERROR("Reading file failed due to I/O error");
-        throw util::error("Cannot read text data.", "file_io");
+        util::error_factory("Cannot read text data.", __FUNCTION_NAME__, FILE_ERROR);
     }
 }
 
@@ -180,12 +180,12 @@ inline bool delete_file(const std::string &filename)
     std::cout << "Deleting " << filename << std::endl;
     try {
         if (!std::filesystem::remove(filename)) {
-            throw util::error("Cannot delete temporary file", "file_error");
+            util::error_factory("Cannot delete file", __FUNCTION_NAME__, FILE_ERROR);
         }
         return false;
     } catch (const std::filesystem::filesystem_error &) {
-        LOG_ERROR("Failed to delete temporary file");
-        throw util::error("Cannot delete temporary file", "file_error");
+        LOG_ERROR("Failed to delete  file");
+        util::error_factory("Cannot delete file", __FUNCTION_NAME__, FILE_ERROR);
     }
 }
 

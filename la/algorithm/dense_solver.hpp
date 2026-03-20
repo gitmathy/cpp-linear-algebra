@@ -97,7 +97,8 @@ void lu_decomposition<MatT, VecT>::decompose()
                 }
             }
             if (max_val < la::util::EPS) {
-                throw la::util::error("Irregular matrix", "algorithm:lup");
+                la::util::error_factory("Irregular matrix in lu decomposition",
+                                              __FUNCTION_NAME__, la::util::NON_ZERO);
             }
             p_p(k) = i_pivot;
             if (i_pivot != k) {
