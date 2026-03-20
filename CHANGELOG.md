@@ -1,3 +1,17 @@
+# [1.27.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.26.0...v1.27.0) (2026-03-20)
+
+
+### Bug Fixes
+
+* Include pre-compiled headers ([8efac16](https://github.com/gitmathy/cpp-linear-algebra/commit/8efac1632b2ead23f8d356b4e03842dddfdb1497))
+
+
+### Features
+
+* Different errors ([7b31527](https://github.com/gitmathy/cpp-linear-algebra/commit/7b315278e3675d2810fcdfb3facbb12f47dc7208))
+* Include assert ([7874fc8](https://github.com/gitmathy/cpp-linear-algebra/commit/7874fc862519040b0251fb2cb1d410c77f022afa))
+* Using error_factory to throw an error ([0232fba](https://github.com/gitmathy/cpp-linear-algebra/commit/0232fbaa41cb888d5c75da5818a502417f69ec24))
+
 # [1.26.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.25.0...v1.26.0) (2026-03-19)
 
 
