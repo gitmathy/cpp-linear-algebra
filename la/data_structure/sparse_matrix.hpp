@@ -303,7 +303,7 @@ inline T &sparse_matrix<T>::operator()(const size_type i, const size_type j)
         // element found!
         return *(p_vals + std::distance(p_col_idx, it));
     }
-    throw util::error("sparse_matrix: Cannot write to a non-zero element");
+    util::error_factory("Cannot write to a non-zero element", __FUNCTION_NAME__, util::BOUNDARY);
 }
 
 template <typename T>

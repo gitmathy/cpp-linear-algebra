@@ -45,6 +45,14 @@ TEST(solver, lu_decomposition_w_x)
     EXPECT_THROW(lu.solve(b, x_wrong), util::error);
 }
 
+/// @brief Test error thrown for irregular matrix
+TEST(solver, lu_decomposition_irregular)
+{
+    matrix<double> A({{0, 0}, {1, 1}});
+    typedef algorithm::lu_decomposition<matrix<double>, vector<double>> solver_type;
+    EXPECT_THROW(solver_type lu(A), util::non_zero_error);
+}
+
 /// @brief Test un-preconditioned CG solver
 TEST(solver, cg_un_pred)
 {

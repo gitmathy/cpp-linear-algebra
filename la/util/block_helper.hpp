@@ -10,6 +10,7 @@
 #ifndef LA_UTIL_BLOCK_HELPER_HPP
 #define LA_UTIL_BLOCK_HELPER_HPP
 
+#include "la/util/macros.hpp"
 #include "la/util/types.hpp"
 #include <numeric>
 #include <vector>
@@ -26,6 +27,8 @@ inline std::vector<size_type> create_block_indices(size_type start, size_type en
                                                    size_type block_size)
 {
     std::vector<size_type> indices;
+    LAYOUT_ASSERT(start < end, "block must consist of more than one element");
+    indices.reserve((end - start) / block_size + 1);
     for (size_type i = start; i < end; i += block_size) {
         indices.push_back(i);
     }
