@@ -122,6 +122,10 @@ auto operator*(const sparse_matrix<T> &left, const T &right);
 template <typename T>
 auto operator*(const T &left, const sparse_matrix<T> &right);
 
+/// @brief transposed sparse matrix * vector
+template <typename T>
+vector<T> transp_mult(const sparse_matrix<T> &left, const vector<T> &right);
+
 // ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
 // ===============================================
@@ -382,6 +386,15 @@ auto operator*(const T &left, const sparse_matrix<T> &right)
         expressions::mult_operation<expressions::literal<T>, sparse_matrix<T>>>
         new_bin_exp_type;
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
+/// @brief transposed sparse matrix * vector
+template <typename T>
+vector<T> transp_mult(const sparse_matrix<T> &left, const vector<T> &right)
+{
+    vector<T> y(left.cols());
+    algorithm::transpose_matrix_multiplication<T>::multiply(left, right, y, true);
+    return y;
 }
 
 } // namespace la
