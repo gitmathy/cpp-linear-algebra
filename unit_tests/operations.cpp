@@ -11,6 +11,7 @@
 
 #include "la/data_structure/expressions/iterator.hpp"
 #include "la/dense"
+#include "la/operation/multiplication.hpp"
 #include "la/sparse"
 #include <gtest/gtest.h>
 
@@ -71,6 +72,19 @@ TEST(ops, sparse_matrix_add)
     EXPECT_EQ(c(2, 2), 0);
     EXPECT_EQ(c(2, 3), 13);
     EXPECT_EQ(c(2, 4), 7);
+}
+
+/// \brief Testing sparse matrix transposed multiply
+TEST(ops, sparse_matrix_transpose_multiply)
+{
+    const sparse_matrix<int> a({{1, 3}, {}, {1, 2, 3}}, {2, 1, 1, 1, 4}, 4);
+    const vector<int> x({1, 2, 3});
+    const vector<int> y = transp_mult(a, x);
+    EXPECT_EQ(y.rows(), 4);
+    EXPECT_EQ(y(0), 0);
+    EXPECT_EQ(y(1), 5);
+    EXPECT_EQ(y(2), 3);
+    EXPECT_EQ(y(3), 13);
 }
 
 } // namespace la

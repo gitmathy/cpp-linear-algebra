@@ -11,10 +11,13 @@
 #define LA_ALGORITHM_MULTIPLICATION_HPP
 
 #include "la/data_structure/matrix.hpp"
+#include "la/data_structure/sparse_matrix.hpp"
+#include "la/data_structure/vector.hpp"
 #include "la/util/block_helper.hpp"
 #include "la/util/constants.hpp"
 #include "la/util/types.hpp"
 #include <algorithm>
+#include <atomic>
 #include <vector>
 
 namespace la {
@@ -35,6 +38,17 @@ public:
     /// @param B right matrix
     /// @return A*B
     static matrix<T> multiply(const matrix<T> &A, const matrix<T> &B);
+};
+
+/// @brief Multiplying a a transposed sparse matrix with a vector
+/// @tparam T Type of the element in the matrix and vector
+template <typename T>
+class transpose_matrix_multiplication
+{
+public:
+    /// @brief Multiply the transposed of A with x yielding y, i.e., A^T*x=y
+    static void multiply(const sparse_matrix<T> &A, const vector<T> &x, vector<T> &y,
+                         const bool y_is_zero = false);
 };
 
 // ===============================================
@@ -114,6 +128,51 @@ matrix<T> matrix_multiplication<T>::multiply(const matrix<T> &A, const matrix<T>
     });
 
     return C;
+}
+
+template <typename T>
+void transpose_matrix_multiplication<T>::multiply(const sparse_matrix<T> &A, const vector<T> &x,
+                                                  vector<T> &y, const bool y_is_zero)
+{
+    SHAPE_ASSERT(x.rows() == A.rows(), "Vector and matrix dimension not aligned");
+    const size_type num_rows = A.rows();
+    const size_type num_cols = A.cols();
+    const size_type __restrict *row_ptr = A.begin_row_ptr();
+    const size_type __restrict *col_indices = A.begin_col_idx();
+    const T *__restrict values = A.begin();
+    const T __restrict *x_data = x.vals();
+    if (y.rows() != num_cols) {
+        y.resize(num_cols, T(0));
+    } else if (!y_is_zero) {
+        y = T(0);
+    }
+    T *y_data = y.vals();
+    std::vector<size_type> row_indices(num_rows);
+    std::iota(row_indices.begin(), row_indices.end(), 0);
+
+    std::for_each(
+#ifdef PARALLEL
+        execution::par_unseq,
+#endif
+        row_indices.begin(), row_indices.end(), [&](size_type i) {
+            const T xi = x_data[i];
+
+            for (size_type k = row_ptr[i]; k < row_ptr[i + 1]; ++k) {
+                const size_type j = col_indices[k];
+                const T val = values[k];
+
+                // Create an atomic reference to the specific element in the output vector
+                std::atomic_ref<T> target(y_data[j]);
+
+                // Perform a thread-safe addition
+                T current = target.load(std::memory_order_relaxed);
+                T desired = current + (val * xi);
+                while (!target.compare_exchange_weak(current, desired, std::memory_order_relaxed,
+                                                     std::memory_order_relaxed)) {
+                    desired = current + (val * xi);
+                }
+            }
+        });
 }
 
 } // namespace algorithm
