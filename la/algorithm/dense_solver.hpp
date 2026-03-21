@@ -150,8 +150,8 @@ void lu_decomposition<MatT, VecT>::decompose()
             std::for_each(i_blocks.begin(), i_blocks.end(),
 #endif
                           [&](size_type i_blk_start) {
-                              // Safe Dynamic Allocation per thread/block
-                              std::vector<T> u_buffer(panel_width);
+                              // Stack-based buffer for performance
+                              T u_buffer[la::util::BLOCK_SIZE];
                               const size_type i_blk_end = std::min(i_blk_start + block_size, M);
 
                               // We iterate by columns of the trailing matrix to pack them once

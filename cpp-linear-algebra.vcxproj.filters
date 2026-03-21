@@ -283,5 +283,8 @@
     <ClInclude Include="la\data_structure\expressions\iterator.hpp">
       <Filter>Header Files\la\data_structure\expressions</Filter>
     </ClInclude>
+    <ClInclude Include="la\data_structure\triplet_sparse_matrix.hpp">
+      <Filter>Header Files\la\data_structure</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
