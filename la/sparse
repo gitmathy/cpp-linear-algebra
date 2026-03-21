@@ -12,6 +12,7 @@
 #include "la/data_structure/mixed_sparse_data.hpp"
 #include "la/data_structure/sparse_matrix.hpp"
 #include "la/data_structure/sparse_matrix_builder.hpp"
+#include "la/data_structure/triplet_sparse_matrix.hpp"
 #include "la/ops"
 
 namespace la {
