@@ -1,3 +1,11 @@
+# [1.28.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.27.0...v1.28.0) (2026-03-21)
+
+
+### Features
+
+* Include triplet sparse matrix ([f280d48](https://github.com/gitmathy/cpp-linear-algebra/commit/f280d48392901ae37642ad5a5112efbaf7ec74d4))
+* optimize performance for lu decomposition ([d703407](https://github.com/gitmathy/cpp-linear-algebra/commit/d7034076d6917f60f6e425a6b33afcad9ee89dfc))
+
 # [1.27.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.26.0...v1.27.0) (2026-03-20)
 
 
