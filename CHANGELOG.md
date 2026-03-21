@@ -1,3 +1,15 @@
+# [1.29.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.28.0...v1.29.0) (2026-03-21)
+
+
+### Bug Fixes
+
+* restricted ([cc9c471](https://github.com/gitmathy/cpp-linear-algebra/commit/cc9c471399e2d8a3a591546afd04c36c248787b6))
+
+
+### Features
+
+* transposed sparse matrix times a vector ([7e2739f](https://github.com/gitmathy/cpp-linear-algebra/commit/7e2739f3609c91c520a984bd255dce70e23c77a7))
+
 # [1.28.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.27.0...v1.28.0) (2026-03-21)
 
 
