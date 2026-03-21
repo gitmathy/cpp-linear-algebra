@@ -106,6 +106,7 @@
     <ClInclude Include="la\data_structure\sparse_matrix.hpp" />
     <ClInclude Include="la\data_structure\sparse_matrix_builder.hpp" />
     <ClInclude Include="la\data_structure\static_vector.hpp" />
+    <ClInclude Include="la\data_structure\triplet_sparse_matrix.hpp" />
     <ClInclude Include="la\data_structure\util\concepts.hpp" />
     <ClInclude Include="la\data_structure\vector.hpp" />
     <ClInclude Include="la\operation\addition.hpp" />
