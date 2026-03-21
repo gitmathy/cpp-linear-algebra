@@ -153,6 +153,94 @@ TEST(triplet_sparse_matrix, assemble_overwrite_3)
     }
 }
 
+/// @brief Testing assemble
+TEST(triplet_sparse_matrix, assemble_sum_0)
+{
+    triplet_sparse_matrix<int, util::SUM> a(2, 3);
+    a(0, 0) = 2;
+    a(0, 1) = 1;
+    a(1, 2) = 4;
+    a(0, 1) = 3;
+    sparse_matrix<int> A_assemble = a.assemble();
+    const sparse_matrix<int> &A = A_assemble;
+    EXPECT_EQ(A.rows(), 2);
+    EXPECT_EQ(A.cols(), 3);
+    EXPECT_EQ(A.non_zeros(), 3);
+    EXPECT_EQ(A(0, 0), 2);
+    EXPECT_EQ(A(0, 1), 4);
+    EXPECT_EQ(A(0, 2), 0);
+    EXPECT_EQ(A(1, 0), 0);
+    EXPECT_EQ(A(1, 1), 0);
+    EXPECT_EQ(A(1, 2), 4);
+}
+
+/// @brief Two rows with same non-zeros
+TEST(triplet_sparse_matrix, assemble_sum_1)
+{
+    triplet_sparse_matrix<int, util::SUM> a(2, 3);
+    a(0, 0) = 2;
+    a(1, 0) = 2;
+    a(0, 0) = 1;
+    sparse_matrix<int> A_assemble = a.assemble();
+    const sparse_matrix<int> &A = A_assemble;
+    EXPECT_EQ(A.rows(), 2);
+    EXPECT_EQ(A.cols(), 3);
+    EXPECT_EQ(A.non_zeros(), 2);
+    EXPECT_EQ(A(0, 0), 3);
+    EXPECT_EQ(A(0, 1), 0);
+    EXPECT_EQ(A(0, 2), 0);
+    EXPECT_EQ(A(1, 0), 2);
+    EXPECT_EQ(A(1, 1), 0);
+    EXPECT_EQ(A(1, 2), 0);
+}
+
+/// @brief Empty rows
+TEST(triplet_sparse_matrix, assemble_sum_2)
+{
+    triplet_sparse_matrix<int, util::SUM> a(6, 3);
+    a(2, 0) = 1;
+    a(3, 2) = 1;
+    a(2, 0) = 2;
+    a(3, 2) = 3;
+    sparse_matrix<int> A_assemble = a.assemble();
+    const sparse_matrix<int> &A = A_assemble;
+    EXPECT_EQ(A.rows(), 6);
+    EXPECT_EQ(A.cols(), 3);
+    EXPECT_EQ(A.non_zeros(), 2);
+    EXPECT_EQ(A(2, 0), 3);
+    EXPECT_EQ(A(2, 1), 0);
+    EXPECT_EQ(A(2, 2), 0);
+    EXPECT_EQ(A(3, 0), 0);
+    EXPECT_EQ(A(3, 1), 0);
+    EXPECT_EQ(A(3, 2), 4);
+
+    // Check empty rows
+    for (size_type j = 0; j < 3; ++j) {
+        EXPECT_EQ(A(0, j), 0);
+        EXPECT_EQ(A(1, 0), 0);
+        EXPECT_EQ(A(4, 1), 0);
+        EXPECT_EQ(A(5, 1), 0);
+    }
+    LOG_DEBUG("Finalizing empty rows");
+}
+
+/// @brief Empty matrix
+TEST(triplet_sparse_matrix, assemble_sum_3)
+{
+    LOG_DEBUG("Testing empty matrix");
+    triplet_sparse_matrix<int, util::SUM> a(2, 3);
+    sparse_matrix<int> A_assemble = a.assemble();
+    const sparse_matrix<int> &A = A_assemble;
+    EXPECT_EQ(A.rows(), 2);
+    EXPECT_EQ(A.cols(), 3);
+    EXPECT_EQ(A.non_zeros(), 0);
+    for (size_type i = 0; i < 2; ++i) {
+        for (size_type j = 0; j < 3; ++j) {
+            EXPECT_EQ(A(i, j), 0);
+        }
+    }
+}
+
 // /// @brief Testing move
 // TEST(sparse_matrix_builder, move)
 // {

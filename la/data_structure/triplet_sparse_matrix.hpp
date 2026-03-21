@@ -37,14 +37,34 @@ enum AssembleStrategy {
     OVERWRITE // last non-zero overwrite previous ones
 };
 
-} // namespace util
+/// @brief Check if two triplets storing the same non-zero by row and column index
+template <typename T>
+inline bool operator==(const triplet<T> &left, const triplet<T> &right)
+{
+    return left.row == right.row && left.col == right.col;
+}
+
+/// @brief Check if a triplet is "smaller" than another
+template <typename T>
+inline bool operator<(const triplet<T> &left, const triplet<T> &right)
+{
+    if (left.row < right.row) {
+        return true;
+    }
+    if (left.row == right.row) {
+        return left.col < right.col;
+    }
+    return false;
+}
 
 /// @brief Check if two triplets storing the same non-zero by row and column index
 template <typename T>
-inline bool operator==(const util::triplet<T> &a, const util::triplet<T> &b)
+inline bool operator<=(const triplet<T> &left, const triplet<T> &right)
 {
-    return a.row == b.row && a.col == b.col;
+    return left < right || left == right;
 }
+
+} // namespace util
 
 /// @brief Build a matrix by storing triplets.
 ///
@@ -70,6 +90,10 @@ private:
 
     /// @brief Sort by row, then by col
     void sort_vals();
+
+    /// @brief Compress the values according to the assembly strategy
+    /// @pre values are sorted!
+    void compress_sorted();
 
 public:
     /// @brief Construct with given number of rows and columns
@@ -109,15 +133,31 @@ void triplet_sparse_matrix<T, assemble_strategy>::sort_vals()
 #ifdef PARALLEL
         execution::par_unseq,
 #endif
-        p_vals.begin(), p_vals.end(), [](const auto &left, const auto &right) {
-            if (left.row < right.row) {
-                return true;
+        p_vals.begin(), p_vals.end());
+}
+
+template <typename T, util::AssembleStrategy assemble_strategy>
+void triplet_sparse_matrix<T, assemble_strategy>::compress_sorted()
+{
+    if (!p_vals.empty()) {
+        size_type dest = 0;
+        for (size_type src = 1; src < p_vals.size(); ++src) {
+            if (p_vals[src] == p_vals[dest]) {
+                if constexpr (assemble_strategy == util::OVERWRITE) {
+                    p_vals[dest].value = p_vals[src].value;
+                } else { // SUM
+                    p_vals[dest].value += p_vals[src].value;
+                }
+            } else {
+                ++dest;
+                if (dest != src) {
+                    p_vals[dest] = p_vals[src];
+                }
             }
-            if (left.row == right.row) {
-                return left.col < right.col;
-            }
-            return false;
-        });
+            BOUNDARY_ASSERT(p_vals[dest] <= p_vals[src], "values are not sorted");
+        }
+        p_vals.resize(dest + 1);
+    }
 }
 
 template <typename T, util::AssembleStrategy assemble_strategy>
@@ -175,66 +215,37 @@ inline const T triplet_sparse_matrix<T, assemble_strategy>::operator()(const siz
 template <typename T, util::AssembleStrategy assemble_strategy>
 sparse_matrix<T> triplet_sparse_matrix<T, assemble_strategy>::assemble()
 {
+    LOG_INFO("Building spare matrix from triplets");
     sort_vals();
-    // Preassemble to perform assemble strategy amd get number of non-zeros
-    size_type unique_nz = 0, nnz = 0;
-    const size_type size = p_vals.size();
-    for (size_type i = 0; i < size; ++i) {
-        if (i > 0 && p_vals[i] == p_vals[unique_nz]) {
-            // the next element has the size row and col index, apply strategy
-            if constexpr (assemble_strategy == util::OVERWRITE) {
-                p_vals[unique_nz].value = p_vals[i].value;
-            } else { // SUM
-                p_vals[unique_nz].value += p_vals[i].value;
-            }
-        } else { // next element has another row and column index
-            unique_nz = i;
-            ++nnz;
-        }
-    }
+    compress_sorted();
+
+    LOG_DEBUG("Assemble sparse matrix from " << p_vals.size() << " triplets");
     // Allocate memory for the sparse matrix
     sparse_matrix<T> A;
-    A.allocate(p_rows, p_cols, nnz);
-    size_type last_row_idx = 0, last_col_idx = SIZE_TYPE_MAX; // last row and column index
-    size_type nnz_idx = 0;                                    // index of curent non-zero
-    size_type row_elements = 0;                               // number of elements in current row
-    size_type *row_ptr = A.begin_row_ptr();                   // access to row_ptr
-    size_type *col_idx = A.begin_col_idx();                   // access to col_idx
-    T *val_ptr = A.begin();                                   // access to values;
+    A.allocate(p_rows, p_cols, p_vals.size());
+
+    size_type *row_ptr = A.begin_row_ptr();
+    size_type *col_idx = A.begin_col_idx();
+    T *val_ptr = A.begin();
 
     row_ptr[0] = 0;
+    size_type current_row = 0;
     for (size_type i = 0; i < p_vals.size(); ++i) {
-        const util::triplet<T> &val = p_vals[i];
-        LOG_DEBUG("Include element " << val.row << ", " << val.col << " in matrix");
-        if (val.row > last_row_idx) {
-            // we are in a next row
-            for (size_type row_offset = 1; row_offset <= val.row - last_row_idx; ++row_offset) {
-                LOG_TRACE("Setting row_ptr[" << last_row_idx + row_offset << ": "
-                                             << row_ptr[last_row_idx] + row_elements);
-                row_ptr[last_row_idx + row_offset] = row_ptr[last_row_idx] + row_elements;
-            }
-            row_elements = 0;
-            last_row_idx = val.row;
-        } else if (val.col == last_col_idx) {
-            // As the values have been sorted, we only consider the first one due to preassemble.
-            LOG_TRACE("Skipping element " << val.row << ", " << val.col);
-            continue;
+        const auto &trip = p_vals[i];
+
+        // Fill row pointers for jumps to next row(s)
+        while (current_row < trip.row) {
+            row_ptr[++current_row] = i;
         }
-        // Same row but new column index
-        col_idx[nnz_idx] = val.col;
-        val_ptr[nnz_idx] = val.value;
 
-        // move on
-        ++nnz_idx;
-        ++row_elements;
-        last_col_idx = val.col;
+        col_idx[i] = trip.col;
+        val_ptr[i] = trip.value;
     }
-    row_ptr[last_row_idx] = nnz_idx - row_elements;
-    for (size_type i = last_row_idx; i < p_rows; ++i)
-    {
-        row_ptr[i+1] = nnz_idx;
+    // Fill remaining row pointers
+    while (current_row < p_rows) {
+        row_ptr[++current_row] = p_vals.size();
     }
-
+    LOG_INFO("Created sparse matrix");
     return A;
 }
 
