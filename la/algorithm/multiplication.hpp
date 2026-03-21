@@ -137,10 +137,10 @@ void transpose_matrix_multiplication<T>::multiply(const sparse_matrix<T> &A, con
     SHAPE_ASSERT(x.rows() == A.rows(), "Vector and matrix dimension not aligned");
     const size_type num_rows = A.rows();
     const size_type num_cols = A.cols();
-    const size_type __restrict *row_ptr = A.begin_row_ptr();
-    const size_type __restrict *col_indices = A.begin_col_idx();
+    const size_type *__restrict row_ptr = A.begin_row_ptr();
+    const size_type *__restrict col_indices = A.begin_col_idx();
     const T *__restrict values = A.begin();
-    const T __restrict *x_data = x.vals();
+    const T *__restrict x_data = x.vals();
     if (y.rows() != num_cols) {
         y.resize(num_cols, T(0));
     } else if (!y_is_zero) {
