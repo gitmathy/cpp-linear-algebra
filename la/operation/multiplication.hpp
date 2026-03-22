@@ -14,8 +14,12 @@
 #include "la/data_structure/expressions/binary.hpp"
 #include "la/data_structure/expressions/operant.hpp"
 #include "la/data_structure/expressions/operations.hpp"
-#include "la/data_structure/expressions/traits.hpp"
 #include "la/data_structure/forward.hpp"
+#include "la/data_structure/matrix.hpp"
+#include "la/data_structure/sparse_matrix.hpp"
+#include "la/data_structure/static_vector.hpp"
+#include "la/data_structure/vector.hpp"
+#include "la/util/types.hpp"
 
 namespace la {
 

@@ -11,13 +11,14 @@
 #define LA_ALGORITHM_DENSE_SOLVER_HPP
 
 #include "la/algorithm/util/solver.hpp"
-#include "la/data_structure/util/concepts.hpp"
 #include "la/data_structure/vector.hpp"
 #include "la/util/block_helper.hpp"
 #include "la/util/constants.hpp"
+#include "la/util/error.hpp"
 #include "la/util/macros.hpp"
 #include "la/util/types.hpp"
-#include <cstddef>
+#include <algorithm>
+#include <cmath>
 
 namespace la {
 namespace algorithm {
