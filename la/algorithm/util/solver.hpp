@@ -147,7 +147,7 @@ template <typename MatT, typename VecT, typename PreconditionerT>
 class preconditioned_iterative_solver : public iterative_solver<MatT, VecT>
 {
 private:
-    /// @brief matrix type must define value_type
+    /// @brief Preconditioner must support solve
     static_assert(la::util::has_solve<PreconditionerT, VecT>, "Preconditioner must support solve");
 
 public:
@@ -166,6 +166,42 @@ public:
     /// @brief Copying a preconditioned solver
     preconditioned_iterative_solver(
         const preconditioned_iterative_solver<MatT, VecT, PreconditionerT> &solver);
+};
+
+/// @brief Base class for preconditioned iterative solvers with left and right preconditioning
+template <typename MatT, typename VecT, typename PreconditionerLeftT, typename PreconditionerRightT>
+class two_side_preconditioned_iterative_solver : public iterative_solver<MatT, VecT>
+{
+private:
+    /// @brief left preconditioner must support solve
+    static_assert(la::util::has_solve<PreconditionerLeftT, VecT>,
+                  "left preconditioner must support solve");
+    /// @brief left preconditioner must support solve
+    static_assert(la::util::has_solve<PreconditionerRightT, VecT>,
+                  "right preconditioner must support solve");
+    /// @brief matrix type and vector type must define the same value_type
+    static_assert(la::util::same_value_type<PreconditionerLeftT, PreconditionerRightT>,
+                  "Value types of preconditioners must be the same");
+
+public:
+    /// @brief Type of every element
+    typedef typename PreconditionerLeftT::value_type value_type;
+
+protected:
+    /// @brief Preconditioner
+    PreconditionerLeftT p_M_left;
+    /// @brief Preconditioner
+    PreconditionerRightT p_M_right;
+
+public:
+    /// @brief Constructor also setup the preconditioner
+    two_side_preconditioned_iterative_solver(const MatT &A, const double res,
+                                             const size_type max_iter, const value_type omega);
+
+    /// @brief Copying a preconditioned solver
+    two_side_preconditioned_iterative_solver(
+        const two_side_preconditioned_iterative_solver<MatT, VecT, PreconditionerLeftT,
+                                                       PreconditionerRightT> &solver);
 };
 
 // ===============================================
@@ -231,6 +267,27 @@ template <typename MatT, typename VecT, typename PreconditionerT>
 preconditioned_iterative_solver<MatT, VecT, PreconditionerT>::preconditioned_iterative_solver(
     const preconditioned_iterative_solver<MatT, VecT, PreconditionerT> &solver)
     : iterative_solver<MatT, VecT>(solver.p_A, solver.p_res, solver.p_max_iter), p_M(solver.p_M)
+{}
+
+// two_side_preconditioned_iterative_solver
+// ----------------------------------------
+
+template <typename MatT, typename VecT, typename PreconditionerLeftT, typename PreconditionerRightT>
+two_side_preconditioned_iterative_solver<MatT, VecT, PreconditionerLeftT, PreconditionerRightT>::
+    two_side_preconditioned_iterative_solver(
+        const MatT &A, const double res, const size_type max_iter,
+        const typename two_side_preconditioned_iterative_solver<
+            MatT, VecT, PreconditionerLeftT, PreconditionerRightT>::value_type omega)
+    : iterative_solver<MatT, VecT>(A, res, max_iter), p_M_left(A, omega), p_M_right(A, omega)
+{}
+
+template <typename MatT, typename VecT, typename PreconditionerLeftT, typename PreconditionerRightT>
+two_side_preconditioned_iterative_solver<MatT, VecT, PreconditionerLeftT, PreconditionerRightT>::
+    two_side_preconditioned_iterative_solver(
+        const two_side_preconditioned_iterative_solver<MatT, VecT, PreconditionerLeftT,
+                                                       PreconditionerRightT> &solver)
+    : iterative_solver<MatT, VecT>(solver.p_A, solver.p_res, solver.p_max_iter),
+      p_M_left(solver.p_M_left), p_M_right(solver.p_M_right)
 {}
 
 } // namespace util

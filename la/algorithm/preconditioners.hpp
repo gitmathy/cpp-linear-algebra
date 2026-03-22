@@ -332,7 +332,7 @@ bool ilu_pc<MatT, VecT>::solve(const VecT &b, VecT &x) const
     }
 
     // Backward substitution: U * x = y
-    for (signed_size_type i = A.rows() - 1; i >= 0; --i) {
+    for (signed_size_type i = (signed_size_type)A.rows() - 1; i >= 0; --i) {
         T sum = 0.0;
         size_type diag_idx = SIZE_TYPE_MAX;
         for (size_type k = A.row_idx_begin(i); k < A.row_idx_begin(i + 1); ++k) {

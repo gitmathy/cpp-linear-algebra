@@ -32,4 +32,10 @@ typedef algorithm::pcg_solver<sparse_dmatrix, dvector,
                               algorithm::symmetric_gauss_seidel_pc<sparse_dmatrix, dvector>>
     pcg_sgs;
 
+/// @brief Type of preconditioned GMRES method with right ILU preconditioning
+typedef algorithm::pgmres_solver<sparse_dmatrix, dvector,
+                                 algorithm::identity_pc<sparse_dmatrix, dvector>,
+                                 algorithm::ilu_pc<sparse_dmatrix, dvector>>
+    pgmres_ilu;
+
 } // namespace la
