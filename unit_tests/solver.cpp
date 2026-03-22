@@ -210,7 +210,7 @@ TEST(solver, pgmres_ilu)
     sparse_matrix<double> A;
     A_build.move(A);
     const vector<double> b(n, 2.0);
-    pgmres_ilu pgmres(A, 1e-10, n, n, 1.0);
+    pgmres_ilu pgmres(A, 1e-10, n, n / 4, 1.0);
     // Act
     const vector<double> x = pgmres.solve(b);
     // Assert
