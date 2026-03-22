@@ -207,6 +207,9 @@ std::ostream &operator<<(std::ostream &os, const vector<T> &vec);
 template <typename T>
 void vector<T>::allocate(size_type n)
 {
+    if (rows() == n) {
+        return;
+    }
     LOG_DEBUG("Allocating memory for vector: " << (n * sizeof(T)) << " B");
     util::deallocate_aligned(p_vals); // Includes a check on nullptr
     p_vals = util::allocate_aligned<T>(n);

@@ -202,7 +202,7 @@ bool pcg_solver<MatT, VecT, PreconditionerT>::solve(const VecT &b, VecT &x) cons
             res_old = res_new;
             break;
         }
-        z = M.solve(r);
+        M.solve(r, z);
         const T preconditioned_res_new = inner_product(r, z);
         const T beta = preconditioned_res_new / preconditioned_res_old;
         LOG_DEBUG("Update search directionby beta=" << beta);
@@ -243,7 +243,8 @@ bool pgmres_solver<MatT, VecT, PreconditionerLeftT, PreconditionerRightT>::solve
 {
     SHAPE_ASSERT(b.rows() == this->p_A.rows() && x.rows() == this->p_A.cols(),
                  "Invalid dimension for gmres solve");
-    LOG_INFO("Solving linear equation system (" << b.rows() << ") with preconditioned gmres");
+    LOG_INFO("Solving linear equation system (" << this->p_A.rows() << " x " << this->p_A.cols()
+                                                << ") with preconditioned gmres");
     typedef typename util::iterative_solver<MatT, VecT>::value_type T;
 
     // references to members of base class to avoid "virtual lookups"
@@ -253,32 +254,38 @@ bool pgmres_solver<MatT, VecT, PreconditionerLeftT, PreconditionerRightT>::solve
     const size_type max_iter = this->p_max_iter;
     const size_type n = A.rows();
     const T &tol = this->p_res;
-    VecT r(n), w(n), update(n); // helper vectors
+    VecT r(n), w(n), update(n), z(n), tmp(n); // helper vectors
     size_type iter = 0;
     T obtained_tol = 0.;
     std::vector<VecT> V(p_restart + 1, VecT(n));
     matrix<T> H(p_restart + 1, p_restart);
+    VecT sn(p_restart, 0.0), cs(p_restart, 0.0);
 
+    LOG_DEBUG("Starting with gmres iterations");
     for (iter = 0; iter < max_iter; ++iter) {
         // Initial residual: r = M_left.solve(b - A * x)
-        r = ML.solve(b - A * x);
+        tmp = b - A * x;
+        ML.solve(tmp, r);
         const T beta = norm<2>(r);
 
         if (beta < tol) {
             obtained_tol = beta;
             break;
+        } else {
+            LOG_DEBUG("Relative error norm: " << beta);
         }
         V[0] = r * (1.0 / beta);
 
         VecT g(p_restart + 1, 0.0);
         g(0) = beta;
 
-        VecT sn(p_restart, 0.0), cs(p_restart, 0.0);
-
         size_type j = 0;
+        LOG_DEBUG("Starting next restart");
         for (; j < p_restart; ++j) {
             // Arnoldi with both Preconditioners: w = ML.solve(A * MR.solve(V[j]))
-            w = ML.solve(A * MR.solve(V[j]));
+            MR.solve(V[j], z);
+            tmp = A * z;
+            ML.solve(tmp, w);
 
             // Modified Gram-Schmidt
             for (size_type i = 0; i <= j; ++i) {
@@ -321,11 +328,12 @@ bool pgmres_solver<MatT, VecT, PreconditionerLeftT, PreconditionerRightT>::solve
         }
 
         // Update x: x = x + MR.solve(V * y)
-        VecT update(n, 0.0);
+        update = T(0);
         for (size_type i = 0; i < j; ++i) {
             update = update + V[i] * y(i);
         }
-        x = x + MR.solve(update);
+        MR.solve(update, z);
+        x += z;
 
         if (std::abs(g(j)) < tol) {
             obtained_tol = std::abs(g(j));
