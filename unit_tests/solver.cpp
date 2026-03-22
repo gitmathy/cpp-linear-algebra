@@ -196,6 +196,32 @@ TEST(solver, pcg_sgs)
     ASSERT_LE(error_norm, 1e-4);
 }
 
+TEST(solver, pgmres_ilu)
+{
+    // Arange
+    const size_type n = 100;
+    sparse_matrix_builder<double> A_build(n, n);
+    for (size_type i = 0; i < n; ++i) {
+        A_build(i, i) = 2;
+        if (i > 0) {
+            A_build(i - 1, i) = -1;
+        }
+    }
+    sparse_matrix<double> A;
+    A_build.move(A);
+    const vector<double> b(n, 2.0);
+    pgmres_ilu pgmres(A, 1e-10, n, n, 1.0);
+    // Act
+    const vector<double> x = pgmres.solve(b);
+    // Assert
+    const vector<double> error = A * x - b;
+    const double error_norm = norm<2>(error);
+    ASSERT_TRUE(pgmres.solved());
+    ASSERT_LE(pgmres.iter(), n);
+    ASSERT_LE(pgmres.res(), 1e-5);
+    ASSERT_LE(error_norm, 1e-4);
+}
+
 /// @brief Test identity preconditioner
 TEST(solver, identity_pc_1)
 {

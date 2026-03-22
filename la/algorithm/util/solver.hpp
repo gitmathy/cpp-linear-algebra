@@ -179,9 +179,8 @@ private:
     /// @brief left preconditioner must support solve
     static_assert(la::util::has_solve<PreconditionerRightT, VecT>,
                   "right preconditioner must support solve");
-
-    static_assert(std::is_same<typename PreconditionerLeftT::value_type,
-                               typename PreconditionerRightT::value_type>::value,
+    /// @brief matrix type and vector type must define the same value_type
+    static_assert(la::util::same_value_type<PreconditionerLeftT, PreconditionerRightT>,
                   "Value types of preconditioners must be the same");
 
 public:

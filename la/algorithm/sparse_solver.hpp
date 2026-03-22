@@ -11,6 +11,7 @@
 #define LA_ALGORITHM_SPARSE_SOLVER_HPP
 
 #include "la/algorithm/util/solver.hpp"
+#include "la/data_structure/matrix.hpp"
 #include "la/data_structure/util/concepts.hpp"
 #include "la/operation/inner_product.hpp"
 #include <cmath>
@@ -69,13 +70,18 @@ class pgmres_solver
 public:
     typedef typename util::solver<MatT, VecT>::value_type value_type;
 
+private:
+    /// @brief Restart parameter
+    size_type p_restart;
+
 public:
     /// @brief Set up a preconditioned gmres solver
-    pgmres_solver(const MatT &A, const double res, const size_type max_iter,
+    pgmres_solver(const MatT &A, const double res, const size_type max_iter, size_type restart,
                   const typename util::solver<MatT, VecT>::value_type omega = 1.0);
 
     /// @brief Copying a pgmres solver
-    pgmres_solver(const pgmres_solver<MatT, VecT, PreconditionerT> &solver);
+    pgmres_solver(
+        const pgmres_solver<MatT, VecT, PreconditionerLeftT, PreconditionerRightT> &solver);
 
     /// @brief Apply the preconditioning
     bool solve(const VecT &b, VecT &x) const override;
@@ -106,7 +112,7 @@ template <typename MatT, typename VecT>
 bool cg_solver<MatT, VecT>::solve(const VecT &b, VecT &x) const
 {
     SHAPE_ASSERT(b.rows() == this->p_A.rows() && x.rows() == this->p_A.cols(),
-                 "Invalid dimension for LU solve");
+                 "Invalid dimension for cg solve");
     LOG_INFO("Solving linear equation system (" << b.rows() << ") with un-preconditioned CG");
     typedef typename util::iterative_solver<MatT, VecT>::value_type T;
 
@@ -158,16 +164,15 @@ pcg_solver<MatT, VecT, PreconditionerT>::pcg_solver(
 template <typename MatT, typename VecT, typename PreconditionerT>
 pcg_solver<MatT, VecT, PreconditionerT>::pcg_solver(
     const pcg_solver<MatT, VecT, PreconditionerT> &solver)
-    : util::preconditioned_iterative_solver<MatT, VecT, PreconditionerT>(
-          solver.p_A, solver.p_res, solver.p_max_iter, solver.p_omega)
+    : util::preconditioned_iterative_solver<MatT, VecT, PreconditionerT>(solver)
 {}
 
 template <typename MatT, typename VecT, typename PreconditionerT>
 bool pcg_solver<MatT, VecT, PreconditionerT>::solve(const VecT &b, VecT &x) const
 {
     SHAPE_ASSERT(b.rows() == this->p_A.rows() && x.rows() == this->p_A.cols(),
-                 "Invalid dimension for LU solve");
-    LOG_INFO("Solving linear equation system (" << b.rows() << ") with un-preconditioned CG");
+                 "Invalid dimension for preconditioned cg solve");
+    LOG_INFO("Solving linear equation system (" << b.rows() << ") with preconditioned CG");
     typedef typename pcg_solver<MatT, VecT, PreconditionerT>::value_type T;
 
     // references to members of base class to avoid "virtual lookups"
@@ -209,6 +214,130 @@ bool pcg_solver<MatT, VecT, PreconditionerT>::solve(const VecT &b, VecT &x) cons
         LOG_WARNING("CG algorithm didn't converged");
     }
     this->p_last_res = std::sqrt(res_old);
+    return this->p_last_solved;
+}
+
+// pgmres_solver
+// -------------
+
+template <typename MatT, typename VecT, typename PreconditionerLeftT, typename PreconditionerRightT>
+pgmres_solver<MatT, VecT, PreconditionerLeftT, PreconditionerRightT>::pgmres_solver(
+    const MatT &A, const double res, const size_type max_iter, size_type restart,
+    const typename util::solver<MatT, VecT>::value_type omega)
+    : util::two_side_preconditioned_iterative_solver<MatT, VecT, PreconditionerLeftT,
+                                                     PreconditionerRightT>(A, res, max_iter, omega),
+      p_restart(restart)
+{}
+
+template <typename MatT, typename VecT, typename PreconditionerLeftT, typename PreconditionerRightT>
+pgmres_solver<MatT, VecT, PreconditionerLeftT, PreconditionerRightT>::pgmres_solver(
+    const pgmres_solver<MatT, VecT, PreconditionerLeftT, PreconditionerRightT> &solver)
+    : util::two_side_preconditioned_iterative_solver<MatT, VecT, PreconditionerLeftT,
+                                                     PreconditionerRightT>(solver),
+      p_restart(solver.p_restart)
+{}
+
+template <typename MatT, typename VecT, typename PreconditionerLeftT, typename PreconditionerRightT>
+bool pgmres_solver<MatT, VecT, PreconditionerLeftT, PreconditionerRightT>::solve(const VecT &b,
+                                                                                 VecT &x) const
+{
+    SHAPE_ASSERT(b.rows() == this->p_A.rows() && x.rows() == this->p_A.cols(),
+                 "Invalid dimension for gmres solve");
+    LOG_INFO("Solving linear equation system (" << b.rows() << ") with preconditioned gmres");
+    typedef typename util::iterative_solver<MatT, VecT>::value_type T;
+
+    // references to members of base class to avoid "virtual lookups"
+    const MatT &A = this->p_A;
+    const PreconditionerLeftT &ML = this->p_M_left;
+    const PreconditionerRightT &MR = this->p_M_right;
+    const size_type max_iter = this->p_max_iter;
+    const size_type n = A.rows();
+    const T &tol = this->p_res;
+    VecT r(n), w(n), update(n); // helper vectors
+    size_type iter = 0;
+    T obtained_tol = 0.;
+    std::vector<VecT> V(p_restart + 1, VecT(n));
+    matrix<T> H(p_restart + 1, p_restart);
+
+    for (iter = 0; iter < max_iter; ++iter) {
+        // Initial residual: r = M_left.solve(b - A * x)
+        r = ML.solve(b - A * x);
+        const T beta = norm<2>(r);
+
+        if (beta < tol) {
+            obtained_tol = beta;
+            break;
+        }
+        V[0] = r * (1.0 / beta);
+
+        VecT g(p_restart + 1, 0.0);
+        g(0) = beta;
+
+        VecT sn(p_restart, 0.0), cs(p_restart, 0.0);
+
+        size_type j = 0;
+        for (; j < p_restart; ++j) {
+            // Arnoldi with both Preconditioners: w = ML.solve(A * MR.solve(V[j]))
+            w = ML.solve(A * MR.solve(V[j]));
+
+            // Modified Gram-Schmidt
+            for (size_type i = 0; i <= j; ++i) {
+                H(i, j) = inner_product(w, V[i]);
+                w = w - V[i] * H(i, j);
+            }
+            H(j + 1, j) = norm<2>(w);
+            V[j + 1] = w * (1.0 / H(j + 1, j));
+
+            // Apply existing Givens rotations
+            for (size_type i = 0; i < j; ++i) {
+                const T temp = cs(i) * H(i, j) + sn(i) * H(i + 1, j);
+                H(i + 1, j) = -sn(i) * H(i, j) + cs(i) * H(i + 1, j);
+                H(i, j) = temp;
+            }
+
+            // New Givens rotation
+            const T t = std::sqrt(H(j, j) * H(j, j) + H(j + 1, j) * H(j + 1, j));
+            cs(j) = H(j, j) / t;
+            sn(j) = H(j + 1, j) / t;
+
+            H(j, j) = cs(j) * H(j, j) + sn(j) * H(j + 1, j);
+            g(j + 1) = -sn(j) * g(j);
+            g(j) = cs(j) * g(j);
+
+            if (std::abs(g(j + 1)) < tol) {
+                j++;
+                break;
+            }
+        }
+
+        // Back-solve Hy = g
+        VecT y(j);
+        for (signed_size_type i = j - 1; i >= 0; --i) {
+            T sum = 0.0;
+            for (size_type k = i + 1; k < j; ++k) {
+                sum += H(i, k) * y(k);
+            }
+            y(i) = (g(i) - sum) / H(i, i);
+        }
+
+        // Update x: x = x + MR.solve(V * y)
+        VecT update(n, 0.0);
+        for (size_type i = 0; i < j; ++i) {
+            update = update + V[i] * y(i);
+        }
+        x = x + MR.solve(update);
+
+        if (std::abs(g(j)) < tol) {
+            obtained_tol = std::abs(g(j));
+        }
+    }
+    if (iter < max_iter) {
+        LOG_INFO("GMRES converged in " << iter << " iterations");
+        this->p_last_solved = (iter < max_iter);
+        this->p_last_res = obtained_tol;
+        this->p_last_iter = iter;
+    }
+
     return this->p_last_solved;
 }
 
