@@ -196,6 +196,33 @@ TEST(solver, pcg_sgs)
     ASSERT_LE(error_norm, 1e-4);
 }
 
+/// @brief Test identity preconditioner
+TEST(solver, identity_pc_1)
+{
+    sparse_matrix<double> A({{0, 1}, {0, 1, 2}, {1, 2}}, {4., 1., 1., 4., 1., 1., 4.}, 3);
+    const vector<double> b({1., 2., 3.});
+    algorithm::identity_pc<sparse_matrix<double>, vector<double>> pc(A);
+    const vector<double> x = pc.solve(b);
+    EXPECT_EQ(x.rows(), 3);
+    EXPECT_DOUBLE_EQ(x(0), 1.0);
+    EXPECT_DOUBLE_EQ(x(1), 2.0);
+    EXPECT_DOUBLE_EQ(x(2), 3.0);
+}
+
+/// @brief Test identity preconditioner
+TEST(solver, identity_pc_2)
+{
+    sparse_matrix<double> A({{0, 1}, {0, 1, 2}, {1, 2}}, {4., 1., 1., 4., 1., 1., 4.}, 3);
+    const vector<double> b({1., 2., 3.});
+    algorithm::identity_pc<sparse_matrix<double>, vector<double>> pc(A);
+    vector<double> x(3);
+    pc.solve(b, x);
+    EXPECT_EQ(x.rows(), 3);
+    EXPECT_DOUBLE_EQ(x(0), 1.0);
+    EXPECT_DOUBLE_EQ(x(1), 2.0);
+    EXPECT_DOUBLE_EQ(x(2), 3.0);
+}
+
 /// @brief Test ilu preconditioner
 TEST(solver, ilu)
 {
