@@ -1,3 +1,18 @@
+# [1.30.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.29.0...v1.30.0) (2026-03-22)
+
+
+### Bug Fixes
+
+* Typo if build for parallel optimization ([4d562af](https://github.com/gitmathy/cpp-linear-algebra/commit/4d562afaee6b4d2345abf5cf4cac3a56fb5216ea))
+
+
+### Features
+
+* Constructor by iterator ([e3df060](https://github.com/gitmathy/cpp-linear-algebra/commit/e3df060d4a1944dc9803d1965257c5b8eb14b759))
+* Include diag_idx and get_idx ([fc93a45](https://github.com/gitmathy/cpp-linear-algebra/commit/fc93a45e6b08b00289e29067fb8ac1165d53285c))
+* Include ilu ([41c6dbc](https://github.com/gitmathy/cpp-linear-algebra/commit/41c6dbcd1e9918f3c3a95cba4f512d5c06f99d29))
+* More concepts for sparse matrix ([05a1267](https://github.com/gitmathy/cpp-linear-algebra/commit/05a1267c101b84be3681275b893c906d6aa3f454))
+
 # [1.29.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.28.0...v1.29.0) (2026-03-21)
 
 
