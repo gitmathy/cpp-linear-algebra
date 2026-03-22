@@ -312,7 +312,7 @@ bool pgmres_solver<MatT, VecT, PreconditionerLeftT, PreconditionerRightT>::solve
 
         // Back-solve Hy = g
         VecT y(j);
-        for (signed_size_type i = j - 1; i >= 0; --i) {
+        for (signed_size_type i = (signed_size_type)j - 1; i >= 0; --i) {
             T sum = 0.0;
             for (size_type k = i + 1; k < j; ++k) {
                 sum += H(i, k) * y(k);
