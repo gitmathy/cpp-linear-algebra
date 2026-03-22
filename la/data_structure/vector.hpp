@@ -18,7 +18,9 @@
 #include <algorithm>
 #include <initializer_list>
 #include <iostream>
+#include <iterator>
 #include <ranges>
+#include <type_traits>
 
 namespace la {
 
@@ -78,6 +80,11 @@ public:
     /// used when writing code like x = y+z;
     template <typename ExpressionT>
     vector(const expressions::operant<ExpressionT> &exp);
+
+    /// @brief Construct from iterators
+    template <typename InputT,
+              typename = typename std::enable_if<!std::is_integral<InputT>::value>::type>
+    vector(InputT first, const InputT last);
 
     /// @brief Destructing a vector
     ~vector() { util::deallocate_aligned(p_vals); }
@@ -236,6 +243,19 @@ template <typename ExpressionT>
 vector<T>::vector(const expressions::operant<ExpressionT> &exp) : p_vals(nullptr), p_size(0)
 {
     *this = exp;
+}
+
+template <typename T>
+template <typename InputT, typename>
+vector<T>::vector(InputT first, const InputT last) : p_vals(nullptr), p_size(0)
+{
+    allocate(std::distance(first, last));
+    std::copy(
+#ifdef PARALLEL
+        execution::par_unseq
+#endif
+            first,
+        last, p_vals);
 }
 
 template <typename T>

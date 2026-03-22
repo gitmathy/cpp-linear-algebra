@@ -96,13 +96,24 @@ TEST(vector, constructor_copy)
     EXPECT_EQ(v(1), 2);
 }
 
-/// @brief Testing the constructor form expression
+/// @brief Testing the constructor from expression
 TEST(vector, constructor_expression)
 {
     expressions::operant<expressions::literal<int>> expr(1);
     vector<int> v(expr);
     EXPECT_EQ(v.rows(), 1);
     EXPECT_EQ(v(0), 1);
+}
+
+/// @brief Testing the constructor from iterator
+TEST(vector, copy_from_iterator)
+{
+    std::vector<double> a({0.0, 1.0, 2.0});
+    vector<double> v(a.begin(), a.end());
+    EXPECT_EQ(v.rows(), 3);
+    for (size_type i = 0; i < 3; ++i) {
+        EXPECT_DOUBLE_EQ(v(i), (double)i);
+    }
 }
 
 /// @brief Testing the destructor
