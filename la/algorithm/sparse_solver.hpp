@@ -60,6 +60,31 @@ public:
     using util::preconditioned_iterative_solver<MatT, VecT, PreconditionerT>::solve;
 };
 
+/// @brief Preconditioned restarted gmres solver
+template <typename MatT, typename VecT, typename PreconditionerLeftT, typename PreconditionerRightT>
+class pgmres_solver
+    : public util::two_side_preconditioned_iterative_solver<MatT, VecT, PreconditionerLeftT,
+                                                            PreconditionerRightT>
+{
+public:
+    typedef typename util::solver<MatT, VecT>::value_type value_type;
+
+public:
+    /// @brief Set up a preconditioned gmres solver
+    pgmres_solver(const MatT &A, const double res, const size_type max_iter,
+                  const typename util::solver<MatT, VecT>::value_type omega = 1.0);
+
+    /// @brief Copying a pgmres solver
+    pgmres_solver(const pgmres_solver<MatT, VecT, PreconditionerT> &solver);
+
+    /// @brief Apply the preconditioning
+    bool solve(const VecT &b, VecT &x) const override;
+
+    /// @brief As we use the function name "solve" for both versions, we need to provide this
+    using util::two_side_preconditioned_iterative_solver<MatT, VecT, PreconditionerLeftT,
+                                                         PreconditionerRightT>::solve;
+};
+
 // ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
 // ===============================================
