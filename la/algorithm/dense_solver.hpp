@@ -66,7 +66,7 @@ lu_decomposition<MatT, VecT>::lu_decomposition(const MatT &A)
 template <typename MatT, typename VecT>
 void lu_decomposition<MatT, VecT>::decompose()
 {
-    LOG_INFO("Decompose matrix");
+    LOG_DEBUG("Decompose (" << this->p_A.rows() << " x " << this->p_A.cols() << ") matrix");
     typedef typename util::dense_solver<MatT, VecT>::value_type T;
     const size_type M = this->p_A.rows();
     const size_type N = this->p_A.cols();
@@ -97,8 +97,8 @@ void lu_decomposition<MatT, VecT>::decompose()
                 }
             }
             if (max_val < la::util::EPS) {
-                la::util::error_factory("Irregular matrix in lu decomposition",
-                                              __FUNCTION_NAME__, la::util::NON_ZERO);
+                la::util::error_factory("Irregular matrix in lu decomposition", __FUNCTION_NAME__,
+                                        la::util::NON_ZERO);
             }
             p_p(k) = i_pivot;
             if (i_pivot != k) {

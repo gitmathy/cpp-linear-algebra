@@ -62,7 +62,7 @@ template <typename T>
 matrix<T> matrix_multiplication<T>::multiply(const matrix<T> &A, const matrix<T> &B)
 {
     SHAPE_ASSERT(A.cols() == B.rows(), "matrix_multiplication: invalid dimension");
-    LOG_INFO("Matrix multiplication.");
+    LOG_INFO("Matrix multiplication on dense matrix.");
     LOG_DEBUG("Input (" << A.rows() << " x " << A.cols() << ") times (" << B.rows() << " x "
                         << B.cols() << ')');
     // M: rows of A, K: shared dimension, N: columns of B
@@ -135,6 +135,7 @@ void transpose_matrix_multiplication<T>::multiply(const sparse_matrix<T> &A, con
                                                   vector<T> &y, const bool y_is_zero)
 {
     SHAPE_ASSERT(x.rows() == A.rows(), "Vector and matrix dimension not aligned");
+    LOG_DEBUG("Transposed matrix times vector");
     const size_type num_rows = A.rows();
     const size_type num_cols = A.cols();
     const size_type *__restrict row_ptr = A.begin_row_ptr();
