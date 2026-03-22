@@ -1,3 +1,10 @@
+# [1.33.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.32.0...v1.33.0) (2026-03-22)
+
+
+### Features
+
+* Include function name in log ([bd897de](https://github.com/gitmathy/cpp-linear-algebra/commit/bd897deb3582f6d2beb2042ab415480ada949a81))
+
 # [1.32.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.31.0...v1.32.0) (2026-03-22)
 
 
