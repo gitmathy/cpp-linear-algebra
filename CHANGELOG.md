@@ -1,3 +1,16 @@
+# [1.32.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.31.0...v1.32.0) (2026-03-22)
+
+
+### Bug Fixes
+
+* Address warnings ([803718a](https://github.com/gitmathy/cpp-linear-algebra/commit/803718aa7a284346b52c382ab0ab5020276bb664))
+
+
+### Features
+
+* include GMRES ([24aeed8](https://github.com/gitmathy/cpp-linear-algebra/commit/24aeed8a5f7c8cf691215d6a7699483f5487a666))
+* include two_side_preconditioned_iterative_solver ([78c4b57](https://github.com/gitmathy/cpp-linear-algebra/commit/78c4b57cc0b8f4c7e9a13cc0151606f7b368b2a5))
+
 # [1.31.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.30.0...v1.31.0) (2026-03-22)
 
 
