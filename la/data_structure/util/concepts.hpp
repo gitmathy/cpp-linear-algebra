@@ -68,10 +68,28 @@ concept has_col_idx = requires(T &t, size_type r) {
     { t.col_idx(r) };
 };
 
-/// @brief Check I provides access to values via vals()
+/// @brief Check if provides access to values via vals()
 template <typename T>
 concept has_vals_access = requires(T &t) {
     { t.vals() };
+};
+
+/// @brief Check if provides access to row pointers
+template <typename T>
+concept has_row_ptr_access = requires(T &t) {
+    { t.begin_row_ptr() };
+};
+
+/// @brief Check if provides access to column indices
+template <typename T>
+concept has_col_idx_access = requires(T &t) {
+    { t.begin_col_idx() };
+};
+
+/// @brief Check if provides access finding diag element
+template <typename T>
+concept has_diag_idx = requires(T &t, size_type r) {
+    { t.diag_idx(r) };
 };
 
 template <typename T, typename VecT>
