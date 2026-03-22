@@ -196,4 +196,17 @@ TEST(solver, pcg_sgs)
     ASSERT_LE(error_norm, 1e-4);
 }
 
+/// @brief Test ilu preconditioner
+TEST(solver, ilu)
+{
+    sparse_matrix<double> A({{0, 1}, {0, 1, 2}, {1, 2}}, {4., 1., 1., 4., 1., 1., 4.}, 3);
+    const vector<double> b({1., 2., 3.});
+    algorithm::ilu_pc<sparse_matrix<double>, vector<double>> ilu(A);
+    const vector<double> x = ilu.solve(b);
+    EXPECT_EQ(x.rows(), 3);
+    EXPECT_NEAR(x(0), 0.1786, 1e-4);
+    EXPECT_NEAR(x(1), 0.2857, 1e-4);
+    EXPECT_NEAR(x(2), 0.6786, 1e-4);
+}
+
 } // namespace la
