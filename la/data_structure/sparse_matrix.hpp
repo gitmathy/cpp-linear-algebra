@@ -109,8 +109,18 @@ public:
     /// @brief Get column index of non-zero index
     inline size_type col_idx(const size_type nz_idx) const;
 
-    /// @brief Get column index of non-zero index
+    /// @brief Get row index of a non-zero index
     inline size_type row_idx(const size_type nz_idx) const;
+
+    /// @brief Get the non-zero index (i,i)
+    /// @return Index of nnz on diagonal if given. If no diagonal element exists, return
+    ///     SIZE_TYPE_MAX.
+    inline size_type diag_idx(const size_type i) const { return get_idx(i, i); }
+
+    /// @brief Get the non-zero index of a given row-column index
+    /// @return Index of index of the element(i,j). If this is a zero element, return
+    ///     SIZE_TYPE_MAX.
+    inline size_type get_idx(const size_type i, const size_type j) const;
 
     /// @brief write access to an element
     inline T &operator()(const size_type i, const size_type j);
@@ -293,15 +303,26 @@ inline size_type sparse_matrix<T>::row_idx(const size_type nz_idx) const
 }
 
 template <typename T>
-inline T &sparse_matrix<T>::operator()(const size_type i, const size_type j)
+inline size_type sparse_matrix<T>::get_idx(const size_type i, const size_type j) const
 {
-    BOUNDARY_ASSERT(i < rows() && j < cols(), "sparse_matrix: out of bound");
-    LOG_TRACE("sparse_matrix: Write access to element " << i << ", " << j);
+    BOUNDARY_ASSERT(i < rows(), "Row index out of bound");
+    BOUNDARY_ASSERT(j < cols(), "Column index out of bound");
     size_type *last = p_col_idx + p_row_ptr[i + 1];
     size_type *it = std::lower_bound(p_col_idx + p_row_ptr[i], last, j);
     if (it != last && *it == j) {
         // element found!
-        return *(p_vals + std::distance(p_col_idx, it));
+        return size_type(std::distance(p_col_idx, it));
+    }
+    return SIZE_TYPE_MAX;
+}
+
+template <typename T>
+inline T &sparse_matrix<T>::operator()(const size_type i, const size_type j)
+{
+    LOG_TRACE("sparse_matrix: Write access to element " << i << ", " << j);
+    const size_type nz_idx = get_idx(i, j);
+    if (nz_idx != SIZE_TYPE_MAX) {
+        return p_vals[nz_idx];
     }
     util::error_factory("Cannot write to a non-zero element", __FUNCTION_NAME__, util::BOUNDARY);
 }
@@ -309,13 +330,10 @@ inline T &sparse_matrix<T>::operator()(const size_type i, const size_type j)
 template <typename T>
 inline const T sparse_matrix<T>::operator()(const size_type i, const size_type j) const
 {
-    BOUNDARY_ASSERT(i < rows() && j < cols(), "sparse_matrix: out of bound");
     LOG_TRACE("sparse_matrix: Read access to element " << i << ", " << j);
-    size_type *const last = p_col_idx + p_row_ptr[i + 1];
-    size_type *const it = std::lower_bound(p_col_idx + p_row_ptr[i], last, j);
-    if (it != last && *it == j) {
-        // element found!
-        return *(p_vals + std::distance(p_col_idx, it));
+    const size_type nz_idx = get_idx(i, j);
+    if (nz_idx != SIZE_TYPE_MAX) {
+        return p_vals[nz_idx];
     }
     return T(0);
 }

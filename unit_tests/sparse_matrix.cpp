@@ -136,6 +136,15 @@ TEST(sparse_matrix, row_idx)
     EXPECT_THROW(a.row_idx(3), util::error);
 }
 
+/// @brief Test diag index
+TEST(sparse_matrix, diag_idx)
+{
+    sparse_matrix<int> a({{0, 1}, {2}}, {3, 4, 5}, 3);
+    EXPECT_EQ(a.diag_idx(0), 0);
+    EXPECT_EQ(a.diag_idx(1), SIZE_TYPE_MAX);
+    EXPECT_THROW(a.diag_idx(3), util::error);
+}
+
 /// @brief Testing read and write elements
 TEST(sparse_matrix, read_write_operator)
 {
