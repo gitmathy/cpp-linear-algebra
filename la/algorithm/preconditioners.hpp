@@ -19,6 +19,29 @@
 namespace la {
 namespace algorithm {
 
+/// @brief Identity preconditioner
+template <typename MatT, typename VecT>
+class identity_pc : public util::preconditioner<MatT, VecT>
+{
+public:
+    /// @brief Type of every element
+    typedef typename util::preconditioner<MatT, VecT>::value_type value_type;
+
+public:
+    /// @brief Set diagonal elements
+    identity_pc(const MatT &A, const value_type &omega = 1.);
+
+    /// @brief Copy constructor
+    identity_pc(const identity_pc<MatT, VecT> &jac);
+
+    /// @brief Apply the preconditioner
+    bool solve(const VecT &b, VecT &x) const;
+
+    /// @brief As we use the function name "solve" for both versions, we need to provide this
+    using util::preconditioner<MatT, VecT>::solve;
+};
+
+/// @brief Jacobi preconditioner, i.e., scale by diagonal elements
 template <typename MatT, typename VecT>
 class jacobi_pc : public util::preconditioner<MatT, VecT>
 {
@@ -44,6 +67,7 @@ public:
     using util::preconditioner<MatT, VecT>::solve;
 };
 
+/// @brief Symmetric Gauss-Seidel preconditioner, used by e.g., CG solver
 template <typename MatT, typename VecT>
 class symmetric_gauss_seidel_pc : public util::preconditioner<MatT, VecT>
 {
@@ -114,6 +138,29 @@ public:
 // ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
 // ===============================================
+
+// identity_pc
+// -----------
+
+template <typename MatT, typename VecT>
+identity_pc<MatT, VecT>::identity_pc(const MatT &A,
+                                     const typename identity_pc<MatT, VecT>::value_type &omega)
+    : util::preconditioner<MatT, VecT>(A, omega)
+{}
+
+template <typename MatT, typename VecT>
+identity_pc<MatT, VecT>::identity_pc(const identity_pc<MatT, VecT> &pc)
+    : util::preconditioner<MatT, VecT>(pc.p_A, pc.p_omega)
+{}
+
+template <typename MatT, typename VecT>
+bool identity_pc<MatT, VecT>::solve(const VecT &b, VecT &x) const
+{
+    SHAPE_ASSERT(x.rows() == this->p_A.rows(), "Preconditioner, invalid dimension of result");
+    SHAPE_ASSERT(b.rows() == this->p_A.rows(), "Preconditioner, invalid dimension of vector");
+    x = b;
+    return true;
+}
 
 // jacobi_pc
 // ---------
