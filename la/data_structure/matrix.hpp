@@ -17,8 +17,10 @@
 #include "la/util/types.hpp"
 #include <algorithm>
 #include <initializer_list>
+#include <ostream>
 #include <ranges>
 #include <string>
+#include <utility>
 
 namespace la {
 
