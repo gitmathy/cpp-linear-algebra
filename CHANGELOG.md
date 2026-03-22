@@ -1,3 +1,10 @@
+# [1.31.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.30.0...v1.31.0) (2026-03-22)
+
+
+### Features
+
+* Include identity preconditioner ([53ed92e](https://github.com/gitmathy/cpp-linear-algebra/commit/53ed92e98d99edfd2c3fb1a4aefeb5adec80f300))
+
 # [1.30.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.29.0...v1.30.0) (2026-03-22)
 
 
