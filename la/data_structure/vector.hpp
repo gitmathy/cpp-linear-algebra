@@ -252,10 +252,9 @@ vector<T>::vector(InputT first, const InputT last) : p_vals(nullptr), p_size(0)
     allocate(std::distance(first, last));
     std::copy(
 #ifdef PARALLEL
-        execution::par_unseq
+        execution::par_unseq,
 #endif
-            first,
-        last, p_vals);
+        first, last, p_vals);
 }
 
 template <typename T>
