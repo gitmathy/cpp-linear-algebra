@@ -82,6 +82,34 @@ public:
     /// @brief Number of non-zeros
     inline size_type non_zeros() const { return N; }
 
+    /// @brief Get i'th element for reading
+    inline const T &operator()(const size_type i) const;
+
+    /// @brief Get i'th element for writing
+    inline T &operator()(const size_type i);
+
+    /// @brief Evaluate at position i is reading the element
+    inline const T &evaluate(const size_type i) const { return (*this)(i); }
+
+    /// @brief Evaluate at position i, j is reading the element i(j is ignored)
+    inline const T &evaluate(const size_type i, const size_type) const { return (*this)(i); }
+
+    /// @brief Iterator to begin
+    inline iterator begin() { return p_vals; }
+    /// @brief Iterator to end
+    inline iterator end() { return p_vals + N; }
+
+    /// @brief Constant iterator to begin
+    inline citerator begin() const { return p_vals; }
+    /// @brief Constant iterator to end
+    inline citerator end() const { return p_vals + N; }
+
+    /// @brief Direct access to the memory. Use with caution
+    inline T *vals() { return p_vals; }
+
+    /// @brief Direct access to the memory. Use with caution
+    inline T const *vals() const { return p_vals; }
+
     /// @brief Assign another vector
     static_vector<T, N> &operator=(const static_vector<T, N> &rhs);
 
@@ -121,28 +149,6 @@ public:
     /// @brief subtract from another expression
     template <typename ExpressionT>
     static_vector<T, N> &operator-=(const expressions::operant<ExpressionT> &exp);
-
-    /// @brief Get i'th element for reading
-    inline const T &operator()(const size_type i) const;
-
-    /// @brief Get i'th element for writing
-    inline T &operator()(const size_type i);
-
-    /// @brief Evaluate at position i is reading the element
-    inline const T &evaluate(const size_type i) const { return (*this)(i); }
-
-    /// @brief Evaluate at position i, j is reading the element i(j is ignored)
-    inline const T &evaluate(const size_type i, const size_type) const { return (*this)(i); }
-
-    /// @brief Iterator to begin
-    inline iterator begin() { return p_vals; }
-    /// @brief Iterator to end
-    inline iterator end() { return p_vals + N; }
-
-    /// @brief Constant iterator to begin
-    inline citerator begin() const { return p_vals; }
-    /// @brief Constant iterator to end
-    inline citerator end() const { return p_vals + N; }
 };
 
 /// @brief Write a vector to an output stream
@@ -188,6 +194,13 @@ template <typename ExpressionT>
 static_vector<T, N>::static_vector(const expressions::operant<ExpressionT> &exp)
 {
     *this = exp;
+}
+
+template <typename T, size_type N>
+static_vector<T, N>::static_vector(const vector<T> &vec)
+{
+    BOUNDARY_ASSERT(vec.rows() >= N, "static_vector: not enough elements in vector");
+    std::copy(vec.begin(), vec.begin() + N, p_vals);
 }
 
 template <typename T, size_type N>

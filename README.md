@@ -1,6 +1,6 @@
 # cpp-linear-algebra
 
-![Makefile CI](https://github.com/gitmathy/cpp-linear-algebra/actions/workflows/cpp-build.yaml/badge.svg)
+![Linux build and unit tests](https://github.com/gitmathy/cpp-linear-algebra/actions/workflows/unix.yaml/badge.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![C++ Standard](https://img.shields.io/badge/C%2B%2B-20-blue.svg)
 
