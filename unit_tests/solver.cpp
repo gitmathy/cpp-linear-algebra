@@ -53,6 +53,28 @@ TEST(solver, lu_decomposition_irregular)
     EXPECT_THROW(solver_type lu(A), util::non_zero_error);
 }
 
+/// @brief Test cholesky solve (and decompose)
+TEST(solver, cholesky_solve)
+{
+    matrix<double> A({{4, 12, -16}, {12, 37, -43}, {-16, -43, 98}});
+    const vector<double> b({-20, -43, 192});
+    algorithm::cholesky_decomposition<matrix<double>, vector<double>> cholesky(A);
+    const vector<double> x = cholesky.solve(b);
+    EXPECT_EQ(x.rows(), 3);
+    EXPECT_DOUBLE_EQ(x(0), 1.);
+    EXPECT_DOUBLE_EQ(x(1), 2.);
+    EXPECT_DOUBLE_EQ(x(2), 3.);
+    EXPECT_THROW(cholesky.solve(vector<double>(4)), util::error);
+}
+
+/// @brief Test if an error is thrown if the matrix is not s.p.d.
+TEST(solver, cholesky_non_spd)
+{
+    matrix<double> A({{1, 2}, {2, 1}});
+    typedef algorithm::cholesky_decomposition<matrix<double>, vector<double>> cholesky_solver;
+    EXPECT_THROW((cholesky_solver(A)), util::non_zero_error);
+}
+
 /// @brief Test un-preconditioned CG solver
 TEST(solver, cg_un_pred)
 {
