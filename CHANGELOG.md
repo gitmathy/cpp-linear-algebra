@@ -1,3 +1,10 @@
+# [1.35.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.34.0...v1.35.0) (2026-03-24)
+
+
+### Features
+
+* Adding Cholesky and test ([53d17ea](https://github.com/gitmathy/cpp-linear-algebra/commit/53d17ea1b507bd2c5476ae10083b75421d74cd23))
+
 # [1.34.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.33.0...v1.34.0) (2026-03-24)
 
 
