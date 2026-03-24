@@ -1,3 +1,16 @@
+# [1.34.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.33.0...v1.34.0) (2026-03-24)
+
+
+### Bug Fixes
+
+* Makefile badge ([e70849e](https://github.com/gitmathy/cpp-linear-algebra/commit/e70849e333f0a0cf59eb7e2e5a3a7875cb2a52bf))
+
+
+### Features
+
+* Align with vector ([fd00e19](https://github.com/gitmathy/cpp-linear-algebra/commit/fd00e1995f079abc49c2c1259e454f53dafe03a8))
+* Testing static vector ([ddaa3f0](https://github.com/gitmathy/cpp-linear-algebra/commit/ddaa3f0c0f863e1ee2a220e293aafcc0a1e4b202))
+
 # [1.33.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.32.0...v1.33.0) (2026-03-22)
 
 
