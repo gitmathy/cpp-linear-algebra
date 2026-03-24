@@ -42,12 +42,6 @@ vector<T> &vector<T>::operator=(const static_vector<T, N> &rhs)
 // -----------------------
 
 template <typename T, size_type N>
-static_vector<T, N>::static_vector(const vector<T> &vec)
-{
-    *this = vec;
-}
-
-template <typename T, size_type N>
 static_vector<T, N> &static_vector<T, N>::operator=(const vector<T> &rhs)
 {
     SHAPE_ASSERT(rhs.rows() >= N, "Assigning static_vector from too small vector");
