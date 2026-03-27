@@ -1,3 +1,17 @@
+# [1.36.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.35.0...v1.36.0) (2026-03-27)
+
+
+### Bug Fixes
+
+* Filename for expression.cpp and remove duplicated algorithm ([dda61d6](https://github.com/gitmathy/cpp-linear-algebra/commit/dda61d61aab031e98fee8b9527ce16a2bcbbbf1e))
+* Remove duplicate ([07d9d51](https://github.com/gitmathy/cpp-linear-algebra/commit/07d9d515da0db8e06289a2f4396ae67a0a8fd52c))
+
+
+### Features
+
+* sparse matrix - sparse matrix ([226492f](https://github.com/gitmathy/cpp-linear-algebra/commit/226492faf89fb9ab543b3f79e948d1148f947aac))
+* Unit test for all operations ([088d452](https://github.com/gitmathy/cpp-linear-algebra/commit/088d452d5ed4147ad851e84136daf3699538d7e8))
+
 # [1.35.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.34.0...v1.35.0) (2026-03-24)
 
 
