@@ -230,8 +230,10 @@ template <typename T>
 void matrix<T>::allocate(const size_type m, const size_type n)
 {
     LOG_DEBUG("Allocating memory for matrix: " << (m * n * sizeof(T)) << " B");
-    util::deallocate_aligned(p_vals);
-    p_vals = util::allocate_aligned<T>(m * n);
+    if (m * n != p_rows * p_cols) {
+        util::deallocate_aligned(p_vals);
+        p_vals = util::allocate_aligned<T>(m * n);
+    }
     p_rows = m;
     p_cols = n;
 }
