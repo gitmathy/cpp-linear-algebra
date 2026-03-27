@@ -65,10 +65,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="matrix.cpp" />
+    <ClCompile Include="algorithm.cpp" />
     <ClCompile Include="sparse_matrix.cpp" />
     <ClCompile Include="sparse_matrix_builder.cpp" />
     <ClCompile Include="vector.cpp" />
     <ClCompile Include="solver.cpp" />
+    <ClCompile Include="expressions.cpp" />
     <ClCompile Include="operations_add.cpp" />
     <ClCompile Include="operations_inner_prod.cpp" />
     <ClCompile Include="operations_mult.cpp" />
