@@ -90,6 +90,12 @@ auto operator-(const matrix<T> &left, const expressions::operant<ExpT> &right);
 template <typename T, typename ExpT>
 auto operator-(const expressions::operant<ExpT> &left, const matrix<T> &right);
 
+// sparse matrix
+
+/// @brief sparse matrix + sparse matrix
+template <typename T>
+auto operator-(const sparse_matrix<T> &left, const sparse_matrix<T> &right);
+
 // ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
 // ===============================================
@@ -275,6 +281,20 @@ auto operator-(const expressions::operant<ExpT> &left, const matrix<T> &right)
         new_bin_exp_type;
     return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
 }
+
+// sparse_matrix
+
+/// @brief sparse matrix + sparse matrix
+template <typename T>
+auto operator-(const sparse_matrix<T> &left, const sparse_matrix<T> &right)
+{
+    typedef expressions::binary_expression<
+        sparse_matrix<T>, sparse_matrix<T>,
+        expressions::sub_operation<sparse_matrix<T>, sparse_matrix<T>>>
+        new_bin_exp_type;
+    return expressions::operant<new_bin_exp_type>(new_bin_exp_type(left, right));
+}
+
 } // namespace la
 
 #endif

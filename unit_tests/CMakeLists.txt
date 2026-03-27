@@ -26,11 +26,16 @@ add_executable(
     sparse_matrix.cpp
     solver.cpp
     sparse_matrix_builder.cpp
-    operations.cpp
+    operations_add.cpp
+    operations_inner_prod.cpp
+    operations_mult.cpp
+    operations_prefix.cpp
+    operations_sub.cpp
     algorithm.cpp
     util.cpp
     triplet_sparse_matrix.cpp
     static_vector.cpp
+    expressions.cpp
 )
 
 # Link against Google Test
