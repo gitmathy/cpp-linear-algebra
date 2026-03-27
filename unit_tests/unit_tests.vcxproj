@@ -69,7 +69,11 @@
     <ClCompile Include="sparse_matrix_builder.cpp" />
     <ClCompile Include="vector.cpp" />
     <ClCompile Include="solver.cpp" />
-    <ClCompile Include="operations.cpp" />
+    <ClCompile Include="operations_add.cpp" />
+    <ClCompile Include="operations_inner_prod.cpp" />
+    <ClCompile Include="operations_mult.cpp" />
+    <ClCompile Include="operations_prefix.cpp" />
+    <ClCompile Include="operations_sub.cpp" />
     <ClCompile Include="algorithm.cpp" />
     <ClCompile Include="util.cpp" />
     <ClCompile Include="triplet_sparse_matrix.cpp" />
