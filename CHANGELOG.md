@@ -1,3 +1,10 @@
+## [1.38.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.38.0...v1.38.1) (2026-03-28)
+
+
+### Bug Fixes
+
+* parallel execution ([71321ac](https://github.com/gitmathy/cpp-linear-algebra/commit/71321ac86f1c85f694be1228853f2427cc2844aa))
+
 # [1.38.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.37.0...v1.38.0) (2026-03-28)
 
 
