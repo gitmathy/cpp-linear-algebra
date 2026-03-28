@@ -330,4 +330,110 @@ TEST(triangular_matrix, get_row_idx_wide_upper)
     EXPECT_EQ(a.row_idx_begin(2), 5);
 }
 
+/// @brief Test write access operator for lower square triangular matrix
+TEST(triangular_matrix, write_access_square_lower)
+{
+    triang_matrix<int, true> a_build(2, 2, 1);
+    a_build(0, 0) = 2;
+    a_build(1, 0) = 3;
+    a_build(1, 1) = 4;
+    EXPECT_THROW((a_build(0, 1) = 1), util::boundary_error);
+    const triang_matrix<int, true> &a = a_build;
+    EXPECT_EQ(a(0, 0), 2);
+    EXPECT_EQ(a(0, 1), 0);
+    EXPECT_EQ(a(1, 0), 3);
+    EXPECT_EQ(a(1, 1), 4);
+    EXPECT_THROW((a_build(2, 2) = 1), util::boundary_error);
+}
+
+/// @brief Test write access operator for lower "tall" triangular matrix
+TEST(triangular_matrix, write_access_tall_lower)
+{
+    triang_matrix<int, true> a_build(3, 2, 1);
+    a_build(0, 0) = 2;
+    a_build(1, 0) = 3;
+    a_build(1, 1) = 4;
+    a_build(2, 0) = 5;
+    a_build(2, 1) = 6;
+    EXPECT_THROW((a_build(0, 1) = 1), util::boundary_error);
+    const triang_matrix<int, true> &a = a_build;
+    EXPECT_EQ(a(0, 0), 2);
+    EXPECT_EQ(a(0, 1), 0);
+    EXPECT_EQ(a(1, 0), 3);
+    EXPECT_EQ(a(1, 1), 4);
+    EXPECT_EQ(a(2, 0), 5);
+    EXPECT_EQ(a(2, 1), 6);
+}
+
+/// @brief Test write access operator for lower "wide" triangular matrix
+TEST(triangular_matrix, write_access_wide_lower)
+{
+    triang_matrix<int, true> a_build(2, 3, 1);
+    a_build(0, 0) = 2;
+    a_build(1, 0) = 3;
+    a_build(1, 1) = 4;
+    EXPECT_THROW((a_build(0, 1) = 1), util::boundary_error);
+    EXPECT_THROW((a_build(0, 2) = 1), util::boundary_error);
+    EXPECT_THROW((a_build(1, 2) = 1), util::boundary_error);
+    const triang_matrix<int, true> &a = a_build;
+    EXPECT_EQ(a(0, 0), 2);
+    EXPECT_EQ(a(0, 1), 0);
+    EXPECT_EQ(a(1, 0), 3);
+    EXPECT_EQ(a(1, 1), 4);
+}
+
+/// @brief Test write access operator for upper square triangular matrix
+TEST(triangular_matrix, write_access_square_upper)
+{
+    triang_matrix<int, false> a_build(2, 2, 1);
+    a_build(0, 0) = 2;
+    a_build(0, 1) = 3;
+    a_build(1, 1) = 4;
+    EXPECT_THROW((a_build(1, 0) = 1), util::boundary_error);
+    const triang_matrix<int, false> &a = a_build;
+    EXPECT_EQ(a(0, 0), 2);
+    EXPECT_EQ(a(0, 1), 3);
+    EXPECT_EQ(a(1, 0), 0);
+    EXPECT_EQ(a(1, 1), 4);
+    EXPECT_THROW((a_build(2, 2) = 1), util::boundary_error);
+}
+
+/// @brief Test write access operator for upper "tall" triangular matrix
+TEST(triangular_matrix, write_access_tall_upper)
+{
+    triang_matrix<int, false> a_build(3, 2, 1);
+    a_build(0, 0) = 2;
+    a_build(0, 1) = 3;
+    a_build(1, 1) = 4;
+    EXPECT_THROW((a_build(1, 0) = 1), util::boundary_error);
+    EXPECT_THROW((a_build(2, 0) = 1), util::boundary_error);
+    EXPECT_THROW((a_build(2, 1) = 1), util::boundary_error);
+    const triang_matrix<int, false> &a = a_build;
+    EXPECT_EQ(a(0, 0), 2);
+    EXPECT_EQ(a(0, 1), 3);
+    EXPECT_EQ(a(1, 0), 0);
+    EXPECT_EQ(a(1, 1), 4);
+    EXPECT_EQ(a(2, 0), 0);
+    EXPECT_EQ(a(2, 1), 0);
+}
+
+/// @brief Test write access operator for upper "wide" triangular matrix
+TEST(triangular_matrix, write_access_wide_upper)
+{
+    triang_matrix<int, false> a_build(2, 3, 1);
+    a_build(0, 0) = 2;
+    a_build(0, 1) = 3;
+    a_build(0, 2) = 4;
+    a_build(1, 1) = 5;
+    a_build(1, 2) = 6;
+    EXPECT_THROW((a_build(1, 0) = 1), util::boundary_error);
+    const triang_matrix<int, false> &a = a_build;
+    EXPECT_EQ(a(0, 0), 2);
+    EXPECT_EQ(a(0, 1), 3);
+    EXPECT_EQ(a(0, 2), 4);
+    EXPECT_EQ(a(1, 0), 0);
+    EXPECT_EQ(a(1, 1), 5);
+    EXPECT_EQ(a(1, 2), 6);
+}
+
 } // namespace la
