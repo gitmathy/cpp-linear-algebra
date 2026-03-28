@@ -68,7 +68,8 @@ jobs:
       shell: bash
       run: |
         set -e
-        for file in $(find la tests -type f);
-          do win_file=$(echo ${file} | sed -re 's/\//\\\\/'g);
+        for file in $(find la tests -type f); do
+          win_file=$(echo ${file} | sed -re 's/\//\\\\/'g);
+          echo "Checking $file"
           grep -q -e "\"${win_file}\"" cpp-linear-algebra.vcxproj;
         done
