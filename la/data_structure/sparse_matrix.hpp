@@ -11,6 +11,7 @@
 #define LA_DATA_STRUCTURE_SPARSE_MATRIX_HPP
 
 #include "la/data_structure/forward.hpp"
+#include "la/util/constants.hpp"
 #include "la/util/error.hpp"
 #include "la/util/file_io.hpp"
 #include "la/util/macros.hpp"
