@@ -39,5 +39,10 @@ class vector;
 template <typename T, size_type N>
 class static_vector;
 
+// Forward declaration of triangular matrix
+// see la/data_structure/triangular_matrix.hpp
+template <typename T, bool LOWER>
+class triang_matrix;
+
 } // namespace la
 #endif

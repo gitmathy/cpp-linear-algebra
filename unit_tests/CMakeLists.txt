@@ -36,6 +36,7 @@ add_executable(
     triplet_sparse_matrix.cpp
     static_vector.cpp
     expressions.cpp
+    triangular_matrix.cpp
 )
 
 # Link against Google Test

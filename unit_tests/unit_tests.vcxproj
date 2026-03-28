@@ -68,6 +68,7 @@
     <ClCompile Include="algorithm.cpp" />
     <ClCompile Include="sparse_matrix.cpp" />
     <ClCompile Include="sparse_matrix_builder.cpp" />
+    <ClCompile Include="triangular_matrix.cpp" />
     <ClCompile Include="vector.cpp" />
     <ClCompile Include="solver.cpp" />
     <ClCompile Include="operations_add.cpp" />

@@ -10,5 +10,6 @@
 #include "la/algorithms"
 #include "la/data_structure/matrix.hpp"
 #include "la/data_structure/mixed_dense_data.hpp"
+#include "la/data_structure/triangular_matrix.hpp"
 #include "la/data_structure/vector.hpp"
 #include "la/ops"

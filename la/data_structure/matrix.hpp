@@ -230,8 +230,10 @@ template <typename T>
 void matrix<T>::allocate(const size_type m, const size_type n)
 {
     LOG_DEBUG("Allocating memory for matrix: " << (m * n * sizeof(T)) << " B");
-    util::deallocate_aligned(p_vals);
-    p_vals = util::allocate_aligned<T>(m * n);
+    if (m * n != p_rows * p_cols) {
+        util::deallocate_aligned(p_vals);
+        p_vals = util::allocate_aligned<T>(m * n);
+    }
     p_rows = m;
     p_cols = n;
 }
@@ -258,7 +260,7 @@ matrix<T>::matrix(matrix<T> &&rhs) noexcept : p_vals(nullptr), p_rows(0), p_cols
 }
 
 template <typename T>
-matrix<T>::matrix(const matrix<T> &rhs) : p_vals(nullptr), p_rows(rhs.p_rows), p_cols(rhs.p_cols)
+matrix<T>::matrix(const matrix<T> &rhs) : p_vals(nullptr), p_rows(0), p_cols()
 {
     *this = rhs;
 }
