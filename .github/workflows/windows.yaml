@@ -1,4 +1,4 @@
-name: Windows build and unit tests (solution file) 👷
+name: Windows unit tests
 description: Build the executable msbuild
 
 on:
