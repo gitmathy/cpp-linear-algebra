@@ -10,6 +10,7 @@
 #ifndef LA_DATA_STRUCTURE_TRIANGULAR_MATRIX_HPP
 #define LA_DATA_STRUCTURE_TRIANGULAR_MATRIX_HPP
 
+#include "la/util/constants.hpp"
 #include "la/util/error.hpp"
 #include "la/util/file_io.hpp"
 #include "la/util/macros.hpp"
@@ -17,6 +18,7 @@
 #include "la/util/types.hpp"
 #include <algorithm>
 #include <initializer_list>
+#include <ranges>
 #include <utility>
 
 namespace la {
