@@ -700,4 +700,28 @@ TEST(triangular_matrix, iterators_wide_upper)
     EXPECT_EQ(b(1, 2), 4);
 }
 
+/// @brief Testing apply for lower square triangular matrix
+TEST(triangular_matrix, apply_square_lower)
+{
+    triang_matrix<int, true> a_build(2, 2, 2);
+    a_build.apply_func([](const int &x) { return x * x; });
+    const triang_matrix<int, true> &a = a_build;
+    EXPECT_EQ(a(0, 0), 4);
+    EXPECT_EQ(a(0, 1), 0);
+    EXPECT_EQ(a(1, 0), 4);
+    EXPECT_EQ(a(1, 1), 4);
+}
+
+/// @brief Testing apply for upper square triangular matrix
+TEST(triangular_matrix, apply_square_upper)
+{
+    triang_matrix<int, false> a_build(2, 2, 2);
+    a_build.apply_func([](const int &x) { return x * x; });
+    const triang_matrix<int, false> &a = a_build;
+    EXPECT_EQ(a(0, 0), 4);
+    EXPECT_EQ(a(0, 1), 4);
+    EXPECT_EQ(a(1, 0), 0);
+    EXPECT_EQ(a(1, 1), 4);
+}
+
 } // namespace la

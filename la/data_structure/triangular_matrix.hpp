@@ -152,6 +152,11 @@ public:
     /// @brief Assign from initializer list
     triang_matrix<T, LOWER> &
     operator=(const std::initializer_list<std::initializer_list<T>> &init_list);
+
+    /// @brief Apply a function to every entry, i.e., A(i,j)=func(A(i,j))
+    /// @tparam function, supports func(T)
+    template <typename function>
+    triang_matrix<T, LOWER> &apply_func(function func);
 };
 
 // ===============================================
@@ -402,6 +407,19 @@ triang_matrix<T, LOWER>::operator=(const std::initializer_list<std::initializer_
         std::copy(it->begin(), it->end(), start);
         start += it->size();
     }
+    return *this;
+}
+template <typename T, bool LOWER>
+template <typename function>
+triang_matrix<T, LOWER> &triang_matrix<T, LOWER>::apply_func(function func)
+{
+    LOG_DEBUG("Applying function to every element of a triangular matrix");
+    auto range = std::views::iota(size_type(0), non_zeros());
+    std::for_each(range.begin(), range.end(),
+#ifdef PARALLEL
+                  execution::par_unseq,
+#endif
+                  [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
     return *this;
 }
 
