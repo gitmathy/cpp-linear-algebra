@@ -30,6 +30,11 @@ public:
     /// @brief Type of every element
     typedef T value_type;
 
+    /// @brief Definition of iterator type
+    typedef T *iterator;
+    /// @brief Definition of constant iterator type
+    typedef const T *citerator;
+
 private:
     /// @brief Storage of the values
     T *p_vals;
@@ -107,6 +112,32 @@ public:
 
     /// @brief Get nz_idx't element for reading
     inline const T &operator()(const size_type nz_idx) const;
+
+    /// @brief Iterator to begin
+    inline iterator begin() { return p_vals; }
+    /// @brief Iterator to end
+    inline iterator end() { return p_vals + p_non_zeros; }
+
+    /// @brief Constant iterator to begin
+    inline citerator begin() const { return p_vals; }
+    /// @brief Constant iterator to end
+    inline citerator end() const { return p_vals + p_non_zeros; }
+
+    /// @brief Iterator to row begin
+    inline iterator row_begin(const size_type i);
+    /// @brief Iterator to row end
+    inline iterator row_end(const size_type i);
+
+    /// @brief Constant iterator to row begin
+    inline citerator row_begin(const size_type i) const;
+    /// @brief Constant iterator to row end
+    inline citerator row_end(const size_type i) const;
+
+    /// @brief Direct access to the memory. Use with caution
+    inline T *vals() { return p_vals; }
+
+    /// @brief Direct access to the memory. Use with caution
+    inline T const *vals() const { return p_vals; }
 
     /// @brief Assign another triangular matrix
     triang_matrix<T, LOWER> &operator=(const triang_matrix<T, LOWER> &rhs);
@@ -275,6 +306,42 @@ inline const T &triang_matrix<T, LOWER>::operator()(const size_type nz_idx) cons
 {
     BOUNDARY_ASSERT(nz_idx != p_non_zeros, "Non-zero element is out of bound");
     return p_vals[nz_idx];
+}
+
+template <typename T, bool LOWER>
+inline typename triang_matrix<T, LOWER>::iterator
+triang_matrix<T, LOWER>::row_begin(const size_type i)
+{
+    LOG_TRACE("Get iterator to beginning of row");
+    BOUNDARY_ASSERT(i < rows(), "Row index out of bound");
+    return p_vals + row_idx_begin(i);
+}
+
+template <typename T, bool LOWER>
+inline typename triang_matrix<T, LOWER>::iterator
+triang_matrix<T, LOWER>::row_end(const size_type i)
+{
+    LOG_TRACE("Get iterator to end of row");
+    BOUNDARY_ASSERT(i < rows(), "Row index out of bound");
+    return p_vals + row_idx_begin(i + 1);
+}
+
+template <typename T, bool LOWER>
+inline typename triang_matrix<T, LOWER>::citerator
+triang_matrix<T, LOWER>::row_begin(const size_type i) const
+{
+    LOG_TRACE("Get iterator to beginning of row");
+    BOUNDARY_ASSERT(i < rows(), "Row index out of bound");
+    return p_vals + row_idx_begin(i);
+}
+
+template <typename T, bool LOWER>
+inline typename triang_matrix<T, LOWER>::citerator
+triang_matrix<T, LOWER>::row_end(const size_type i) const
+{
+    LOG_TRACE("Get iterator to end of row");
+    BOUNDARY_ASSERT(i < rows(), "Row index out of bound");
+    return p_vals + row_idx_begin(i + 1);
 }
 
 template <typename T, bool LOWER>

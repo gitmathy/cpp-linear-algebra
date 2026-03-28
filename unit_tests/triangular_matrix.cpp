@@ -330,6 +330,8 @@ TEST(triangular_matrix, get_row_idx_wide_upper)
     EXPECT_EQ(a.row_idx_begin(2), 5);
 }
 
+// read element access via () is tested in nearly all tests
+
 /// @brief Test write access operator for lower square triangular matrix
 TEST(triangular_matrix, write_access_square_lower)
 {
@@ -434,6 +436,268 @@ TEST(triangular_matrix, write_access_wide_upper)
     EXPECT_EQ(a(1, 0), 0);
     EXPECT_EQ(a(1, 1), 5);
     EXPECT_EQ(a(1, 2), 6);
+}
+
+/// @brief Testing constant iterators for lower square triangular matrix
+TEST(triangular_matrix, constant_iterators_square_lower)
+{
+    const triang_matrix<size_type, true> a({{0}, {1, 2}});
+    size_type i = 0;
+    size_type const *val_ptr = a.vals();
+    for (triang_matrix<size_type, true>::citerator it = a.begin(); it != a.end();
+         ++it, ++i, ++val_ptr) {
+        EXPECT_EQ(*it, i);
+        EXPECT_EQ(*val_ptr, i);
+    }
+    triang_matrix<size_type, true>::citerator row_it = a.row_begin(0);
+    EXPECT_EQ(*(row_it++), 0);
+    EXPECT_EQ(row_it, a.row_end(0));
+    row_it = a.row_begin(1);
+    EXPECT_EQ(*(row_it++), 1);
+    EXPECT_EQ(*(row_it++), 2);
+    EXPECT_EQ(row_it, a.row_end(1));
+    EXPECT_THROW(a.row_begin(2), util::boundary_error);
+}
+
+/// @brief Testing constant iterators for lower "tall" triangular matrix
+TEST(triangular_matrix, constant_iterators_tall_lower)
+{
+    const triang_matrix<size_type, true> a({{0}, {1, 2}, {3, 4}});
+    size_type i = 0;
+    size_type const *val_ptr = a.vals();
+    for (triang_matrix<size_type, true>::citerator it = a.begin(); it != a.end();
+         ++it, ++i, ++val_ptr) {
+        EXPECT_EQ(*it, i);
+        EXPECT_EQ(*val_ptr, i);
+    }
+    triang_matrix<size_type, true>::citerator row_it = a.row_begin(0);
+    EXPECT_EQ(*(row_it++), 0);
+    EXPECT_EQ(row_it, a.row_end(0));
+    row_it = a.row_begin(1);
+    EXPECT_EQ(*(row_it++), 1);
+    EXPECT_EQ(*(row_it++), 2);
+    EXPECT_EQ(row_it, a.row_end(1));
+    row_it = a.row_begin(2);
+    EXPECT_EQ(*(row_it++), 3);
+    EXPECT_EQ(*(row_it++), 4);
+    EXPECT_EQ(row_it, a.row_end(2));
+    EXPECT_THROW(a.row_begin(3), util::boundary_error);
+}
+
+/// @brief Testing constant iterators for lower "wide" triangular matrix
+TEST(triangular_matrix, constant_iterators_wide_lower)
+{
+    const triang_matrix<size_type, true> a(2, 3, 2);
+    EXPECT_EQ(std::find_if(a.begin(), a.end(), [](auto b) { return b != 2; }), a.end());
+    triang_matrix<size_type, true>::citerator row_it = a.row_begin(0);
+    EXPECT_EQ(*(row_it++), 2);
+    EXPECT_EQ(row_it, a.row_end(0));
+    row_it = a.row_begin(1);
+    EXPECT_EQ(*(row_it++), 2);
+    EXPECT_EQ(*(row_it++), 2);
+    EXPECT_EQ(row_it, a.row_end(1));
+    EXPECT_THROW(a.row_begin(2), util::boundary_error);
+}
+
+/// @brief Testing constant iterators for upper square triangular matrix
+TEST(triangular_matrix, constant_iterators_square_upper)
+{
+    const triang_matrix<size_type, false> a({{0, 1}, {2}});
+    size_type i = 0;
+    size_type const *val_ptr = a.vals();
+    for (triang_matrix<size_type, false>::citerator it = a.begin(); it != a.end();
+         ++it, ++i, ++val_ptr) {
+        EXPECT_EQ(*it, i);
+        EXPECT_EQ(*val_ptr, i);
+    }
+    triang_matrix<size_type, false>::citerator row_it = a.row_begin(0);
+    EXPECT_EQ(*(row_it++), 0);
+    EXPECT_EQ(*(row_it++), 1);
+    EXPECT_EQ(row_it, a.row_end(0));
+    row_it = a.row_begin(1);
+    EXPECT_EQ(*(row_it++), 2);
+    EXPECT_EQ(row_it, a.row_end(1));
+    EXPECT_THROW(a.row_begin(2), util::boundary_error);
+}
+
+/// @brief Testing constant iterators for upper "tall" triangular matrix
+TEST(triangular_matrix, constant_iterators_tall_upper)
+{
+    const triang_matrix<size_type, false> a(3, 2, 2);
+    EXPECT_EQ(std::find_if(a.begin(), a.end(), [](auto b) { return b != 2; }), a.end());
+    triang_matrix<size_type, false>::citerator row_it = a.row_begin(0);
+    EXPECT_EQ(*(row_it++), 2);
+    EXPECT_EQ(*(row_it++), 2);
+    EXPECT_EQ(row_it, a.row_end(0));
+    row_it = a.row_begin(1);
+    EXPECT_EQ(*(row_it++), 2);
+    EXPECT_EQ(row_it, a.row_end(1));
+    row_it = a.row_begin(2);
+    EXPECT_EQ(row_it, a.row_end(2));
+    EXPECT_THROW(a.row_begin(3), util::boundary_error);
+}
+
+/// @brief Testing constant iterators for upper "wide" triangular matrix
+TEST(triangular_matrix, constant_iterators_wide_upper)
+{
+    const triang_matrix<size_type, false> a({{0, 1, 2}, {3, 4}});
+    size_type i = 0;
+    size_type const *val_ptr = a.vals();
+    for (triang_matrix<size_type, false>::citerator it = a.begin(); it != a.end();
+         ++it, ++i, ++val_ptr) {
+        EXPECT_EQ(*it, i);
+        EXPECT_EQ(*val_ptr, i);
+    }
+    triang_matrix<size_type, false>::citerator row_it = a.row_begin(0);
+    EXPECT_EQ(*(row_it++), 0);
+    EXPECT_EQ(*(row_it++), 1);
+    EXPECT_EQ(*(row_it++), 2);
+    EXPECT_EQ(row_it, a.row_end(0));
+    row_it = a.row_begin(1);
+    EXPECT_EQ(*(row_it++), 3);
+    EXPECT_EQ(*(row_it++), 4);
+    EXPECT_EQ(row_it, a.row_end(1));
+    EXPECT_THROW(a.row_begin(2), util::boundary_error);
+}
+
+/// @brief Testing iterator for lower square triangular matrix
+TEST(triangular_matrix, iterators_square_lower)
+{
+    triang_matrix<int, true> a(2, 2, 1);
+    for (matrix<int>::iterator it = a.begin(); it != a.end(); ++it) {
+        *it = 2;
+    }
+    EXPECT_EQ(std::find_if(a.begin(), a.end(), [](auto b) { return b != 2; }), a.end());
+
+    for (triang_matrix<int, true>::iterator it = a.row_begin(1); it != a.row_end(1); ++it) {
+        *it = 3;
+    }
+    const triang_matrix<int, true> &b = a;
+    EXPECT_EQ(b(0, 0), 2);
+    EXPECT_EQ(b(0, 1), 0);
+    EXPECT_EQ(b(1, 0), 3);
+    EXPECT_EQ(b(1, 1), 3);
+}
+
+/// @brief Testing iterator for lower "tall" triangular matrix
+TEST(triangular_matrix, iterators_tall_lower)
+{
+    triang_matrix<int, true> a(3, 2, 1);
+    for (matrix<int>::iterator it = a.begin(); it != a.end(); ++it) {
+        *it = 2;
+    }
+    EXPECT_EQ(std::find_if(a.begin(), a.end(), [](auto b) { return b != 2; }), a.end());
+
+    for (triang_matrix<int, true>::iterator it = a.row_begin(0); it != a.row_end(0); ++it) {
+        *it = 3;
+    }
+    for (triang_matrix<int, true>::iterator it = a.row_begin(1); it != a.row_end(1); ++it) {
+        *it = 4;
+    }
+    for (triang_matrix<int, true>::iterator it = a.row_begin(2); it != a.row_end(2); ++it) {
+        *it = 5;
+    }
+    const triang_matrix<int, true> &b = a;
+    EXPECT_EQ(b(0, 0), 3);
+    EXPECT_EQ(b(0, 1), 0);
+    EXPECT_EQ(b(1, 0), 4);
+    EXPECT_EQ(b(1, 1), 4);
+    EXPECT_EQ(b(2, 0), 5);
+    EXPECT_EQ(b(2, 1), 5);
+}
+
+/// @brief Testing iterator for lower "wide" triangular matrix
+TEST(triangular_matrix, iterators_wide_lower)
+{
+    triang_matrix<int, true> a(2, 3, 1);
+    for (matrix<int>::iterator it = a.begin(); it != a.end(); ++it) {
+        *it = 2;
+    }
+    EXPECT_EQ(std::find_if(a.begin(), a.end(), [](auto b) { return b != 2; }), a.end());
+
+    for (triang_matrix<int, true>::iterator it = a.row_begin(0); it != a.row_end(0); ++it) {
+        *it = 3;
+    }
+    for (triang_matrix<int, true>::iterator it = a.row_begin(1); it != a.row_end(1); ++it) {
+        *it = 4;
+    }
+    const triang_matrix<int, true> &b = a;
+    EXPECT_EQ(b(0, 0), 3);
+    EXPECT_EQ(b(0, 1), 0);
+    EXPECT_EQ(b(0, 2), 0);
+    EXPECT_EQ(b(1, 0), 4);
+    EXPECT_EQ(b(1, 1), 4);
+    EXPECT_EQ(b(1, 2), 0);
+}
+
+/// @brief Testing iterator for upper square triangular matrix
+TEST(triangular_matrix, iterators_square_upper)
+{
+    triang_matrix<int, false> a(2, 2, 1);
+    for (matrix<int>::iterator it = a.begin(); it != a.end(); ++it) {
+        *it = 2;
+    }
+    EXPECT_EQ(std::find_if(a.begin(), a.end(), [](auto b) { return b != 2; }), a.end());
+
+    for (triang_matrix<int, false>::iterator it = a.row_begin(1); it != a.row_end(1); ++it) {
+        *it = 3;
+    }
+    const triang_matrix<int, false> &b = a;
+    EXPECT_EQ(b(0, 0), 2);
+    EXPECT_EQ(b(0, 1), 2);
+    EXPECT_EQ(b(1, 0), 0);
+    EXPECT_EQ(b(1, 1), 3);
+}
+
+/// @brief Testing iterator for upper "tall" triangular matrix
+TEST(triangular_matrix, iterators_tall_upper)
+{
+    triang_matrix<int, false> a(3, 2, 1);
+    for (matrix<int>::iterator it = a.begin(); it != a.end(); ++it) {
+        *it = 2;
+    }
+    EXPECT_EQ(std::find_if(a.begin(), a.end(), [](auto b) { return b != 2; }), a.end());
+
+    for (triang_matrix<int, false>::iterator it = a.row_begin(0); it != a.row_end(0); ++it) {
+        *it = 3;
+    }
+    for (triang_matrix<int, false>::iterator it = a.row_begin(1); it != a.row_end(1); ++it) {
+        *it = 4;
+    }
+    for (triang_matrix<int, false>::iterator it = a.row_begin(2); it != a.row_end(2); ++it) {
+        *it = 5;
+    }
+    const triang_matrix<int, false> &b = a;
+    EXPECT_EQ(b(0, 0), 3);
+    EXPECT_EQ(b(0, 1), 3);
+    EXPECT_EQ(b(1, 0), 0);
+    EXPECT_EQ(b(1, 1), 4);
+    EXPECT_EQ(b(2, 0), 0);
+    EXPECT_EQ(b(2, 1), 0);
+}
+
+/// @brief Testing iterator for upper "wide" triangular matrix
+TEST(triangular_matrix, iterators_wide_upper)
+{
+    triang_matrix<int, false> a(2, 3, 1);
+    for (matrix<int>::iterator it = a.begin(); it != a.end(); ++it) {
+        *it = 2;
+    }
+    EXPECT_EQ(std::find_if(a.begin(), a.end(), [](auto b) { return b != 2; }), a.end());
+
+    for (triang_matrix<int, false>::iterator it = a.row_begin(0); it != a.row_end(0); ++it) {
+        *it = 3;
+    }
+    for (triang_matrix<int, false>::iterator it = a.row_begin(1); it != a.row_end(1); ++it) {
+        *it = 4;
+    }
+    const triang_matrix<int, false> &b = a;
+    EXPECT_EQ(b(0, 0), 3);
+    EXPECT_EQ(b(0, 1), 3);
+    EXPECT_EQ(b(0, 2), 3);
+    EXPECT_EQ(b(1, 0), 0);
+    EXPECT_EQ(b(1, 1), 4);
+    EXPECT_EQ(b(1, 2), 4);
 }
 
 } // namespace la
