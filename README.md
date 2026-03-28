@@ -82,6 +82,16 @@ cmake --build .
 ./run_unit_tests
 ```
 
+If you want to test using the compiler option "PARALLEL":`
+
+```bash
+mkdir build
+cd build
+cmake ../unit_tests -DPARALLEL=ON
+cmake --build .
+./run_unit_tests
+```
+
 You may want to put the googletest includes in [googletest](./googletest/) for your VSCode setup.
 
 If you want to include a new source for a unit test, include a new cpp file [unit_tests](./unit_tests/), include that file in [CMakeLists.txt](./unit_tests/CMakeLists.txt) and in [unit_tests.vcxproj](unit_tests/unit_tests.vcxproj).

@@ -26,8 +26,8 @@ jobs:
       shell: bash
       run: make run-unit
 
-  run_unit_tests:
-    name: 🧪 Unit tests
+  run_gunit_tests:
+    name: 🧪 Google unit tests
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd    # v6.0.2
@@ -37,7 +37,25 @@ jobs:
         mkdir build
         cd build || false
         cmake ../unit_tests
-        cmake --build .
+        cmake --build . --parallel=4
+    - name: 🧪 Run unit tests
+      shell: bash
+      run: |
+        cd build || false
+        ./run_unit_tests
+
+  run_gunit_tests_parallel:
+    name: 🧪 Google unit tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd    # v6.0.2
+    - name: ⚒️ Building
+      shell: bash
+      run: |
+        mkdir build
+        cd build || false
+        cmake ../unit_tests -DPARALLEL=ON
+        cmake --build . --parallel=4
     - name: 🧪 Run unit tests
       shell: bash
       run: |

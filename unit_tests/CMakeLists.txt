@@ -4,6 +4,7 @@ project(unit_tests)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options(-Wall -Wextra -Wpedantic -DLA_CHECK=7 -DLA_DEBUG_LEVEL=4)
+option(PARALLEL "Enable parallel execution" OFF)
 
 # Include the main project's headers
 include_directories(../)
@@ -39,9 +40,17 @@ add_executable(
     triangular_matrix.cpp
 )
 
+if(PARALLEL)
+    target_compile_definitions(run_unit_tests PRIVATE PARALLEL)
+    # Search for and link TBB
+    find_package(TBB REQUIRED)
+    target_link_libraries(run_unit_tests PRIVATE TBB::tbb)
+endif()
+
 # Link against Google Test
 target_link_libraries(
     run_unit_tests
+    PRIVATE
     GTest::gtest_main
 )
 
