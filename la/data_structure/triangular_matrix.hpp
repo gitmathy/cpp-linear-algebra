@@ -11,6 +11,7 @@
 #define LA_DATA_STRUCTURE_TRIANGULAR_MATRIX_HPP
 
 #include "la/util/error.hpp"
+#include "la/util/file_io.hpp"
 #include "la/util/macros.hpp"
 #include "la/util/memory.hpp"
 #include "la/util/types.hpp"
@@ -157,6 +158,12 @@ public:
     /// @tparam function, supports func(T)
     template <typename function>
     triang_matrix<T, LOWER> &apply_func(function func);
+
+    /// @brief Write matrix to a file (default in binary mode)
+    void to_file(const std::string &filename, const bool binary = true) const;
+
+    /// @brief Read matrix from a file (default in binary mode)
+    void from_file(const std::string &filename, const bool binary = true);
 };
 
 // ===============================================
@@ -421,6 +428,30 @@ triang_matrix<T, LOWER> &triang_matrix<T, LOWER>::apply_func(function func)
 #endif
                   [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
     return *this;
+}
+
+template <typename T, bool LOWER>
+void triang_matrix<T, LOWER>::to_file(const std::string &filename, const bool binary) const
+{
+    util::file_writer writer(filename, binary);
+    writer.append(p_rows);
+    writer.append(p_cols);
+    writer.append(p_non_zeros);
+    writer.append(p_vals, p_non_zeros);
+}
+
+template <typename T, bool LOWER>
+void triang_matrix<T, LOWER>::from_file(const std::string &filename, const bool binary)
+{
+    util::file_reader reader(filename, binary);
+    // Read size information
+    size_type rows = size_type(0), cols = size_type(0), non_zeros = size_type(0);
+    reader.get(rows);
+    reader.get(cols);
+    reader.get(non_zeros);
+    // Allocate memory
+    allocate(rows, cols);
+    reader.get(p_vals, p_non_zeros);
 }
 
 } // namespace la

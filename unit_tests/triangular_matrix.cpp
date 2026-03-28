@@ -724,4 +724,76 @@ TEST(triangular_matrix, apply_square_upper)
     EXPECT_EQ(a(1, 1), 4);
 }
 
+/// @brief Testing read and write of lower square triangular to binary file
+TEST(triangular_matrix, read_write_bin_square_lower)
+{
+    const std::string filename = "tmp_read_bin_triangular_lower_matrix.tst";
+    triang_matrix<double, true> a({{3.14}, {2.718, 1.618}}), b_build;
+    a.to_file(filename, true);
+    b_build.from_file(filename, true);
+    const triang_matrix<double, true> &b = b_build;
+    EXPECT_EQ(b.rows(), 2);
+    EXPECT_EQ(b.cols(), 2);
+    EXPECT_DOUBLE_EQ(b(0, 0), 3.14);
+    EXPECT_DOUBLE_EQ(b(0, 1), 0);
+    EXPECT_DOUBLE_EQ(b(1, 0), 2.718);
+    EXPECT_DOUBLE_EQ(b(1, 1), 1.618);
+    util::delete_file(filename);
+    EXPECT_THROW(a.to_file("/no_exist/dummy", true), util::error);
+}
+
+/// @brief Testing read and write of upper square triangular to binary file
+TEST(triangular_matrix, read_write_bin_square_upper)
+{
+    const std::string filename = "tmp_read_bin_triangular_upper_matrix.tst";
+    triang_matrix<double, false> a({{3.14, 2.718}, {1.618}}), b_build;
+    a.to_file(filename, true);
+    b_build.from_file(filename, true);
+    const triang_matrix<double, false> &b = b_build;
+    EXPECT_EQ(b.rows(), 2);
+    EXPECT_EQ(b.cols(), 2);
+    EXPECT_DOUBLE_EQ(b(0, 0), 3.14);
+    EXPECT_DOUBLE_EQ(b(0, 1), 2.718);
+    EXPECT_DOUBLE_EQ(b(1, 0), 0);
+    EXPECT_DOUBLE_EQ(b(1, 1), 1.618);
+    util::delete_file(filename);
+    EXPECT_THROW(a.to_file("/no_exist/dummy", true), util::error);
+}
+
+/// @brief Testing read and write of lower square triangular to text file
+TEST(triangular_matrix, read_write_txt_square_lower)
+{
+    const std::string filename = "tmp_read_txt_triangular_lower_matrix.tst";
+    triang_matrix<double, true> a({{3.14}, {2.718, 1.618}}), b_build;
+    a.to_file(filename, false);
+    b_build.from_file(filename, false);
+    const triang_matrix<double, true> &b = b_build;
+    EXPECT_EQ(b.rows(), 2);
+    EXPECT_EQ(b.cols(), 2);
+    EXPECT_DOUBLE_EQ(b(0, 0), 3.14);
+    EXPECT_DOUBLE_EQ(b(0, 1), 0);
+    EXPECT_DOUBLE_EQ(b(1, 0), 2.718);
+    EXPECT_DOUBLE_EQ(b(1, 1), 1.618);
+    util::delete_file(filename);
+    EXPECT_THROW(a.to_file("/no_exist/dummy", true), util::error);
+}
+
+/// @brief Testing read and write of upper square triangular to text file
+TEST(triangular_matrix, read_write_txt_square_upper)
+{
+    const std::string filename = "tmp_read_txt_triangular_upper_matrix.tst";
+    triang_matrix<double, false> a({{3.14, 2.718}, {1.618}}), b_build;
+    a.to_file(filename, false);
+    b_build.from_file(filename, false);
+    const triang_matrix<double, false> &b = b_build;
+    EXPECT_EQ(b.rows(), 2);
+    EXPECT_EQ(b.cols(), 2);
+    EXPECT_DOUBLE_EQ(b(0, 0), 3.14);
+    EXPECT_DOUBLE_EQ(b(0, 1), 2.718);
+    EXPECT_DOUBLE_EQ(b(1, 0), 0);
+    EXPECT_DOUBLE_EQ(b(1, 1), 1.618);
+    util::delete_file(filename);
+    EXPECT_THROW(a.to_file("/no_exist/dummy", true), util::error);
+}
+
 } // namespace la
