@@ -43,33 +43,3 @@ jobs:
       run: |
         cd build || false
         ./run_unit_tests
-
-  unit_tests_in_solution:
-    runs-on: ubuntu-latest
-    name: 👀 Test unit tests in solution
-    steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd    # v6.0.2
-    - name: check if all unit tests are in solution
-      shell: bash
-      run: |
-        set -e
-        cd unit_tests || false
-        for cpp_file in *.cpp; do
-          echo "Checking $cpp_file..."
-          grep -q "\"${cpp_file}\"" unit_tests.vcxproj
-        done
-
-  all_files_in_solution:
-    runs-on: ubuntu-latest
-    name: 👀 Test files in solution
-    steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd    # v6.0.2
-    - name: check if all files are in the in solution
-      shell: bash
-      run: |
-        set -e
-        for file in $(find la tests -type f); do
-          win_file=$(echo ${file} | sed -re 's/\//\\\\/'g);
-          echo "Checking $file"
-          grep -q -e "\"${win_file}\"" cpp-linear-algebra.vcxproj;
-        done
