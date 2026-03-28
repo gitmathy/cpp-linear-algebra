@@ -45,10 +45,14 @@ jobs:
         ./run_unit_tests
 
   run_gunit_tests_parallel:
-    name: 🧪 Google unit tests
+    name: 🧪 Google unit tests for PARALLEL
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd    # v6.0.2
+    - name: Install TBB
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libtbb-dev
     - name: ⚒️ Building
       shell: bash
       run: |
@@ -56,7 +60,7 @@ jobs:
         cd build || false
         cmake ../unit_tests -DPARALLEL=ON
         cmake --build . --parallel=4
-    - name: 🧪 Run unit tests
+    - name: 🧪 Run unit tests with PARALLEL
       shell: bash
       run: |
         cd build || false
