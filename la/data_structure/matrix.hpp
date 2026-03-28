@@ -260,7 +260,7 @@ matrix<T>::matrix(matrix<T> &&rhs) noexcept : p_vals(nullptr), p_rows(0), p_cols
 }
 
 template <typename T>
-matrix<T>::matrix(const matrix<T> &rhs) : p_vals(nullptr), p_rows(rhs.p_rows), p_cols(rhs.p_cols)
+matrix<T>::matrix(const matrix<T> &rhs) : p_vals(nullptr), p_rows(0), p_cols()
 {
     *this = rhs;
 }
