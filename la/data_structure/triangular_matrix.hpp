@@ -424,11 +424,12 @@ triang_matrix<T, LOWER> &triang_matrix<T, LOWER>::apply_func(function func)
 {
     LOG_DEBUG("Applying function to every element of a triangular matrix");
     auto range = std::views::iota(size_type(0), non_zeros());
-    std::for_each(range.begin(), range.end(),
+    std::for_each(
 #ifdef PARALLEL
-                  execution::par_unseq,
+        execution::par_unseq,
 #endif
-                  [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
+        range.begin(), range.end(),
+        [this, &func](size_type i) { this->p_vals[i] = func(this->p_vals[i]); });
     return *this;
 }
 
