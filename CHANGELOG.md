@@ -1,3 +1,10 @@
+# [1.38.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.37.0...v1.38.0) (2026-03-28)
+
+
+### Features
+
+* Using triangular matrix for L ([570a6a5](https://github.com/gitmathy/cpp-linear-algebra/commit/570a6a54814571dfd777e3a49a4ace0f1677ea54))
+
 # [1.37.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.36.0...v1.37.0) (2026-03-28)
 
 
