@@ -1,3 +1,19 @@
+# [1.37.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.36.0...v1.37.0) (2026-03-28)
+
+
+### Bug Fixes
+
+* Copy constructor for matrix ([560bff4](https://github.com/gitmathy/cpp-linear-algebra/commit/560bff496198aae7091248545f01fdcf75192828))
+* Only allocate memory if needed ([db28429](https://github.com/gitmathy/cpp-linear-algebra/commit/db28429f04cc08f3647ceebd96cd357f6d75470b))
+
+
+### Features
+
+* apply for triangular matrices ([c03b0d6](https://github.com/gitmathy/cpp-linear-algebra/commit/c03b0d69c3e38644c7f6ebd1be39a8c33f440551))
+* file io for triangular matrices ([cabd831](https://github.com/gitmathy/cpp-linear-algebra/commit/cabd83138f90f60c8ff81a6bd4ce6bb463dda2cf))
+* Initial version of triangular matrix ([5d9b191](https://github.com/gitmathy/cpp-linear-algebra/commit/5d9b191faa448fb775d1b624a069b48c8033a194))
+* iterators for triangular matrix ([33aad08](https://github.com/gitmathy/cpp-linear-algebra/commit/33aad08d59e073f13ed58078b850e4d59a4e7cc2))
+
 # [1.36.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.35.0...v1.36.0) (2026-03-27)
 
 
