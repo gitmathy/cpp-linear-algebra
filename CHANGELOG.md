@@ -1,3 +1,10 @@
+## [1.38.2](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.38.1...v1.38.2) (2026-03-28)
+
+
+### Bug Fixes
+
+* Include constants ([64a6d75](https://github.com/gitmathy/cpp-linear-algebra/commit/64a6d75ff020666a7d4e79505de2dac10b223dd4))
+
 ## [1.38.1](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.38.0...v1.38.1) (2026-03-28)
 
 
