@@ -11,6 +11,7 @@
 #define LA_ALGORITHM_DENSE_SOLVER_HPP
 
 #include "la/algorithm/util/solver.hpp"
+#include "la/data_structure/triangular_matrix.hpp"
 #include "la/data_structure/vector.hpp"
 #include "la/util/block_helper.hpp"
 #include "la/util/constants.hpp"
@@ -59,7 +60,7 @@ class cholesky_decomposition : public util::dense_solver<MatT, VecT>
 {
 private:
     /// @brief Cholesky factor L
-    MatT p_l;
+    triang_matrix<typename util::dense_solver<MatT, VecT>::value_type, true> p_l;
 
     /// @brief (Re)-Decompose a matrix
     /// @param A The matrix to be decomposed
@@ -264,42 +265,52 @@ cholesky_decomposition<MatT, VecT>::cholesky_decomposition(const MatT &A)
 template <typename MatT, typename VecT>
 void cholesky_decomposition<MatT, VecT>::decompose()
 {
-    LOG_DEBUG("Decompose (" << this->p_A.rows() << " x " << this->p_A.cols() << ") matrix");
+    LOG_DEBUG("Decompose (" << this->p_A.rows() << " x " << this->p_A.cols()
+                            << ") matrix into lower triangular storage");
     typedef typename util::dense_solver<MatT, VecT>::value_type T;
-    const size_type N = this->p_A.rows(); // Matrix must be square
+    const size_type N = this->p_A.rows();
     const size_type block_size = la::util::BLOCK_SIZE;
 
-    // Initialize Cholesky factor L (p_l)
-    p_l = this->p_A;
+    // 1. Initialize p_l with only the lower triangle of A
+    // Assuming p_l is pre-allocated to size N*(N+1)/2
+    p_l.allocate(N, N);
     T *__restrict l_ptr = p_l.vals();
+    size_type l_idx = 0;
+    for (size_type i = 0; i < N; ++i) {
+        for (size_type j = 0; j <= i; ++j, ++l_idx) {
+            l_ptr[l_idx] = this->p_A(i, j);
+        }
+    }
 
     for (size_type k_block = 0; k_block < N; k_block += block_size) {
         const size_type b_limit = std::min(k_block + block_size, N);
 
-        // --- 1. PANEL FACTORIZATION (Sequential) ---
-        // Factorize the current block diagonal and the panel below it
+        // --- 1. PANEL FACTORIZATION ---
         for (size_type k = k_block; k < b_limit; ++k) {
-            T diag_val = l_ptr[k * N + k];
+            const T diag_val = l_ptr[p_l.get_idx(k, k)];
             if (diag_val <= la::util::EPS) {
                 la::util::error_factory("Matrix not positive definite", __FUNCTION_NAME__,
                                         la::util::NON_ZERO);
             }
-            T sqrt_diag = std::sqrt(diag_val);
-            l_ptr[k * N + k] = sqrt_diag;
+
+            const T sqrt_diag = std::sqrt(diag_val);
+            l_ptr[p_l.get_idx(k, k)] = sqrt_diag;
             T inv_sqrt = T(1) / sqrt_diag;
-            // Scale the column below the diagonal
+
+            // Scale column k below diagonal
             for (size_type i = k + 1; i < N; ++i) {
-                l_ptr[i * N + k] *= inv_sqrt;
+                l_ptr[p_l.get_idx(i, k)] *= inv_sqrt;
             }
-            // Internal panel update (Update subsequent columns within the current block)
+
+            // Internal panel update
             for (size_type j = k + 1; j < b_limit; ++j) {
                 for (size_type i = j; i < N; ++i) {
-                    l_ptr[i * N + j] -= l_ptr[i * N + k] * l_ptr[j * N + k];
+                    l_ptr[p_l.get_idx(i, j)] -= l_ptr[p_l.get_idx(i, k)] * l_ptr[p_l.get_idx(j, k)];
                 }
             }
         }
-        // --- 2. TRAILING MATRIX UPDATE (Parallel) ---
-        // Update the remaining (N - b_limit) x (N - b_limit) submatrix
+
+        // --- 2. TRAILING MATRIX UPDATE ---
         if (b_limit < N) {
             auto i_blocks = la::util::create_block_indices(b_limit, N, block_size);
 #ifdef PARALLEL
@@ -309,17 +320,14 @@ void cholesky_decomposition<MatT, VecT>::decompose()
 #endif
                           [&](size_type i_blk_start) {
                               const size_type i_blk_end = std::min(i_blk_start + block_size, N);
-
-                              // Update each row in the current block
                               for (size_type i = i_blk_start; i < i_blk_end; ++i) {
-                                  // Symmetric update: only iterate up to column i
                                   for (size_type j = b_limit; j <= i; ++j) {
                                       T sum = 0;
-                                      // Dot product of the rows in the current panel
                                       for (size_type k = k_block; k < b_limit; ++k) {
-                                          sum += l_ptr[i * N + k] * l_ptr[j * N + k];
+                                          sum +=
+                                              l_ptr[p_l.get_idx(i, k)] * l_ptr[p_l.get_idx(j, k)];
                                       }
-                                      l_ptr[i * N + j] -= sum;
+                                      l_ptr[p_l.get_idx(i, j)] -= sum;
                                   }
                               }
                           });
@@ -330,36 +338,39 @@ void cholesky_decomposition<MatT, VecT>::decompose()
 template <typename MatT, typename VecT>
 bool cholesky_decomposition<MatT, VecT>::solve(const VecT &b, VecT &x) const
 {
-    LOG_DEBUG("Solving linear equation system by Cholesky");
+    LOG_DEBUG("Solving linear equation system by Cholesky (Triangular Storage)");
     SHAPE_ASSERT(b.rows() == this->p_A.rows() && x.rows() == this->p_A.cols(),
-                 "Invalid dimension for LU solve");
+                 "Invalid dimension for solve");
 
     const size_type N = p_l.rows();
     typedef typename util::dense_solver<MatT, VecT>::value_type T;
     const T *__restrict l_ptr = p_l.vals();
-    // Use x as a temporary buffer for y to solve in-place
-    x = b;
+
+    x = b; // Use x as the buffer for y
     T *__restrict x_ptr = x.vals();
+
     // --- 1. FORWARD SUBSTITUTION (Solve Ly = b) ---
-    // L is lower triangular
+    // Accessing L row by row: Very cache-friendly
     for (size_type i = 0; i < N; ++i) {
         T sum = 0;
         for (size_type j = 0; j < i; ++j) {
-            sum += l_ptr[i * N + j] * x_ptr[j];
+            sum += l_ptr[p_l.get_idx(i, j)] * x_ptr[j];
         }
-        x_ptr[i] = (x_ptr[i] - sum) / l_ptr[i * N + i];
+        x_ptr[i] = (x_ptr[i] - sum) / l_ptr[p_l.get_idx(i, i)];
     }
 
     // --- 2. BACKWARD SUBSTITUTION (Solve L^T x = y) ---
-    // L^T is upper triangular. In Row-Major, L^T entries (i, j) are l_ptr[j * N + i]
+    // L^T is upper triangular. The element (L^T)_ij is L_ji.
+    // Here we iterate backwards through x, but access L column-wise.
     for (size_type i = N; i-- > 0;) {
         T sum = 0;
         for (size_type j = i + 1; j < N; ++j) {
-            // Note: Accessing L transpose (column-wise in Row-Major L)
-            sum += l_ptr[j * N + i] * x_ptr[j];
+            // Accessing L_ji where j > i
+            sum += l_ptr[p_l.get_idx(j, i)] * x_ptr[j];
         }
-        x_ptr[i] = (x_ptr[i] - sum) / l_ptr[i * N + i];
+        x_ptr[i] = (x_ptr[i] - sum) / l_ptr[p_l.get_idx(i, i)];
     }
+
     return true;
 }
 
