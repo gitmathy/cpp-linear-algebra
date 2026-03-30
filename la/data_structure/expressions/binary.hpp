@@ -180,8 +180,6 @@ size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::cols() const
 template <typename ExpTLeft, typename ExpTRight, typename OpsT>
 inline size_type binary_expression<ExpTLeft, ExpTRight, OpsT>::non_zeros() const
 {
-    SHAPE_ASSERT(ExpTLeft::dimension == 2 || ExpTRight::dimension == 2,
-                 "binary_expression: col_idx one side needs to be a matrix");
     return ExpTLeft::dimension == 2 ? p_left.non_zeros() : p_right.non_zeros();
 }
 

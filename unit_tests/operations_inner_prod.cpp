@@ -35,6 +35,23 @@ TEST(ops_inner_prod, static_vector)
     EXPECT_EQ(inner_product(a, b), 32);
 }
 
+/// \brief Testing inner product vector operant
+TEST(ops_inner_prod, vector_operant)
+{
+    const vector<int> a({1, 2, 3});
+    const vector<int> b({4, 5, 6});
+    const vector<int> c({1, 2, 3});
+    EXPECT_EQ(inner_product(a, b + c), 46);
+}
+
+TEST(ops_inner_prod, operant_vector)
+{
+    const vector<int> a({1, 2, 3});
+    const vector<int> b({4, 5, 6});
+    const vector<int> c({1, 2, 3});
+    EXPECT_EQ(inner_product(a + b, c), 46);
+}
+
 /// \brief Testing norm default
 TEST(ops_inner_prod, vector_norm)
 {
@@ -138,6 +155,41 @@ TEST(ops_inner_prod, matrix_norm_max)
 {
     const matrix<double> a({{-1., 2., -2., 3.}});
     EXPECT_DOUBLE_EQ(norm<SIZE_TYPE_MAX>(a), 3.);
+}
+
+/// \brief Testing norm default
+TEST(ops_inner_prod, operator_norm_default)
+{
+    const vector<double> a({1., 2.}), b({2., 2.});
+    EXPECT_DOUBLE_EQ(norm(a + b), 5.);
+}
+
+/// \brief Testing norm-1
+TEST(ops_inner_prod, operator_norm_1)
+{
+    const static_vector<double, 2> a({1., 2.}), b({2., 2.});
+    EXPECT_DOUBLE_EQ(norm<1>(a + b), 7.);
+}
+
+/// \brief Testing norm-2
+TEST(ops_inner_prod, operator_norm_2)
+{
+    const static_vector<double, 2> a({1., 2.}), b({2., 2.});
+    EXPECT_DOUBLE_EQ(norm<2>(a + b), 5.);
+}
+
+/// \brief Testing norm-3
+TEST(ops_inner_prod, operator_norm_3)
+{
+    const vector<double> a({1., 2.}), b({2., 2.});
+    EXPECT_DOUBLE_EQ(norm<3>(a + b), std::pow(91.0, 1.0 / 3.0));
+}
+
+/// \brief Testing norm-max
+TEST(ops_inner_prod, operator_norm_max)
+{
+    const matrix<double> a({{-1., 2., -2., 3.}}), b({{-1., 2., -2., 4.}});
+    EXPECT_DOUBLE_EQ(norm<SIZE_TYPE_MAX>(a + b), 7.);
 }
 
 } // namespace la
