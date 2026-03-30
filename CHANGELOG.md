@@ -1,3 +1,17 @@
+# [1.39.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.38.2...v1.39.0) (2026-03-30)
+
+
+### Bug Fixes
+
+* Do not duplicate default ([86756fd](https://github.com/gitmathy/cpp-linear-algebra/commit/86756fda51136428c2a8c3536ad635dd03e6cbbb))
+* wrong assertion ([b34aae7](https://github.com/gitmathy/cpp-linear-algebra/commit/b34aae7787fc1bd2cf66f51c468194133a4c4a80))
+
+
+### Features
+
+* Include concepts has_evaluate and has_non_zeros ([7573842](https://github.com/gitmathy/cpp-linear-algebra/commit/75738424f5808d1b2f704a6aee721ec1208cd3d7))
+* inner product and norm on operants ([2df1be3](https://github.com/gitmathy/cpp-linear-algebra/commit/2df1be30e1a52e9de5eb5cfcf820bae7a9fb9177))
+
 ## [1.38.2](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.38.1...v1.38.2) (2026-03-28)
 
 
