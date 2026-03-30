@@ -11,6 +11,7 @@
 #define LA_OPERATIONS_INNER_PRODUCT_HPP
 
 #include "la/data_structure/forward.hpp"
+#include "la/data_structure/util/concepts.hpp"
 #include "la/util/macros.hpp"
 #include "la/util/types.hpp"
 #include <algorithm>
@@ -18,41 +19,29 @@
 
 namespace la {
 
-/// @brief Inner product of a vector
-/// @return left^T * right
-template <typename T>
-T inner_product(const vector<T> &left, const vector<T> &right);
-
-/// @brief Inner product of a static_vector
-/// @return left^T * right
-template <typename T, size_type N>
-T inner_product(const static_vector<T, N> &left, const static_vector<T, N> &right);
+template <typename LeftT, typename RightT>
+typename LeftT::value_type inner_product(const LeftT &left, const RightT &right);
 
 // ===============================================
 // T E M P L A T E   I M P L E M E N T A T I O N S
 // ===============================================
 
-template <typename T>
-T inner_product(const vector<T> &left, const vector<T> &right)
+template <typename LeftT, typename RightT>
+typename LeftT::value_type inner_product(const LeftT &left, const RightT &right)
 {
-    SHAPE_ASSERT(left.rows() == right.rows(), "vectors for inner product not of same length");
+    static_assert(la::util::has_evaluate<LeftT>, "LeftT must provide evaluate");
+    static_assert(la::util::has_evaluate<RightT>, "RightT must provide evaluate");
+    static_assert(la::util::same_value_type<LeftT, RightT>,
+                  "Left and RightT must have same value type");
+    SHAPE_ASSERT(left.rows() == right.rows(), "Inner product only defined on same length");
+    typedef typename LeftT::value_type T;
+    auto indices = std::views::iota(size_type(0), left.rows());
+    return std::transform_reduce(
 #ifdef PARALLEL
-    return std::transform_reduce(execution::par, left.begin(), left.end(), right.begin(), T(0),
-                                 std::plus<>(),      // Reduction (sum)
-                                 std::multiplies<>() // Transformation (product)
-    );
-#else
-    return std::transform_reduce(left.begin(), left.end(), right.begin(), T(0),
-                                 std::plus<>(),      // Reduction (sum)
-                                 std::multiplies<>() // Transformation (product)
-    );
+        std::execution::par,
 #endif
-}
-
-template <typename T, size_type N>
-T inner_product(const static_vector<T, N> &left, const static_vector<T, N> &right)
-{
-    return std::inner_product(left.begin(), left.end(), right.begin(), T(0));
+        indices.begin(), indices.end(), T(0), std::plus<>(),
+        [&left, &right](const size_t i) { return left.evaluate(i) * right.evaluate(i); });
 }
 
 } // namespace la
