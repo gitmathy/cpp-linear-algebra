@@ -97,6 +97,16 @@ concept has_solve = requires(T &t, VecT &b, VecT &x) {
     { t.solve(b, x) };
 };
 
+template <typename T>
+concept has_evaluate = requires(T &t, size_type i) {
+    { t.evaluate(i) };
+};
+
+template <typename T>
+concept has_non_zeros = requires(T &t) {
+    { t.non_zeros() };
+};
+
 } // namespace util
 } // namespace la
 #endif
