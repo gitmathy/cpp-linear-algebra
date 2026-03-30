@@ -27,7 +27,7 @@ typename ExpressionT::value_type norm(const ExpressionT &x);
 // ===============================================
 
 // Some performance improvements for different common norms such as 1-, 2-, and max-norm.
-template <size_type p = 2, typename ExpressionT>
+template <size_type p, typename ExpressionT>
 typename ExpressionT::value_type norm(const ExpressionT &x)
 {
     static_assert(la::util::has_evaluate<ExpressionT>, "ExpressionT must provide evaluate");
