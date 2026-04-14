@@ -20,6 +20,7 @@
 #include "la/util/types.hpp"
 #include <algorithm>
 #include <cmath>
+#include <vector>
 
 namespace la {
 namespace algorithm {
@@ -28,16 +29,23 @@ namespace algorithm {
 template <typename MatT, typename VecT>
 class lu_decomposition : public util::dense_solver<MatT, VecT>
 {
-private:
+public:
+    /// @brief Definition of value types
+    typedef typename util::dense_solver<MatT, VecT>::value_type value_type;
+
+protected:
     /// @brief Decomposed matrix
     MatT p_lu;
 
     /// @brief Permutation
     vector<size_type> p_p;
 
+    /// @brief Keeping track of swaps for determinate
+    size_type p_swap_count;
+
     /// @brief (Re)-Decompose a matrix
     /// @param A The matrix to be decomposed
-    void decompose();
+    virtual void decompose();
 
 public:
     /// @brief Decompose the matrix A
@@ -47,6 +55,9 @@ public:
     /// @param x A^-1*rhs
     /// @param rhs right hand side
     bool solve(const VecT &b, VecT &x) const override;
+
+    /// @brief Determine the determinate of the matrix
+    value_type det() const;
 
     /// @brief As we use the function name "solve" for both versions, we need to provide this
     using util::dense_solver<MatT, VecT>::solve;
@@ -79,18 +90,12 @@ public:
 
 /// @brief LU decomposition for small matrices
 template <typename MatT, typename VecT>
-class small_lu_decomposition : public util::dense_solver<MatT, VecT>
+class small_lu_decomposition : public lu_decomposition<MatT, VecT>
 {
 private:
-    /// @brief Decomposed matrix
-    MatT p_lu;
-
-    /// @brief Permutation
-    vector<size_type> p_p;
-
     /// @brief (Re)-Decompose a matrix
     /// @param A The matrix to be decomposed
-    void decompose();
+    void decompose() override;
 
 public:
     /// @brief Decompose the matrix A
@@ -111,7 +116,7 @@ public:
 
 template <typename MatT, typename VecT>
 lu_decomposition<MatT, VecT>::lu_decomposition(const MatT &A)
-    : util::dense_solver<MatT, VecT>(A), p_lu(0, 0), p_p(0)
+    : util::dense_solver<MatT, VecT>(A), p_lu(0, 0), p_p(0), p_swap_count(0)
 {
     LOG_DEBUG("Setting up LU solver class");
     decompose();
@@ -134,6 +139,7 @@ void lu_decomposition<MatT, VecT>::decompose()
     for (size_type i = 0; i < min_dim; ++i) {
         p_p(i) = i;
     }
+    p_swap_count = 0;
 
     for (size_type k_block = 0; k_block < min_dim; k_block += block_size) {
         const size_type b_limit = std::min(k_block + block_size, min_dim);
@@ -162,6 +168,7 @@ void lu_decomposition<MatT, VecT>::decompose()
                 for (size_type j = 0; j < N; ++j) {
                     std::swap(row_k[j], row_p[j]);
                 }
+                ++p_swap_count;
             }
             // Compute L multipliers (Column k)
             T diag_inv = T(1) / lu_ptr[k * N + k];
@@ -275,6 +282,22 @@ bool lu_decomposition<MatT, VecT>::solve(const VecT &b, VecT &x) const
         x_ptr[i] = (x_ptr[i] - sum) / row_i[i];
     }
     return true;
+}
+
+template <typename MatT, typename VecT>
+typename lu_decomposition<MatT, VecT>::value_type lu_decomposition<MatT, VecT>::det() const
+{
+    LOG_DEBUG("Computing the determinate of the matrix");
+    typedef typename util::dense_solver<MatT, VecT>::value_type T;
+    const size_type N = p_lu.rows();
+    T det = T(1.0);
+
+    // 1. Multiply the diagonal elements of U
+    for (size_type i = 0; i < N; ++i) {
+        det *= p_lu(i, i);
+    }
+    // If swaps is odd, determinant is negative
+    return (p_swap_count % 2 == 0) ? det : -det;
 }
 
 // Cholesky
@@ -400,9 +423,12 @@ bool cholesky_decomposition<MatT, VecT>::solve(const VecT &b, VecT &x) const
     return true;
 }
 
+// Small LU decomposition
+// ----------------------
+
 template <typename MatT, typename VecT>
 small_lu_decomposition<MatT, VecT>::small_lu_decomposition(const MatT &A)
-    : util::dense_solver<MatT, VecT>(A), p_lu(0, 0), p_p(0)
+    : lu_decomposition<MatT, VecT>(A)
 {
     decompose();
 }
@@ -418,34 +444,41 @@ void small_lu_decomposition<MatT, VecT>::decompose()
     if (M > 8 || N > 8) {
         LOG_WARNING("Usage of solver for small systems for a big system");
     }
+    MatT &LU = this->p_lu;
+    vector<size_type> &P = this->p_p;
+    size_type &swap_count = this->p_swap_count;
     // Initialize LU decomposition
-    p_lu = this->p_A;
-    p_p.allocate(N);
+    LU = this->p_A;
+    P.allocate(N);
     for (size_type i = 0; i < N; ++i) {
-        p_p(i) = i;
+        P(i) = i;
     }
+    swap_count = 0;
 
     for (size_type i = 0; i < N; ++i) {
         size_type max_row = i;
         for (size_type k = i + 1; k < N; ++k) {
-            if (std::abs(p_lu(k, i)) > std::abs(p_lu(max_row, i))) {
+            if (std::abs(LU(k, i)) > std::abs(LU(max_row, i))) {
                 max_row = k;
             }
         }
 
-        if (std::abs(p_lu(max_row, i)) < la::util::EPS) {
+        if (std::abs(LU(max_row, i)) < la::util::EPS) {
             la::util::error_factory("Irregular matrix in lu decomposition", __FUNCTION_NAME__,
                                     la::util::NON_ZERO);
         }
-        for (size_type j = 0; j < N; ++j) {
-            std::swap(p_lu(i, j), p_lu(max_row, j));
+        if (i != max_row) {
+            for (size_type j = 0; j < N; ++j) {
+                std::swap(LU(i, j), LU(max_row, j));
+            }
+            std::swap(P(i), P(max_row));
+            ++swap_count;
         }
-        std::swap(p_p(i), p_p(max_row));
 
         for (size_type j = i + 1; j < N; ++j) {
-            p_lu(j, i) /= p_lu(i, i);
+            LU(j, i) /= LU(i, i);
             for (size_type k = i + 1; k < N; ++k) {
-                p_lu(j, k) -= p_lu(j, i) * p_lu(i, k);
+                LU(j, k) -= LU(j, i) * LU(i, k);
             }
         }
     }
@@ -457,25 +490,27 @@ bool small_lu_decomposition<MatT, VecT>::solve(const VecT &b, VecT &x) const
     LOG_DEBUG("Solving linear equation system by LU decomposition for small systems");
     SHAPE_ASSERT(b.rows() == this->p_A.rows() && x.rows() == this->p_A.cols(),
                  "Invalid dimension for small LU solve");
-    size_type N = p_lu.rows();
-    typedef typename util::dense_solver<MatT, VecT>::value_type T;
+    typedef typename lu_decomposition<MatT, VecT>::value_type T;
+    const MatT &LU = this->p_lu;
+    const vector<size_type> &P = this->p_p;
+    size_type N = LU.rows();
 
     // Forward substitution: Ly = Pb (y is stored in x temporarily)
     for (size_type i = 0; i < N; ++i) {
         T sum = 0;
         for (size_type k = 0; k < i; ++k) {
-            sum += p_lu(i, k) * x(k);
+            sum += LU(i, k) * x(k);
         }
-        x(i) = b(p_p(i)) - sum;
+        x(i) = b(P(i)) - sum;
     }
 
     // Backward substitution: Ux = y
     for (int i = static_cast<int>(N) - 1; i >= 0; --i) {
         T sum = 0;
         for (size_type k = i + 1; k < N; ++k) {
-            sum += p_lu(i, k) * x(k);
+            sum += LU(i, k) * x(k);
         }
-        x(i) = (x(i) - sum) / p_lu(i, i);
+        x(i) = (x(i) - sum) / LU(i, i);
     }
     return true;
 }
