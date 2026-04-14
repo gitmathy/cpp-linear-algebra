@@ -19,4 +19,7 @@ namespace la {
 template <typename T>
 using lu_solver = algorithm::lu_decomposition<matrix<T>, vector<T>>;
 
+template <typename T>
+using small_lu_solver = algorithm::small_lu_decomposition<matrix<T>, vector<T>>;
+
 } // namespace la
