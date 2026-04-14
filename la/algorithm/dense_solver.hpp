@@ -25,7 +25,6 @@ namespace la {
 namespace algorithm {
 
 /// @brief LU decomposition of a matrix
-/// @tparam T value type of every element
 template <typename MatT, typename VecT>
 class lu_decomposition : public util::dense_solver<MatT, VecT>
 {
@@ -54,7 +53,6 @@ public:
 };
 
 /// @brief Cholesky decomposition of a matrix
-/// @tparam T value type of every element
 template <typename MatT, typename VecT>
 class cholesky_decomposition : public util::dense_solver<MatT, VecT>
 {
