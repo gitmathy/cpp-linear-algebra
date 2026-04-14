@@ -75,6 +75,22 @@ TEST(solver, cholesky_non_spd)
     EXPECT_THROW((cholesky_solver(A)), util::non_zero_error);
 }
 
+/// @brief Test lu for small matrices
+TEST(solver, small_lu)
+{
+    matrix<double> A({{0, 2, 1}, {1, 1, 2}, {2, 1, 1}});
+    const vector<double> b({4, 6, 7});
+    vector<double> x(3);
+    algorithm::small_lu_decomposition<matrix<double>, vector<double>> lu(A);
+    lu.solve(b, x);
+    EXPECT_EQ(x.rows(), 3);
+    EXPECT_DOUBLE_EQ(x(0), 2.2);
+    EXPECT_DOUBLE_EQ(x(1), 1.4);
+    EXPECT_DOUBLE_EQ(x(2), 1.2);
+    vector<double> x_wrong(4);
+    EXPECT_THROW(lu.solve(b, x_wrong), util::error);
+}
+
 /// @brief Test un-preconditioned CG solver
 TEST(solver, cg_un_pred)
 {
