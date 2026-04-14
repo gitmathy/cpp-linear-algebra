@@ -18,14 +18,21 @@ namespace la {
 /// @brief Test lu decomposition
 TEST(solver, lu_decomposition)
 {
-    matrix<double> A({{0, 2, 1}, {1, 1, 2}, {2, 1, 1}});
-    const vector<double> b({4, 6, 7});
+    // matrix<double> A({{0, 2, 1}, {1, 1, 2}, {2, 1, 1}});
+    matrix<double> A({{2, -1, 3, 0, 1},
+                      {1, 3, -1, 2, 4},
+                      {-1, 2, 4, -3, 0},
+                      {0, 1, 2, 5, -2},
+                      {3, -2, 1, 4, 1}});
+    const vector<double> b({12, 8, 5, -3, 10});
     algorithm::lu_decomposition<matrix<double>, vector<double>> lu(A);
     const vector<double> x = lu.solve(b);
-    EXPECT_EQ(x.rows(), 3);
-    EXPECT_DOUBLE_EQ(x(0), 2.2);
-    EXPECT_DOUBLE_EQ(x(1), 1.4);
-    EXPECT_DOUBLE_EQ(x(2), 1.2);
+    EXPECT_EQ(x.rows(), 5);
+    EXPECT_NEAR(x(0), 1, 1e-6);
+    EXPECT_NEAR(x(1), -1, 1e-6);
+    EXPECT_NEAR(x(2), 2, 1e-6);
+    EXPECT_NEAR(x(3), 0, 1e-6);
+    EXPECT_NEAR(x(4), 3, 1e-6);
     EXPECT_THROW(lu.solve(vector<double>(4)), util::error);
 }
 
@@ -43,6 +50,25 @@ TEST(solver, lu_decomposition_w_x)
     EXPECT_DOUBLE_EQ(x(2), 1.2);
     vector<double> x_wrong(4);
     EXPECT_THROW(lu.solve(b, x_wrong), util::error);
+}
+/// @brief Test determinate small matrices
+TEST(solver, lu_decomposition_det)
+{
+    matrix<double> A({{2, -1, 3, 0, 1},
+                      {1, 3, -1, 2, 4},
+                      {-1, 2, 4, -3, 0},
+                      {0, 1, 2, 5, -2},
+                      {3, -2, 1, 4, 1}});
+    algorithm::lu_decomposition<matrix<double>, vector<double>> lu(A);
+    EXPECT_NEAR(lu.det(), 78, 0.1);
+}
+
+/// @brief Test determinate small matrices
+TEST(solver, lu_decomposition_det_small)
+{
+    matrix<double> A({{0, 2, 1}, {1, 1, 2}, {2, 1, 1}});
+    algorithm::lu_decomposition<matrix<double>, vector<double>> lu(A);
+    EXPECT_NEAR(lu.det(), 5, 0.1);
 }
 
 /// @brief Test error thrown for irregular matrix
@@ -89,6 +115,14 @@ TEST(solver, small_lu)
     EXPECT_DOUBLE_EQ(x(2), 1.2);
     vector<double> x_wrong(4);
     EXPECT_THROW(lu.solve(b, x_wrong), util::error);
+}
+
+/// @brief Test determinate small matrices
+TEST(solver, small_lu_det)
+{
+    matrix<double> A({{0, 2, 1}, {1, 1, 2}, {2, 1, 1}});
+    algorithm::small_lu_decomposition<matrix<double>, vector<double>> lu(A);
+    EXPECT_DOUBLE_EQ(lu.det(), 5.);
 }
 
 /// @brief Test un-preconditioned CG solver
