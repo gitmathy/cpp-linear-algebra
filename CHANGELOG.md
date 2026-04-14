@@ -1,3 +1,12 @@
+# [1.40.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.39.0...v1.40.0) (2026-04-14)
+
+
+### Features
+
+* Include solver for small systems ([bb1b744](https://github.com/gitmathy/cpp-linear-algebra/commit/bb1b7445674c3dc009d3fbd821b02bd55d6ae7f3))
+* Include type for lu decomposition solver ([0a30e74](https://github.com/gitmathy/cpp-linear-algebra/commit/0a30e744257928bfb4426a3361ced6c5a4d04951))
+* type for solver for small systems ([6f08a19](https://github.com/gitmathy/cpp-linear-algebra/commit/6f08a1946ccee01578faa6df6ce3b177fca7230c))
+
 # [1.39.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.38.2...v1.39.0) (2026-03-30)
 
 
