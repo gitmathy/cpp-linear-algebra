@@ -1,3 +1,11 @@
+# [1.41.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.40.0...v1.41.0) (2026-04-14)
+
+
+### Features
+
+* Improve tests ([ab8c25d](https://github.com/gitmathy/cpp-linear-algebra/commit/ab8c25dcdf36b017872481d0b240e734aca8709a))
+* Include computation of determinant ([36d54f8](https://github.com/gitmathy/cpp-linear-algebra/commit/36d54f8347ce792efe54260276faa6a29bb6b88b))
+
 # [1.40.0](https://github.com/gitmathy/cpp-linear-algebra/compare/v1.39.0...v1.40.0) (2026-04-14)
 
 
